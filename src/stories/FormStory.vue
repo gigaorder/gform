@@ -14,7 +14,7 @@
    import _ from 'lodash';
    import {VApp} from 'vuetify/lib';
    import GForm from '../main';
-   //import GForm from '../../dist/gform.umd';
+   //import GForm from '../../dist/GForm.umd';
    import Vue from "vue";
 
    Vue.use(GForm);
