@@ -8,17 +8,17 @@
     "build:storybook": "vue-cli-service build:storybook -c config/storybook",
     "serve:storybook": "vue-cli-service serve:storybook -p 6006 -c config/storybook"
   },
-  "main": "src/main.js",
+  "main": "dist/GForm.common.js",
   "dependencies": {
     "bootstrap": "^4.1.3",
-    "vue": "^2.5.17"
-  },
-  "devDependencies": {
-    "vue-fragment": "^1.2.2",
+    "lodash": "latest",
     "material-design-icons-iconfont": "^4.0.2",
     "roboto-fontface": "^0.10.0",
-    "lodash": "latest",
-    "vuetify": "^1.3.0",
+    "vue": "^2.5.17",
+    "vue-fragment": "^1.2.2",
+    "vuetify": "^1.3.0"
+  },
+  "devDependencies": {
     "@storybook/addon-actions": "4.0.0-alpha.20",
     "@storybook/addon-links": "4.0.0-alpha.20",
     "api-generator": "github:vuetifyjs/api-generator",
