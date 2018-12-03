@@ -32,7 +32,7 @@
         </v-layout>
       </div>
       <div style="width: 100%">
-        <v-menu offset-y v-if="!inArray">
+        <v-menu offset-y v-if="!inArray" z-index="1000">
           <v-btn slot="activator" color="white" small>
             Add {{getLabel(field)}} <v-icon>arrow_drop_down</v-icon>
           </v-btn>
@@ -58,7 +58,7 @@
         </div>
       </div>
       <div style="width: 100%">
-        <v-menu offset-y v-if="!inArray && !model[field.key].choice">
+        <v-menu offset-y v-if="!inArray && !model[field.key].choice" z-index="1000">
           <v-btn slot="activator" color="white" small>
             Add {{getLabel(field)}} <v-icon>arrow_drop_down</v-icon>
           </v-btn>

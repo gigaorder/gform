@@ -1,7 +1,28 @@
 <template>
 	<v-app>
 		<div style="width: 50%;padding: 20px">
-			<g-field :fields="fields" :model="model" :tabs="tabs"></g-field>
+			<v-dialog v-model="dialog" persistent width="900px">
+				<v-btn slot="activator" icon><v-icon>add_circle</v-icon></v-btn>
+				<v-card>
+					<v-card-title>
+						<span class="headline">Form</span>
+					</v-card-title>
+					<v-card-text v-if="dialog">
+						<v-select
+								:items="['0-17', '18-29', '30-54', '54+']"
+								label="Age*"
+								required
+						></v-select>
+
+						<g-field :fields="fields" :model="model" :tabs="tabs"></g-field>
+					</v-card-text>
+					<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn color="green darken-1" flat="flat" @click="dialog = false">Disagree</v-btn>
+						<v-btn color="green darken-1" flat="flat" @click="dialog = false">Agree</v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
 			<br><br>
 			<div>
 				{{model}}
@@ -24,7 +45,7 @@
       components: {VApp},
       data() {
          return {
-            form: {},
+						dialog: false,
             model: {
                name: 'test',
                addressArray1: [

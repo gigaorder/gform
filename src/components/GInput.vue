@@ -4,7 +4,7 @@
       <v-switch v-if="inputType === 'switch'" color="success" :label="label" v-model="model[field.key]"/>
     </v-flex>
     <v-flex :class="field.flex" class="px-2" v-else-if="inputType === 'select'">
-      <v-select v-model="model[field.key]" :items="field.options" label="Select" clearable return-object></v-select>
+      <v-select v-model="model[field.key]" :items="field.options" label="Select" clearable return-object attach></v-select>
     </v-flex>
     <input v-else-if="field.tableCell" :type="inputType" v-model="model[field.key]" class="form-control">
     <v-flex :class="field.flex" class="px-2" v-else>
