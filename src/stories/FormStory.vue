@@ -73,6 +73,12 @@
                   options: [{text: 'male', value: 0}, {text: 'female', value: 1}]
                },
                {
+                  key: 'sexFn', type: 'input', inputType: 'select', flex: 'md6',
+                  options: () => {
+                     return [{text: 'male', value: 0}, {text: 'female', value: 1}];
+									}
+               },
+               {
                   key: 'address', type: 'object',
                   fields: [{key: 'street', type: 'input', flex: 'md6'}, {key: 'city', type: 'input', flex: 'md6'},]
                },
