@@ -17,7 +17,7 @@
 <script>
    //not required but this baseField has a lot of useful stuff already in it, check it out
    import {Fragment} from "vue-fragment";
-   import {upperFirst, get} from "lodash";
+   import {upperFirst, get} from "lodash-es";
    import {VFlex, VSwitch, VSelect, VTextField, VIcon} from 'vuetify/lib';
 
    const _ = {upperFirst, get};
@@ -36,11 +36,15 @@
          },
          options() {
 						if (typeof this.field.options === 'function') {
-						   return this.field.options();
+						   return this.field.options(this);
 						}
 						return this.field.options;
          }
-      }
+      },
+      inject: {
+         rootModel: {default: null},
+         path: {default: null}
+      },
    }
 </script>
 

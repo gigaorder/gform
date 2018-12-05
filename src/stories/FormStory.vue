@@ -74,9 +74,9 @@
                },
                {
                   key: 'sexFn', type: 'input', inputType: 'select', flex: 'md6',
-                  options: () => {
+                  options: (formState) => {
                      return [{text: 'male', value: 0}, {text: 'female', value: 1}];
-									}
+                  }
                },
                {
                   key: 'address', type: 'object',
