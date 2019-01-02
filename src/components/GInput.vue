@@ -1,15 +1,33 @@
 <template>
 	<fragment>
-		<v-flex :class="field.flex" class="px-2" v-if="inputType === 'switch'">
+		<v-flex :class="flex" class="px-2" v-if="inputType === 'switch'">
 			<v-switch v-if="inputType === 'switch'" color="success" :label="label" v-model="model[field.key]"/>
 		</v-flex>
-		<v-flex :class="field.flex" class="px-2" v-else-if="inputType === 'select'">
-			<v-select v-model="model[field.key]" :items="options" :label="label" clearable return-object attach></v-select>
+		<v-flex :class="flex" class="px-2" v-else-if="inputType === 'select'">
+			<v-select v-model="model[field.key]" :items="options" :label="label" clearable :return-object="!!field.returnObject"
+								:menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
+				<v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
+			</v-select>
+		</v-flex>
+		<v-flex :class="flex" class="px-2" v-else-if="inputType === 'multiSelect'">
+			<v-combobox
+					v-model="model[field.key]"
+					:items="options"
+					hide-selected
+					:label="label"
+					multiple
+					small-chips
+					deletable-chips
+					:return-object="!!field.returnObject"
+					:menu-props="{'z-index': 1000, 'closeOnContentClick': true}"
+			>
+				<v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
+			</v-combobox>
 		</v-flex>
 		<input v-else-if="field.tableCell" :type="inputType" v-model="model[field.key]" class="form-control">
-		<v-flex :class="field.flex" class="px-2" v-else>
+		<v-flex :class="flex" class="px-2" v-else>
 			<v-text-field v-model="model[field.key]" :label="label" :type="inputType">
-				<v-icon slot="append" v-if="field.arrayItem" @click="$emit('remove-field')">clear</v-icon>
+				<v-icon slot="append" v-if="inArray" @click="$emit('remove-field')">delete_outline</v-icon>
 			</v-text-field>
 		</v-flex>
 	</fragment>
@@ -25,7 +43,7 @@
    export default {
       components: {Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon},
       name: 'GInput',
-      props: ['model', 'field'],
+      props: ['model', 'field', 'inArray'],
       computed: {
          inputType() {
             return _.get(this.field, 'inputType', 'text')
@@ -35,10 +53,13 @@
             return _.upperFirst(this.field.key);
          },
          options() {
-						if (typeof this.field.options === 'function') {
-						   return this.field.options(this);
-						}
-						return this.field.options;
+            if (typeof this.field.options === 'function') {
+               return this.field.options(this);
+            }
+            return this.field.options;
+         },
+         flex() {
+            return this.field.flex;
          }
       },
       inject: {

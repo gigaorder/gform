@@ -14,4 +14,4 @@ let GForm = {
    }
 };
 export default GForm;
-export {GForm}
+export {GForm, GInput, GField}

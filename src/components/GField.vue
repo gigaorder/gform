@@ -18,19 +18,18 @@
 		</fragment>
 
 		<component v-else-if="!isArray && !isObject && !isChoice && !isChoiceArray" :is="type" :field="field" :model="model"
-							 v-on="$listeners">
+							 v-on="$listeners" :in-array="inArray">
 			<slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
 		</component>
 
 		<fragment v-else-if="isChoiceArray">
-			<div style="width: 100%">
-				<v-layout row wrap>
-					<v-flex class="md12" v-for="(val, index) in model[field.key]" :key="index">
-						<g-field @remove-field="model[field.key].splice(index, 1)" :in-array="true"
-										 :field="createChoiceArrayField(index)" :model="model[field.key]"></g-field>
-					</v-flex>
-				</v-layout>
-			</div>
+			<v-flex class="xs12">
+				<v-flex class="md12" v-for="(val, index) in model[field.key]" :key="index">
+					<g-field @remove-field="model[field.key].splice(index, 1)" :in-array="true"
+									 :field="createChoiceArrayField(index)" :model="model[field.key]"></g-field>
+				</v-flex>
+			</v-flex>
+
 			<div style="width: 100%">
 				<v-menu offset-y v-if="!inArray" z-index="1000">
 					<v-btn slot="activator" color="white" small>
@@ -48,11 +47,9 @@
 		<fragment v-else-if="isChoice">
 			<div style="width: 100%">
 				<div v-if="model[field.key].choice">
-					<g-field :field="createChoiceField()" :model="model[field.key]">
+					<g-field :field="createChoiceField()" :model="model[field.key]" @remove-field="removeChoice" :in-array="true">
 						<template slot="action">
-							<v-btn small depressed class="remove-btn" @click="removeChoice()">
-								<v-icon>delete</v-icon>
-							</v-btn>
+							<v-btn small depressed class="remove-btn" @click="removeChoice()"><v-icon>delete</v-icon></v-btn>
 						</template>
 					</g-field>
 				</div>
@@ -83,12 +80,14 @@
 		</fieldset>
 
 		<fragment v-else-if="isSimpleArray">
-			<v-layout row wrap>
+
+			<v-flex class="xs12">
 				<v-flex class="xs12" v-for="(val, index) in model[field.key]" :key="index">
-					<g-field @remove-field="model[field.key].splice(index, 1)"
+					<g-field @remove-field="model[field.key].splice(index, 1)" :in-array="true"
 									 :field="createArrayField(field.field, index)" :model="model[field.key]"></g-field>
 				</v-flex>
-			</v-layout>
+			</v-flex>
+
 			<v-flex class="xs12">
 				<v-btn color="primary" small @click="addItem()">
 					Add {{getLabel(field)}}
@@ -97,12 +96,12 @@
 		</fragment>
 
 		<fragment v-else-if="isObjectArray">
-			<v-layout row wrap>
+			<v-layout row wrap class="xs12">
 				<div v-for="(val, index) in model[field.key]" :key="index" style="width: 100%; position: relative;">
 					<v-btn small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
 						<v-icon>delete</v-icon>
 					</v-btn>
-					<g-field :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"></g-field>
+					<g-field :field="createObjectArrayField(field.fields, index)" :model="model[field.key]" :in-array="true"></g-field>
 				</div>
 			</v-layout>
 			<v-flex class="md12">
@@ -123,7 +122,7 @@
 				<tbody>
 				<tr v-for="(val, index) in model[field.key]" :key="index" class="text-md-center">
 					<td v-for="_field in field.fields" class="input-group-sm">
-						<g-field :field="makeTableCell(_field)" :model="model[field.key][index]"/>
+						<g-field :field="makeTableCell(_field)" :model="model[field.key][index]" :in-array="true"/>
 					</td>
 					<td><v-icon @click="model[field.key].splice(index, 1)">delete</v-icon></td>
 				</tr>
@@ -196,13 +195,13 @@
             return this.field.fields.map(f => _.assign(f, {sortable: false}));
          },
          createArrayField(field, $index) {
-            return _.assign(_.cloneDeep(field), {key: $index, arrayItem: true, label: this.label});
+            return _.assign(_.cloneDeep(field), {key: $index, flex: this.field.flex, label: this.label});
          },
          createObjectArrayField(fields, index) {
             return {key: index, type: 'object', label: this.field.label, fields}
          },
          createChoiceArrayField(index) {
-            return {key: index, type: 'choice', label: this.field.label, choices: this.field.choices}
+            return {key: index, type: 'choice', label: this.field.label, arrayItem: true, choices: this.field.choices}
          },
          createChoiceField() {
             return this.field.choices.find(choice => choice.key === this.model[this.field.key].choice);
@@ -250,8 +249,8 @@
       },
       inject: {
          rootModel: {default: null},
-				 path: {default: null}
-			},
+         path: {default: null}
+      },
       provide() {
          if (this.rootModel) {
             if (!this.field) return null
