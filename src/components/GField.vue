@@ -75,7 +75,8 @@
 			</legend>
 
 			<v-layout row wrap style="padding-top: 5px;">
-				<g-field :fields="field.fields" :model="model[field.key]"/>
+				<g-field :fields="field.fields" :model="model[field.key]" v-if="field.key"/>
+				<g-field :fields="field.fields" :model="model" v-else/>
 			</v-layout>
 		</fieldset>
 
@@ -136,132 +137,134 @@
 </template>
 
 <script>
-   import {Fragment} from "vue-fragment";
-   import {upperFirst, filter, values, assign, cloneDeep, map} from "lodash-es";
+  import {Fragment} from "vue-fragment";
+  import {upperFirst, filter, values, assign, cloneDeep, map} from "lodash-es";
 
-   const _ = {upperFirst, filter, values, assign, cloneDeep, map};
+  const _ = {upperFirst, filter, values, assign, cloneDeep, map};
 
-   import {VTabs, VTab, VTabItem, VLayout, VFlex, VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon} from 'vuetify/lib';
-   import Vue from 'vue';
+  import {VTabs, VTab, VTabItem, VLayout, VFlex, VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon} from 'vuetify/lib';
+  import Vue from 'vue';
 
-   export default {
-      components: {
-         Fragment, VTabs, VTab, VTabItem, VLayout, VFlex,
-         VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
+  export default {
+    components: {
+      Fragment, VTabs, VTab, VTabItem, VLayout, VFlex,
+      VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
+    },
+    name: "GField",
+    props: ['model', 'fields', 'field', 'tabs', 'inArray'],
+    computed: {
+      isChoiceArray() {
+        return !!(this.field && this.field.type === 'choiceArray');
       },
-      name: "GField",
-      props: ['model', 'fields', 'field', 'tabs', 'inArray'],
-      computed: {
-         isChoiceArray() {
-            return !!(this.field && this.field.type === 'choiceArray');
-         },
-         isArray() {
-            return !!(this.field && (this.field.type === 'array' || this.field.type === 'tableArray'));
-         },
-         isSimpleArray() {
-            return !!(this.field && this.field.type === 'array' && this.field.field);
-         },
-         isObjectArray() {
-            return !!(this.field && this.field.type === 'array' && this.field.fields);
-         },
-         isChoice() {
-            return !!(this.field && this.field.type === 'choice');
-         },
-         isObject() {
-            return !!(this.field && this.field.type === 'object');
-         },
-         isTableArray() {
-            return !!(this.field && this.field.type === 'tableArray');
-         },
-         isTableCellObject() {
-            return false;
-         },
-         label() {
-            if (this.field.label) return this.field.label;
-            return _.upperFirst(this.field.key);
-         },
-         type() {
-            return Vue.$gform.mapping[this.field.type];
-         }
+      isArray() {
+        return !!(this.field && (this.field.type === 'array' || this.field.type === 'tableArray'));
       },
-      methods: {
-         getTabs() {
-            const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
-            return _.map(_.assign({}, {basic}, this.tabs), (tabFields, name) => {
-               return {name, fields: _.filter(this.fields, f => tabFields.includes(f.key))};
-            });
-         },
-         createHeaders() {
-            return this.field.fields.map(f => _.assign(f, {sortable: false}));
-         },
-         createArrayField(field, $index) {
-            return _.assign(_.cloneDeep(field), {key: $index, flex: this.field.flex, label: this.label});
-         },
-         createObjectArrayField(fields, index) {
-            return {key: index, type: 'object', label: this.field.label, fields}
-         },
-         createChoiceArrayField(index) {
-            return {key: index, type: 'choice', label: this.field.label, arrayItem: true, choices: this.field.choices}
-         },
-         createChoiceField() {
-            return this.field.choices.find(choice => choice.key === this.model[this.field.key].choice);
-         },
-         addItem() {
-            this.model[this.field.key].push(null);
-         },
-         addObjectItem() {
-            this.model[this.field.key].push({});
-         },
-         makeTableCell(field) {
-            return _.assign(field, {tableCell: true})
-         },
-         getLabel(field) {
-            if (field.label) return field.label;
-            return _.upperFirst(field.key);
-         },
-         selectChoice(choice) {
-            this.model[this.field.key].choice = choice.key;
-         },
-         selectChoiceInArray(choice) {
-            this.model[this.field.key].push({choice: choice.key});
-         },
-         removeChoice() {
-            if (this.inArray) {
-               this.$emit('remove-field');
-            } else {
-               this.model[this.field.key].choice = null
-            }
-         }
+      isSimpleArray() {
+        return !!(this.field && this.field.type === 'array' && this.field.field);
       },
-      created() {
-         //make sure that the 'value' is always set
-         const setProperty = field => {
-            if (typeof this.model[field.key] === 'undefined') {
-               if (field.type === 'object') this.$set(this.model, field.key, {});
-               else if (field.type === 'choice') this.$set(this.model, field.key, {choice: null});
-               else if (['array', 'tableArray', 'choiceArray'].includes(field.type)) this.$set(this.model, field.key, []);
-               else this.$set(this.model, field.key, null);
-            }
-         }
-
-         if (this.fields) this.fields.forEach(setProperty);
-         else if (!this.fields && this.field) setProperty(this.field)
+      isObjectArray() {
+        return !!(this.field && this.field.type === 'array' && this.field.fields);
       },
-      inject: {
-         rootModel: {default: null},
-         path: {default: null}
+      isChoice() {
+        return !!(this.field && this.field.type === 'choice');
       },
-      provide() {
-         if (this.rootModel) {
-            if (!this.field) return null
-            const path = this.path ? `${this.path}.${this.field.key}` : this.field.key;
-            return {path};
-         }
-         return {
-            rootModel: this.model
-         }
+      isObject() {
+        return !!(this.field && this.field.type === 'object');
+      },
+      isTableArray() {
+        return !!(this.field && this.field.type === 'tableArray');
+      },
+      isTableCellObject() {
+        return false;
+      },
+      label() {
+        if (this.field.label) return this.field.label;
+        return _.upperFirst(this.field.key);
+      },
+      type() {
+        return Vue.$gform.mapping[this.field.type];
       }
-   }
+    },
+    methods: {
+      getTabs() {
+        const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
+        return _.map(_.assign({}, {basic}, this.tabs), (tabFields, name) => {
+          return {name, fields: _.filter(this.fields, f => tabFields.includes(f.key))};
+        });
+      },
+      createHeaders() {
+        return this.field.fields.map(f => _.assign(f, {sortable: false}));
+      },
+      createArrayField(field, $index) {
+        return _.assign(_.cloneDeep(field), {key: $index, flex: this.field.flex, label: this.label});
+      },
+      createObjectArrayField(fields, index) {
+        return {key: index, type: 'object', label: this.field.label, fields}
+      },
+      createChoiceArrayField(index) {
+        return {key: index, type: 'choice', label: this.field.label, arrayItem: true, choices: this.field.choices}
+      },
+      createChoiceField() {
+        let field = _.cloneDeep(this.field.choices.find(choice => choice.key === this.model[this.field.key].choice));
+        delete field.key;
+        return field;
+      },
+      addItem() {
+        this.model[this.field.key].push(null);
+      },
+      addObjectItem() {
+        this.model[this.field.key].push({});
+      },
+      makeTableCell(field) {
+        return _.assign(field, {tableCell: true})
+      },
+      getLabel(field) {
+        if (field.label) return field.label;
+        return _.upperFirst(field.key);
+      },
+      selectChoice(choice) {
+        this.model[this.field.key].choice = choice.key;
+      },
+      selectChoiceInArray(choice) {
+        this.model[this.field.key].push({choice: choice.key});
+      },
+      removeChoice() {
+        if (this.inArray) {
+          this.$emit('remove-field');
+        } else {
+          this.$set(this.model, this.field.key, {choice: null});
+        }
+      }
+    },
+    created() {
+      //make sure that the 'value' is always set
+      const setProperty = field => {
+        if (field.key && typeof this.model[field.key] === 'undefined') {
+          if (field.type === 'object') this.$set(this.model, field.key, {});
+          else if (field.type === 'choice') this.$set(this.model, field.key, {choice: null});
+          else if (['array', 'tableArray', 'choiceArray'].includes(field.type)) this.$set(this.model, field.key, []);
+          else this.$set(this.model, field.key, null);
+        }
+      }
+
+      if (this.fields) this.fields.forEach(setProperty);
+      else if (!this.fields && this.field) setProperty(this.field)
+    },
+    inject: {
+      rootModel: {default: null},
+      path: {default: null}
+    },
+    provide() {
+      if (this.rootModel) {
+        if (!this.field) return null
+        const path = this.path ? `${this.path}.${this.field.key}` : this.field.key;
+        return {path};
+      }
+      return {
+        rootModel: this.model
+      }
+    }
+  }
 </script>
 
 <style scoped lang="scss">
