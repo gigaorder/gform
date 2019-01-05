@@ -36,7 +36,7 @@
 						Add {{getLabel(field)}} <v-icon>arrow_drop_down</v-icon>
 					</v-btn>
 					<v-list>
-						<v-list-tile v-for="(choice, index) in field.choices" :key="index" @click="selectChoiceInArray(choice)">
+						<v-list-tile v-for="(choice, index) in field.fields" :key="index" @click="selectChoiceInArray(choice)">
 							<v-list-tile-title>{{ choice.key }}</v-list-tile-title>
 						</v-list-tile>
 					</v-list>
@@ -60,7 +60,7 @@
 						Add {{getLabel(field)}} <v-icon>arrow_drop_down</v-icon>
 					</v-btn>
 					<v-list>
-						<v-list-tile v-for="(choice, index) in field.choices" :key="index" @click="selectChoice(choice)">
+						<v-list-tile v-for="(choice, index) in field.fields" :key="index" @click="selectChoice(choice)">
 							<v-list-tile-title>{{ choice.key }}</v-list-tile-title>
 						</v-list-tile>
 					</v-list>
@@ -85,7 +85,7 @@
 			<v-flex class="xs12">
 				<v-flex class="xs12" v-for="(val, index) in model[field.key]" :key="index">
 					<g-field @remove-field="model[field.key].splice(index, 1)" :in-array="true"
-									 :field="createArrayField(field.field, index)" :model="model[field.key]"></g-field>
+									 :field="createArrayField(field.fields, index)" :model="model[field.key]"></g-field>
 				</v-flex>
 			</v-flex>
 
@@ -160,7 +160,7 @@
         return !!(this.field && (this.field.type === 'array' || this.field.type === 'tableArray'));
       },
       isSimpleArray() {
-        return !!(this.field && this.field.type === 'array' && this.field.field);
+        return !!(this.field && this.field.type === 'array' && this.field.fields.length === 1);
       },
       isObjectArray() {
         return !!(this.field && this.field.type === 'array' && this.field.fields);
@@ -195,17 +195,17 @@
       createHeaders() {
         return this.field.fields.map(f => _.assign(f, {sortable: false}));
       },
-      createArrayField(field, $index) {
-        return _.assign(_.cloneDeep(field), {key: $index, flex: this.field.flex, label: this.label});
+      createArrayField(fields, $index) {
+        return _.assign(_.cloneDeep(fields[0]), {key: $index, flex: this.field.flex, label: this.label});
       },
       createObjectArrayField(fields, index) {
         return {key: index, type: 'object', label: this.field.label, fields}
       },
       createChoiceArrayField(index) {
-        return {key: index, type: 'choice', label: this.field.label, arrayItem: true, choices: this.field.choices}
+        return {key: index, type: 'choice', label: this.field.label, arrayItem: true, fields: this.field.fields}
       },
       createChoiceField() {
-        let field = _.cloneDeep(this.field.choices.find(choice => choice.key === this.model[this.field.key].choice));
+        let field = _.cloneDeep(this.field.fields.find(choice => choice.key === this.model[this.field.key].choice));
         delete field.key;
         return field;
       },
