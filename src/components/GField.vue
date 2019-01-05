@@ -75,7 +75,7 @@
 			</legend>
 
 			<v-layout row wrap style="padding-top: 5px;">
-				<g-field :fields="field.fields" :model="model[field.key]" v-if="field.key"/>
+				<g-field :fields="field.fields" :model="model[field.key]" v-if="directInject"/>
 				<g-field :fields="field.fields" :model="model" v-else/>
 			</v-layout>
 		</fieldset>
@@ -153,6 +153,9 @@
     name: "GField",
     props: ['model', 'fields', 'field', 'tabs', 'inArray'],
     computed: {
+      directInject() {
+        return typeof this.field.key !== 'undefined';
+			},
       isChoiceArray() {
         return !!(this.field && this.field.type === 'choiceArray');
       },
