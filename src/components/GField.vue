@@ -182,7 +182,7 @@
         return _.upperFirst(this.field.key);
       },
       type() {
-        return Vue.$gform.mapping[this.field.type];
+        return Vue.$gform.mapping[this.field.type.split('@')[0]];
       }
     },
     methods: {

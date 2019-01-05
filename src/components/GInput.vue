@@ -33,40 +33,43 @@
 	</fragment>
 </template>
 <script>
-   //not required but this baseField has a lot of useful stuff already in it, check it out
-   import {Fragment} from "vue-fragment";
-   import {upperFirst, get} from "lodash-es";
-   import {VFlex, VSwitch, VSelect, VTextField, VIcon} from 'vuetify/lib';
+  //not required but this baseField has a lot of useful stuff already in it, check it out
+  import {Fragment} from "vue-fragment";
+  import {upperFirst, get} from "lodash-es";
+  import {VFlex, VSwitch, VSelect, VTextField, VIcon} from 'vuetify/lib';
 
-   const _ = {upperFirst, get};
+  const _ = {upperFirst, get};
 
-   export default {
-      components: {Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon},
-      name: 'GInput',
-      props: ['model', 'field', 'inArray'],
-      computed: {
-         inputType() {
-            return _.get(this.field, 'inputType', 'text')
-         },
-         label() {
-            if (this.field.label) return this.field.label;
-            return _.upperFirst(this.field.key);
-         },
-         options() {
-            if (typeof this.field.options === 'function') {
-               return this.field.options(this);
-            }
-            return this.field.options;
-         },
-         flex() {
-            return this.field.flex;
-         }
+  export default {
+    components: {Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon},
+    name: 'GInput',
+    props: ['model', 'field', 'inArray'],
+    computed: {
+      inputType() {
+        if (this.field.type.includes('@')) {
+          return this.field.type.split('@')[1];
+        }
+        return _.get(this.field, 'inputType', 'text')
       },
-      inject: {
-         rootModel: {default: null},
-         path: {default: null}
+      label() {
+        if (this.field.label) return this.field.label;
+        return _.upperFirst(this.field.key);
       },
-   }
+      options() {
+        if (typeof this.field.options === 'function') {
+          return this.field.options(this);
+        }
+        return this.field.options;
+      },
+      flex() {
+        return this.field.flex;
+      }
+    },
+    inject: {
+      rootModel: {default: null},
+      path: {default: null}
+    },
+  }
 </script>
 
 <style lang="scss">
