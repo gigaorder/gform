@@ -155,7 +155,7 @@
     computed: {
       directInject() {
         return typeof this.field.key !== 'undefined';
-			},
+      },
       isChoiceArray() {
         return !!(this.field && this.field.type === 'choiceArray');
       },
@@ -182,7 +182,8 @@
       },
       label() {
         if (this.field.label) return this.field.label;
-        return _.upperFirst(this.field.key);
+        if (this.field.key) return _.upperFirst(this.field.key);
+        return _.upperFirst(this.model.choice);
       },
       type() {
         return Vue.$gform.mapping[this.field.type.split('@')[0]];
@@ -191,7 +192,7 @@
     methods: {
       getTabs() {
         const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
-        return _.map(_.assign({}, {basic}, this.tabs), (tabFields, name) => {
+        return _.map(_.assign({}, basic.length > 0 ? {basic} : {}, this.tabs), (tabFields, name) => {
           return {name, fields: _.filter(this.fields, f => tabFields.includes(f.key))};
         });
       },
@@ -202,7 +203,7 @@
         return _.assign(_.cloneDeep(fields[0]), {key: $index, flex: this.field.flex, label: this.label});
       },
       createObjectArrayField(fields, index) {
-        return {key: index, type: 'object', label: this.field.label, fields}
+        return {key: index, type: 'object', label: this.label, fields}
       },
       createChoiceArrayField(index) {
         return {key: index, type: 'choice', label: this.field.label, arrayItem: true, fields: this.field.fields}
