@@ -68,7 +68,7 @@
 			</div>
 		</fragment>
 
-		<fieldset v-else-if="isObject">
+		<fieldset v-else-if="isObject && !noPanel">
 			<slot name="action"/>
 			<legend v-if="label">
 				<span>{{label}}</span>
@@ -79,6 +79,11 @@
 				<g-field :fields="field.fields" :model="model" v-else/>
 			</v-layout>
 		</fieldset>
+
+		<div v-else-if="isObject && noPanel" style="position: relative">
+			<slot name="action"/>
+			<g-field :fields="field.fields" :model="model" />
+		</div>
 
 		<fragment v-else-if="isSimpleArray">
 
@@ -155,6 +160,9 @@
     computed: {
       directInject() {
         return typeof this.field.key !== 'undefined';
+      },
+      noPanel() {
+        return this.field.noPanel;
       },
       isChoiceArray() {
         return !!(this.field && this.field.type === 'choiceArray');
