@@ -67,7 +67,7 @@
     </div>
   </div>
 
-  <fieldset v-else-if="isObject">
+  <fieldset v-else-if="isObject && !noPanel">
     <slot name="action" />
     <legend v-if="label">
       <span>{{label}}</span>
@@ -78,6 +78,11 @@
       <g-field :fields="field.fields" :model="model" v-else />
     </v-layout>
   </fieldset>
+
+  <div v-else-if="isObject && noPanel" style="position: relative">
+    <slot name="action" />
+    <g-field :fields="field.fields" :model="model" />
+  </div>
 
   <div v-else-if="isSimpleArray">
 
@@ -164,10 +169,13 @@
       VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
     },
     name: "GField",
-    props: ["model", "fields", "field", "tabs", "inArray", "noLayout"],
+    props: ["model", "fields", "field", "tabs", "inArray"],
     computed: {
       directInject() {
         return typeof this.field.key !== "undefined";
+      },
+      noPanel() {
+        return this.field.noPanel;
       },
       isChoiceArray() {
         return !!(this.field && this.field.type === "choiceArray");
