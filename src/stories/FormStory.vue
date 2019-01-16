@@ -60,6 +60,7 @@
               return [{text: 'male', value: 0}, {text: 'female', value: 1}];
             }
           },
+          {key: 'date', type: 'input@datetime-local', flex: 'md6'},
           {
             key: 'address', type: 'object',
             fields: [{key: 'street', type: 'input', flex: 'md6'}, {key: 'city', type: 'input', flex: 'md6'},]

@@ -13,6 +13,8 @@
 		<g-field v-for="(_field, index) in fields" :key="index" :field="_field" :model="model"></g-field>
 	</v-layout>
 
+	<div v-else-if="!field.type"></div>
+
 	<component v-else-if="!isArray && !isObject && !isChoice && !isChoiceArray" :is="type" :field="field" :model="model"
 						 v-on="$listeners" :in-array="inArray">
 		<slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
@@ -55,13 +57,13 @@
 				</g-field>
 			</v-flex>
 		</div>
-		<v-menu offset-y v-if="!inArray && !choiceExist" z-index="1000">
+		<v-menu offset-y v-if="!choiceExist" z-index="1000">
 			<v-btn slot="activator" color="primary" small>
 				{{choiceBtnPrepend}} {{getLabel(field)}}
 				<v-icon>arrow_drop_down</v-icon>
 			</v-btn>
 			<v-list>
-				<v-list-tile v-for="(choice, index) in field.fields" :key="index" @click="selectChoice(choice)">
+				<v-list-tile v-for="(choice, index) in _fields" :key="index" @click="selectChoice(choice)">
 					<v-list-tile-title>{{ getChoiceName(choice) }}</v-list-tile-title>
 				</v-list-tile>
 			</v-list>
@@ -76,14 +78,14 @@
 			</legend>
 
 			<v-layout row wrap style="padding-top: 5px;">
-				<g-field :fields="field.fields" :model="_model"/>
+				<g-field :fields="_fields" :model="_model"/>
 			</v-layout>
 		</fieldset>
 	</v-flex>
 
 	<v-flex xs12 v-else-if="isObject && noPanel" style="position: relative">
 		<slot name="action"/>
-		<g-field :fields="field.fields" :model="model"/>
+		<g-field :fields="_fields" :model="model"/>
 	</v-flex>
 
 	<v-flex class="xs12" v-else-if="isSimpleArray">
@@ -188,7 +190,7 @@
         return !!(this.field && this.field.type === 'choice');
       },
       isObject() {
-        return !!(this.field && this.field.type === 'object');
+        return !!(this.field && this.field.type.split('@')[0] === 'object');
       },
       _model() {
         if (typeof this.field.key !== 'undefined') return this.model[this.field.key];
@@ -210,7 +212,9 @@
         return _.upperFirst(this.model.choice);
       },
       type() {
-        return Vue.$gform.mapping[this.field.type.split('@')[0]];
+        const _type = Vue.$gform.mapping[this.field.type.split('@')[0]];
+        if (!_type) return this.field.type;
+        return _type;
       },
       choiceKey() {
         return this.field.choiceKey || 'choice';
@@ -228,6 +232,22 @@
       choiceBtnPrepend() {
         if (this.field.choiceKeyOutside) return 'Choose';
         return 'Add'
+      },
+      _fields() {
+        if (typeof this.field.dynamicFields === 'function') {
+          try {
+            return this.field.dynamicFields(this);
+          } catch (e) {
+            return [];
+          }
+				} else if (this.field.dynamicFields && Vue.$gform.resolver) {
+          const resolver = Vue.$gform.resolver;
+          const fields = [];
+          if (this.field.fields) fields.push(...this.field.fields);
+          fields.push(...resolver(this.field.dynamicFields));
+          return fields;
+        }
+        return this.field.fields;
       }
     },
     methods: {
@@ -250,7 +270,7 @@
         return {key: index, type: 'choice', choiceKey: this.field.choiceKey, label: this.field.label, fields: this.field.fields};
       },
       createChoiceField() {
-        let field = _.cloneDeep(this.field.fields.find(choice => this.getChoiceName(choice) === this.choiceModel[this.choiceKey]));
+        let field = _.cloneDeep(this._fields.find(choice => this.getChoiceName(choice) === this.choiceModel[this.choiceKey]));
         /*if (!['array', 'object', 'tableArray', 'input', 'input@number', 'input@multiSelect'].includes(field.type)) {
           field = {
             label: this.choiceModel[this.choiceKey],
@@ -313,7 +333,7 @@
       //make sure that the 'value' is always set
       const setProperty = field => {
         if (field.key && typeof this.model[field.key] === 'undefined') {
-          if (field.type === 'object') {
+          if (field.type.split('@')[0] === 'object') {
             this.$set(this.model, field.key, {});
           } else if (['array', 'tableArray', 'choiceArray'].includes(field.type)) {
             this.$set(this.model, field.key, []);

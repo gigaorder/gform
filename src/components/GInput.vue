@@ -79,4 +79,8 @@
 	@import "~bootstrap/scss/variables";
 	@import "~bootstrap/scss/mixins";
 	@import "~bootstrap/scss/forms";
+
+	.v-input--switch .v-input__slot{
+		margin-bottom: 0 !important;
+	}
 </style>
