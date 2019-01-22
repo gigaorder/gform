@@ -25,6 +25,11 @@
 		</v-combobox>
 	</v-flex>
 	<input v-else-if="field.tableCell" :type="inputType" v-model="model[field.key]" class="form-control">
+  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'number'">
+    <v-text-field v-model.number="model[field.key]" :label="label" :type="inputType">
+      <v-icon slot="append" v-if="inArray" @click="$emit('remove-field')">delete_outline</v-icon>
+    </v-text-field>
+  </v-flex>
 	<v-flex :class="flex" class="px-2" v-else>
 		<v-text-field v-model="model[field.key]" :label="label" :type="inputType">
 			<v-icon slot="append" v-if="inArray" @click="$emit('remove-field')">delete_outline</v-icon>
