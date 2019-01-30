@@ -3,18 +3,18 @@
 		<v-switch v-if="inputType === 'switch'" color="success" :label="label" v-model="model[field.key]"/>
 	</v-flex>
 	<v-flex :class="flex" class="px-2" v-else-if="inputType === 'select'">
-		<v-select v-model="model[field.key]" :items="options" :label="label" clearable
+		<v-autocomplete v-model="model[field.key]" :items="options" :label="label" clearable
 							:return-object="!!field.returnObject"
 							:menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
 			<v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
-		</v-select>
+		</v-autocomplete>
 	</v-flex>
   <v-flex :class="flex" class="px-2" v-else-if="inputType === 'select.number'">
-    <v-select v-model.number="model[field.key]" :items="options" :label="label" clearable
+    <v-autocomplete v-model.number="model[field.key]" :items="options" :label="label" clearable
               :return-object="!!field.returnObject"
               :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
       <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
-    </v-select>
+    </v-autocomplete>
   </v-flex>
 	<v-flex :class="flex" class="px-2" v-else-if="inputType === 'multiSelect'">
 		<v-combobox
