@@ -2,23 +2,22 @@
   <v-tabs style="width: 100%" v-if="tabs">
     <v-tab v-for="tab in getTabs()" :key="tab.name">{{tab.name}}</v-tab>
     <v-tab-item v-for="tab in getTabs()" :key="tab.name" style="padding-top: 20px;">
-      <v-layout row wrap>
-        <g-field v-for="(_field, index) in tab.fields" :key="index" :field="_field" :model="model"></g-field>
-      </v-layout>
+      <g-field :fields="tab.fields" :model="model"></g-field>
     </v-tab-item>
     <slot name="tab-append"></slot>
   </v-tabs>
 
   <v-layout row wrap v-else-if="fields">
-    <g-field v-for="(_field, index) in fields" :key="index" :field="_field" :model="model"></g-field>
+    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field" :model="model"></g-field>
+    <v-flex xs12>
+      <v-chip v-for="(addField, index) in getAddFields()" :key="addField.key + index" color="#4dd8a7" text-color="white" @click="addNullValue(addField)">
+        <v-avatar><v-icon>add_circle</v-icon></v-avatar>
+        {{addField.label || addField.key}}
+      </v-chip>
+    </v-flex>
   </v-layout>
 
   <div v-else-if="!field.type"></div>
-
-  <component v-else-if="!isArray && !isObject && !isChoice && !isChoiceArray" :is="type" :field="field" :model="model"
-             v-on="$listeners" :in-array="inArray">
-    <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
-  </component>
 
   <v-flex class="xs12" v-else-if="isChoiceArray">
     <v-flex class="md12" v-for="(val, index) in model[field.key]" :key="index">
@@ -58,7 +57,7 @@
       </v-flex>
     </div>
     <v-menu offset-y v-if="!choiceExist" z-index="1000">
-      <v-btn slot="activator" color="primary" small>
+      <v-btn slot="activator" color="blue lighten-2" outline small>
         {{choiceBtnPrepend}} {{getLabel(field)}}
         <v-icon>arrow_drop_down</v-icon>
       </v-btn>
@@ -90,13 +89,13 @@
     <g-field :fields="_fields" :model="_model"/>
   </v-flex>
 
-  <v-flex class="xs12" v-else-if="isSimpleArray">
+  <v-flex xs12 v-else-if="isSimpleArray">
     <v-flex class="xs12" v-for="(val, index) in model[field.key]" :key="index">
       <g-field @remove-field="_model.splice(index, 1)" :in-array="true"
                :field="createArrayField(field.fields, index)" :model="model[field.key]"></g-field>
     </v-flex>
     <v-flex class="xs12">
-      <v-btn color="primary" small @click="addItem()">
+      <v-btn color="blue lighten-2" outline small @click="addItem()">
         Add {{getLabel(field)}}
       </v-btn>
       <slot name="btn-append"></slot>
@@ -104,18 +103,18 @@
   </v-flex>
 
   <v-flex xs12 v-else-if="isObjectArray">
-    <v-flex xs12 v-for="(val, index) in model[field.key]" :key="index" style="position: relative;">
-      <v-btn small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
-        <v-icon>delete</v-icon>
-      </v-btn>
-      <g-field :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
-               :in-array="true"></g-field>
-    </v-flex>
-    <v-flex class="md12">
-      <v-btn color="primary" small @click="addObjectItem()">
-        Add {{getLabel(field)}}
-      </v-btn>
-    </v-flex>
+    <v-layout row wrap>
+      <v-flex :class="flex" v-for="(val, index) in model[field.key]" :key="index" style="position: relative;padding-right: 7px;padding-left: 7px">
+        <v-btn small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
+          <v-icon>delete</v-icon>
+        </v-btn>
+        <g-field :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
+                 :in-array="true"></g-field>
+      </v-flex>
+    </v-layout>
+    <v-btn color="blue lighten-2" outline small @click="addObjectItem()" v-if="!field.addable">
+      Add {{getLabel(field)}}
+    </v-btn>
   </v-flex>
 
   <v-flex xs12 v-else-if="isTableArray">
@@ -129,35 +128,42 @@
       </thead>
 
       <tbody v-for="(val, index) in model[field.key]" :key="index">
-        <tr class="text-md-center">
-          <td v-if="field.expansion" style="width: 15px" @click="toggleRowDetail(index)">
-            <v-icon>keyboard_arrow_{{rowDetail === index ? 'down': 'right'}}</v-icon>
-          </td>
-          <td v-for="_field in mainFields" class="input-group-sm">
-            <g-field :field="makeTableCell(_field)" :model="model[field.key][index]" :in-array="true"/>
-          </td>
-          <td>
-            <v-icon @click="model[field.key].splice(index, 1)">delete</v-icon>
-          </td>
-        </tr>
+      <tr class="text-md-center">
+        <td v-if="field.expansion" style="width: 15px" @click="toggleRowDetail(index)">
+          <v-icon>keyboard_arrow_{{rowDetail === index ? 'down': 'right'}}</v-icon>
+        </td>
+        <td v-for="_field in mainFields" class="input-group-sm">
+          <g-field :field="makeTableCell(_field)" :model="model[field.key][index]" :in-array="true"/>
+        </td>
+        <td>
+          <v-icon @click="model[field.key].splice(index, 1)">delete</v-icon>
+        </td>
+      </tr>
+      <VExpandTransition>
         <tr v-if="field.expansion" v-show="rowDetail === index"
             style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
-          <td :colspan="field.fields.length + 2">
-            <v-card flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;">
-              <v-card-text>
-                <g-field :fields="expansionFields" :model="model[field.key][index]" :in-array="true"/>
-              </v-card-text>
-            </v-card>
+          <td :colspan="field.fields.length + 2" style="height: 0 !important;">
+            <VExpandTransition>
+              <v-card v-show="rowDetail === index" flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
+                <v-card-text>
+                  <g-field :fields="expansionFields" :model="model[field.key][index]" :in-array="true"/>
+                </v-card-text>
+              </v-card>
+            </VExpandTransition>
           </td>
         </tr>
+      </VExpandTransition>
       </tbody>
 
     </table>
-    <v-btn color="primary" small depressed class="add-btn" @click="addObjectItem()">Add {{getLabel(field)}}</v-btn>
+    <v-btn color="blue lighten-2" outline small @click="addObjectItem()" v-if="!field.addable">Add {{getLabel(field)}}</v-btn>
     <slot name="btn-append"></slot>
   </v-flex>
 
-
+  <component v-else :is="type" :field="field" :model="model"
+             v-on="$listeners" :in-array="inArray">
+    <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
+  </component>
 </template>
 
 <script>
@@ -274,14 +280,43 @@
       },
       mainFields() {
         if (!this.field.expansion) return this.field.fields;
-        return this.field.fields.filter( f => !this.field.expansion.includes(f.key));
+        return this.field.fields.filter(f => !this.field.expansion.includes(f.key));
       },
       expansionFields() {
         if (!this.field.expansion) return [];
-        return this.field.fields.filter( f => this.field.expansion.includes(f.key));
+        return this.field.fields.filter(f => this.field.expansion.includes(f.key));
+      },
+      flex() {
+        return this.noLayout ? 'xs12' : this.field.flex;
       }
     },
     methods: {
+      getFormFields() {
+        return this.fields.filter(f => {
+          if (!f.addable) return true;
+          if (typeof this.model[f.key] === 'undefined') return false;
+          return true;
+        })
+      },
+      getAddFields() {
+        return this.fields.filter(f => {
+          if (!f.addable) return false;
+          if (typeof this.model[f.key] === 'undefined') return true;
+          if (f.type.includes('array') || f.type.includes('Array')) {
+            return true;
+          }
+          return false;
+        })
+      },
+      addNullValue(field) {
+        if (field.type.includes('array') || field.type.includes('Array')) {
+          this.model[field.key].push({});
+        } else if (field.type && field.type.split('@')[0] === 'object') {
+          this.model[field.key] = {};
+        } else {
+          this.model[field.key] = null;
+        }
+      },
       getTabs() {
         const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
         return _.map(_.assign({}, basic.length > 0 ? {basic} : {}, this.tabs), (tabFields, name) => {
@@ -371,12 +406,12 @@
       //make sure that the 'value' is always set
       const setProperty = field => {
         if (field.key && typeof this.model[field.key] === 'undefined') {
-          if (field.type && field.type.split('@')[0] === 'object') {
+          if (field.type && field.type.split('@')[0] === 'object' && !field.addable) {
             this.$set(this.model, field.key, {});
           } else if (['array', 'tableArray', 'choiceArray'].includes(field.type)) {
             this.$set(this.model, field.key, []);
           } else if (!['choice'].includes(field.type)) {
-            this.$set(this.model, field.key, null);
+            this.$set(this.model, field.key);
           }
         }
       };
@@ -412,6 +447,10 @@
 </script>
 
 <style scoped lang="scss">
+  table.v-table tbody td:not(:nth-child(1)) {
+    padding: 0 10px;
+  }
+
   .v-datatable.v-table thead tr {
     height: 40px;
   }
@@ -452,7 +491,7 @@
 
   .remove-btn {
     position: absolute;
-    right: 0;
+    right: 7px;
     top: 14px;
     margin: 0;
     font-size: 1.3em;
