@@ -104,7 +104,7 @@
 
   <v-flex xs12 v-else-if="isObjectArray">
     <v-layout row wrap>
-      <v-flex :class="flex" v-for="(val, index) in model[field.key]" :key="index" style="position: relative;padding-right: 7px;padding-left: 7px">
+      <v-flex :class="[flex, flex !== 'xs12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]" :key="index" style="position: relative;">
         <v-btn small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
           <v-icon>delete</v-icon>
         </v-btn>
@@ -491,7 +491,7 @@
 
   .remove-btn {
     position: absolute;
-    right: 7px;
+    right: 0;
     top: 14px;
     margin: 0;
     font-size: 1.3em;
@@ -508,5 +508,13 @@
       color: #6d6d6d;
     }
   }
+  .fix-inline {
+    padding-right: 7px;
+    padding-left: 7px;
+    .remove-btn {
+      right: 7px;
+    }
+  }
+
 
 </style>
