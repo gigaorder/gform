@@ -145,6 +145,11 @@
 
   }
 
+  .v-select__slot {
+    .v-input__icon--clear .v-icon {
+      color: #d3d3d3 !important;
+    }
+  }
   table tr:not(.g-expansion) {
     .v-select__slot {
       //height: calc(2.25rem + 2px);

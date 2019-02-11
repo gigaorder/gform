@@ -70,7 +70,7 @@
   </v-flex>
 
   <v-flex xs12 v-else-if="isObject && !noPanel">
-    <fieldset>
+    <fieldset v-show="_fields && _fields.length > 0">
       <slot name="action"/>
       <legend v-if="label">
         <span @click="collapse = !collapse">{{label}} {{collapse ? '+' : ''}}</span>
@@ -479,9 +479,10 @@
     border: 0;
     margin-left: 10px;
     width: initial;
-    padding: 0 5px;
-    font-size: 1.4em;
+    padding: 1px 5px;
+    font-size: 1.3em;
     font-weight: 300;
+    font-family: Roboto,sans-serif;
   }
 
   .add-btn {
