@@ -404,8 +404,8 @@
     },
     created() {
       //make sure that the 'value' is always set
-      const setProperty = field => {
-        if (field.key && typeof this.model[field.key] === 'undefined') {
+      const setProperty = function (field) {
+        if (field.key && !this.model.hasOwnProperty(field.key)) {
           if (field.type && field.type.split('@')[0] === 'object' && !field.addable) {
             this.$set(this.model, field.key, {});
           } else if (['array', 'tableArray', 'choiceArray'].includes(field.type)) {
@@ -417,9 +417,9 @@
       };
 
       if (this.fields) {
-        this.fields.forEach(setProperty);
+        this.fields.forEach(setProperty.bind(this));
       } else if (!this.fields && this.field) {
-        setProperty(this.field);
+        setProperty.bind(this)(this.field);
       }
     },
     inject: {
