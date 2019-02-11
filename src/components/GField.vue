@@ -133,20 +133,20 @@
           <v-icon>keyboard_arrow_{{rowDetail === index ? 'down': 'right'}}</v-icon>
         </td>
         <td v-for="_field in mainFields" class="input-group-sm">
-          <g-field :field="makeTableCell(_field)" :model="model[field.key][index]" :in-array="true"/>
+          <g-field :field="makeTableCell(_field)" :model="model[field.key][index]"/>
         </td>
         <td>
           <v-icon @click="model[field.key].splice(index, 1)">delete</v-icon>
         </td>
       </tr>
       <VExpandTransition>
-        <tr v-if="field.expansion" v-show="rowDetail === index"
+        <tr v-if="field.expansion" v-show="rowDetail === index" class="g-expansion"
             style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
           <td :colspan="field.fields.length + 2" style="height: 0 !important;">
             <VExpandTransition>
               <v-card v-show="rowDetail === index" flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
                 <v-card-text>
-                  <g-field :fields="expansionFields" :model="model[field.key][index]" :in-array="true"/>
+                  <g-field :fields="expansionFields" :model="model[field.key][index]"/>
                 </v-card-text>
               </v-card>
             </VExpandTransition>
