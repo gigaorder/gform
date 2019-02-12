@@ -8,10 +8,15 @@
   </v-tabs>
 
   <v-layout row wrap v-else-if="fields">
-    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field" :model="model"></g-field>
+    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field"
+             :model="model"></g-field>
     <v-flex xs12>
-      <v-chip v-for="(addField, index) in getAddFields()" :key="addField.key + index" color="#4dd8a7" text-color="white" @click="addNullValue(addField)">
-        <v-avatar><v-icon>add_circle</v-icon></v-avatar>
+      <v-chip v-for="(addField, index) in getAddFields()" :key="addField.key + index" color="#4dd8a7"
+              text-color="white"
+              @click="addNullValue(addField)">
+        <v-avatar>
+          <v-icon>add_circle</v-icon>
+        </v-avatar>
         {{addField.label || addField.key}}
       </v-chip>
     </v-flex>
@@ -71,22 +76,22 @@
 
   <v-flex xs12 v-else-if="isObject && !noPanel">
     <fieldset>
-      <slot name="action"/>
+      <slot name="action" />
       <legend v-if="label">
         <span @click="collapse = !collapse">{{label}} {{collapse ? '+' : ''}}</span>
       </legend>
 
       <VExpandTransition>
         <v-layout row wrap style="padding-top: 5px;" v-show="!collapse">
-          <g-field :fields="_fields" :model="_model"/>
+          <g-field :fields="_fields" :model="_model" />
         </v-layout>
       </VExpandTransition>
     </fieldset>
   </v-flex>
 
   <v-flex xs12 v-else-if="isObject && noPanel" style="position: relative">
-    <slot name="action"/>
-    <g-field :fields="_fields" :model="_model"/>
+    <slot name="action" />
+    <g-field :fields="_fields" :model="_model" />
   </v-flex>
 
   <v-flex xs12 v-else-if="isSimpleArray">
@@ -104,7 +109,9 @@
 
   <v-flex xs12 v-else-if="isObjectArray">
     <v-layout row wrap>
-      <v-flex :class="[flex, flex !== 'xs12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]" :key="index" style="position: relative;">
+      <v-flex :class="[flex, flex !== 'xs12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]"
+              :key="index"
+              style="position: relative;">
         <v-btn small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
           <v-icon>delete</v-icon>
         </v-btn>
@@ -133,7 +140,7 @@
           <v-icon>keyboard_arrow_{{rowDetail === index ? 'down': 'right'}}</v-icon>
         </td>
         <td v-for="_field in mainFields" class="input-group-sm">
-          <g-field :field="makeTableCell(_field)" :model="model[field.key][index]"/>
+          <g-field :field="makeTableCell(_field)" :model="model[field.key][index]" />
         </td>
         <td>
           <v-icon @click="model[field.key].splice(index, 1)">delete</v-icon>
@@ -144,9 +151,10 @@
             style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
           <td :colspan="field.fields.length + 2" style="height: 0 !important;">
             <VExpandTransition>
-              <v-card v-show="rowDetail === index" flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
+              <v-card v-show="rowDetail === index" flat
+                      style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
                 <v-card-text>
-                  <g-field :fields="expansionFields" :model="model[field.key][index]"/>
+                  <g-field :fields="expansionFields" :model="model[field.key][index]" />
                 </v-card-text>
               </v-card>
             </VExpandTransition>
@@ -156,21 +164,22 @@
       </tbody>
 
     </table>
-    <v-btn color="blue lighten-2" outline small @click="addObjectItem()" v-if="!field.addable">Add {{getLabel(field)}}</v-btn>
+    <v-btn color="blue lighten-2" outline small @click="addObjectItem()" v-if="!field.addable">Add {{getLabel(field)}}
+    </v-btn>
     <slot name="btn-append"></slot>
   </v-flex>
 
   <component v-else :is="type" :field="field" :model="model"
              v-on="$listeners" :in-array="inArray">
-    <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
+    <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot" />
   </component>
 </template>
 
 <script>
-  import {Fragment} from 'vue-fragment';
-  import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash-es';
+  import { Fragment } from 'vue-fragment';
+  import { upperFirst, filter, values, assign, cloneDeep, map } from 'lodash-es';
 
-  const _ = {upperFirst, filter, values, assign, cloneDeep, map};
+  const _ = { upperFirst, filter, values, assign, cloneDeep, map };
 
   import {
     VTabs,
@@ -194,7 +203,7 @@
       VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
     },
     name: 'GField',
-    props: ['model', 'fields', 'field', 'tabs', 'inArray', 'noLayout'],
+    props: ['model', 'fields', 'field', 'tabs', 'inArray', 'noLayout', 'service'],
     data: () => ({
       collapse: false,
       rowDetail: null
@@ -222,7 +231,9 @@
         return !!(this.field && this.field.type.split('@')[0] === 'object');
       },
       _model() {
-        if (typeof this.field.key !== 'undefined') return this.model[this.field.key];
+        if (typeof this.field.key !== 'undefined') {
+          return this.model[this.field.key];
+        }
         return this.model;
       },
       isTableArray() {
@@ -242,25 +253,37 @@
       },
       type() {
         const _type = Vue.$gform.mapping[this.field.type.split('@')[0]];
-        if (!_type) return this.field.type;
+        if (!_type) {
+          return this.field.type;
+        }
         return _type;
       },
       choiceKey() {
         return this.field.choiceKey || 'choice';
       },
       choiceExist() {
-        if (this.field.choiceKeyOutside) return !!this.model[this.choiceKey];
-        if (!this.model[this.field.key]) return false;
+        if (this.field.choiceKeyOutside) {
+          return !!this.model[this.choiceKey];
+        }
+        if (!this.model[this.field.key]) {
+          return false;
+        }
         return !!this.model[this.field.key][this.choiceKey];
       },
       choiceModel() {
-        if (this.field.choiceKeyOutside) return this.model;
-        if (!this.model[this.field.key]) this.$set(this.model, this.field.key, {});
+        if (this.field.choiceKeyOutside) {
+          return this.model;
+        }
+        if (!this.model[this.field.key]) {
+          this.$set(this.model, this.field.key, {});
+        }
         return this.model[this.field.key];
       },
       choiceBtnPrepend() {
-        if (this.field.choiceKeyOutside) return 'Choose';
-        return 'Add'
+        if (this.field.choiceKeyOutside) {
+          return 'Choose';
+        }
+        return 'Add';
       },
       _fields() {
         if (typeof this.field.dynamicFields === 'function') {
@@ -272,18 +295,24 @@
         } else if (this.field.dynamicFields && Vue.$gform.resolver) {
           const resolver = Vue.$gform.resolver;
           const fields = [];
-          if (this.field.fields) fields.push(...this.field.fields);
+          if (this.field.fields) {
+            fields.push(...this.field.fields);
+          }
           fields.push(...resolver(this.field.dynamicFields));
           return fields;
         }
         return this.field.fields;
       },
       mainFields() {
-        if (!this.field.expansion) return this.field.fields;
+        if (!this.field.expansion) {
+          return this.field.fields;
+        }
         return this.field.fields.filter(f => !this.field.expansion.includes(f.key));
       },
       expansionFields() {
-        if (!this.field.expansion) return [];
+        if (!this.field.expansion) {
+          return [];
+        }
         return this.field.fields.filter(f => this.field.expansion.includes(f.key));
       },
       flex() {
@@ -293,20 +322,28 @@
     methods: {
       getFormFields() {
         return this.fields.filter(f => {
-          if (!f.addable) return true;
-          if (typeof this.model[f.key] === 'undefined') return false;
+          if (!f.addable) {
+            return true;
+          }
+          if (typeof this.model[f.key] === 'undefined') {
+            return false;
+          }
           return true;
-        })
+        });
       },
       getAddFields() {
         return this.fields.filter(f => {
-          if (!f.addable) return false;
-          if (typeof this.model[f.key] === 'undefined') return true;
+          if (!f.addable) {
+            return false;
+          }
+          if (typeof this.model[f.key] === 'undefined') {
+            return true;
+          }
           if (f.type.includes('array') || f.type.includes('Array')) {
             return true;
           }
           return false;
-        })
+        });
       },
       addNullValue(field) {
         if (field.type.includes('array') || field.type.includes('Array')) {
@@ -319,21 +356,27 @@
       },
       getTabs() {
         const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
-        return _.map(_.assign({}, basic.length > 0 ? {basic} : {}, this.tabs), (tabFields, name) => {
-          return {name, fields: _.filter(this.fields, f => tabFields.includes(f.key))};
+        return _.map(_.assign({}, basic.length > 0 ? { basic } : {}, this.tabs), (tabFields, name) => {
+          return { name, fields: _.filter(this.fields, f => tabFields.includes(f.key)) };
         });
       },
       createHeaders() {
-        return this.field.fields.map(f => _.assign(f, {sortable: false}));
+        return this.field.fields.map(f => _.assign(f, { sortable: false }));
       },
       createArrayField(fields, $index) {
-        return _.assign(_.cloneDeep(fields[0]), {key: $index, flex: this.field.flex, label: this.label});
+        return _.assign(_.cloneDeep(fields[0]), { key: $index, flex: this.field.flex, label: this.label });
       },
       createObjectArrayField(fields, index) {
-        return {key: index, type: 'object', label: this.label, fields};
+        return { key: index, type: 'object', label: this.label, fields };
       },
       createChoiceArrayField(index) {
-        return {key: index, type: 'choice', choiceKey: this.field.choiceKey, label: this.field.label, fields: this.field.fields};
+        return {
+          key: index,
+          type: 'choice',
+          choiceKey: this.field.choiceKey,
+          label: this.field.label,
+          fields: this.field.fields
+        };
       },
       createChoiceField() {
         let field = _.cloneDeep(this._fields.find(choice => this.getChoiceName(choice) === this.choiceModel[this.choiceKey]));
@@ -352,15 +395,19 @@
         return field;
       },
       addItem() {
-        if (!this.model[this.field.key]) this.$set(this.model, this.field.key, []);
+        if (!this.model[this.field.key]) {
+          this.$set(this.model, this.field.key, []);
+        }
         this.model[this.field.key].push(null);
       },
       addObjectItem() {
-        if (!this.model[this.field.key]) this.$set(this.model, this.field.key, []);
+        if (!this.model[this.field.key]) {
+          this.$set(this.model, this.field.key, []);
+        }
         this.model[this.field.key].push({});
       },
       makeTableCell(field) {
-        return _.assign(field, {tableCell: true});
+        return _.assign(field, { tableCell: true });
       },
       getLabel(field) {
         if (field.label) {
@@ -375,8 +422,10 @@
         return choice.choiceName || choice.key;
       },
       selectChoiceInArray(choice) {
-        if (!this.model[this.field.key]) this.$set(this.model, this.field.key, []);
-        this.model[this.field.key].push({[this.choiceKey]: this.getChoiceName(choice)});
+        if (!this.model[this.field.key]) {
+          this.$set(this.model, this.field.key, []);
+        }
+        this.model[this.field.key].push({ [this.choiceKey]: this.getChoiceName(choice) });
       },
       removeChoice() {
         if (this.inArray) {
@@ -386,8 +435,10 @@
             const fields = this.createChoiceField().fields;
             fields && fields.map(v => v.key).forEach(k => {
               delete this.model[k];
-            })
-            if (this.model[this.field.key]) this.$set(this.model, this.field.key, null);
+            });
+            if (this.model[this.field.key]) {
+              this.$set(this.model, this.field.key, null);
+            }
             this.$set(this.model, this.choiceKey, null);
           } else {
             this.$set(this.model, this.field.key, null);
@@ -404,7 +455,7 @@
     },
     created() {
       //make sure that the 'value' is always set
-      const setProperty = function (field) {
+      const setProperty = function(field) {
         if (field.key && !this.model.hasOwnProperty(field.key)) {
           if (field.type && field.type.split('@')[0] === 'object' && !field.addable) {
             this.$set(this.model, field.key, {});
@@ -423,8 +474,9 @@
       }
     },
     inject: {
-      rootModel: {default: null},
-      path: {default: null}
+      rootModel: { default: null },
+      path: { default: null },
+      serviceInjection: { default: null }
     },
     provide() {
       if (this.rootModel) {
@@ -436,11 +488,39 @@
           path
         };
       }
+      if (this.service) {
+        const service = {
+          services: [],
+          registerService(path, data) {
+            const service = { path, data };
+            const isExists = this.getService(path);
+            if (isExists) {
+              isExists.data = data;
+              return () => this.services = this.services.filter(i => i !== isExists);
+            } else {
+              this.services.push(service);
+              return () => this.services = this.services.filter(i => i !== service);
+            }
+          },
+          getService(path) {
+            const service = this.services.find(item => item.path === path);
+            return service ? service.data : null;
+          }
+        };
+        if (typeof this.service.set === 'function') {
+          this.service.set(service);
+        } else {
+          Object.keys(service).forEach((key) => {
+            this.$set(this.service, key, service[key]);
+          });
+        }
+      }
       return {
         getLabel: this.getLabel,
         addObjectItem: this.addObjectItem,
         noLayout: this.noLayout,
-        rootModel: this.model
+        rootModel: this.model,
+        serviceInjection: this.service
       };
     }
   };
@@ -508,9 +588,11 @@
       color: #6d6d6d;
     }
   }
+
   .fix-inline {
     padding-right: 7px;
     padding-left: 7px;
+
     .remove-btn {
       right: 7px;
     }
