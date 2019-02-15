@@ -8,9 +8,9 @@
   </v-tabs>
 
   <v-layout row wrap v-else-if="fields">
-    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field" :model="model"></g-field>
+    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field" :model="model" v-show="isVisible(_field)"></g-field>
     <v-flex xs12>
-      <v-chip v-for="(addField, index) in getAddFields()" :key="addField.key + index" color="#4dd8a7" text-color="white" @click="addNullValue(addField)">
+      <v-chip v-for="(addField, index) in getAddFields()" v-show="isVisible(addField)" :key="addField.key + index" color="#4dd8a7" text-color="white" @click="addNullValue(addField)">
         <v-avatar><v-icon>add_circle</v-icon></v-avatar>
         {{addField.label || addField.key}}
       </v-chip>
@@ -344,6 +344,7 @@
           }
         } else */
         if (field.type === 'object') {
+          field.label = field.label || field.key;
           delete field.key;
         } else {
           field.key = this.field.key;
@@ -400,6 +401,10 @@
         } else {
           this.rowDetail = index;
         }
+      },
+      isVisible(field) {
+        if (!field.isVisible) return true;
+        return field.isVisible(this);
       }
     },
     created() {
@@ -482,7 +487,7 @@
     padding: 1px 5px;
     font-size: 1.3em;
     font-weight: 300;
-    font-family: Roboto,sans-serif;
+    font-family: Roboto, sans-serif;
   }
 
   .add-btn {
@@ -509,9 +514,11 @@
       color: #6d6d6d;
     }
   }
+
   .fix-inline {
     padding-right: 7px;
     padding-left: 7px;
+
     .remove-btn {
       right: 7px;
     }
