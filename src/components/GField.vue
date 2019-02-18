@@ -194,7 +194,8 @@
       VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
     },
     name: 'GField',
-    props: ['model', 'fields', 'field', 'tabs', 'inArray', 'noLayout'],
+    props: ['model', 'fields', 'field', 'tabs', 'inArray', 'noLayout', 'domain'],
+    domain: ':domain',
     data: () => ({
       collapse: false,
       rowDetail: null
