@@ -31,7 +31,7 @@
           <v-icon>arrow_drop_down</v-icon>
         </v-btn>
         <v-list>
-          <v-list-tile v-for="(choice, index) in field.fields" :key="index" @click="selectChoiceInArray(choice)">
+          <v-list-tile v-for="(choice, index) in _fields" :key="index" @click="selectChoiceInArray(choice)">
             <v-list-tile-title>{{ getChoiceName(choice) }}</v-list-tile-title>
           </v-list-tile>
         </v-list>
@@ -334,7 +334,8 @@
         return {key: index, type: 'object', label: this.label, fields};
       },
       createChoiceArrayField(index) {
-        return {key: index, type: 'choice', choiceKey: this.field.choiceKey, label: this.field.label, fields: this.field.fields};
+        return {key: index, type: 'choice', choiceKey: this.field.choiceKey,
+          label: this.field.label, fields: this.field.fields, dynamicFields: this.field.dynamicFields};
       },
       createChoiceField() {
         let field = _.cloneDeep(this._fields.find(choice => this.getChoiceName(choice) === this.choiceModel[this.choiceKey]));

@@ -105,13 +105,13 @@
       }
     },
     mounted() {
-      if (this.field.default && typeof this.field.default !== 'function') {
+      if (this.field.default && typeof this.field.default !== 'function' && !this.model[this.field.key]) {
         if (this.inputType.includes('number')) {
           this.model[this.field.key] = parseFloat(this.field.default);
         } else {
           this.model[this.field.key] = this.field.default;
         }
-      } else if (this.field.default && typeof this.field.default === 'function') {
+      } else if (this.field.default && typeof this.field.default === 'function' && !this.model[this.field.key]) {
         this.model[this.field.key] = this.field.default();
       }
     },
