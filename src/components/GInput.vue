@@ -23,6 +23,7 @@
   <v-flex :class="flex" class="px-2" v-else-if="inputType === 'multiSelect'">
     <v-combobox
       v-model="model[field.key]"
+      :item-text="field.itemText" :item-value="field.itemValue"
       :items="options"
       hide-selected
       :label="field.tableCell ? '': label"
