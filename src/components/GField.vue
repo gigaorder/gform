@@ -346,7 +346,8 @@
           type: 'choice',
           choiceKey: this.field.choiceKey,
           label: this.field.label,
-          fields: this.field.fields
+          fields: this.field.fields,
+          dynamicFields: this.field.dynamicFields
         };
       },
       createChoiceField() {
