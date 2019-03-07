@@ -8,10 +8,14 @@
   </v-tabs>
 
   <v-layout row wrap v-else-if="fields">
-    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field" :model="model" v-show="isVisible(_field)"></g-field>
+    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field" :model="model"
+             v-show="isVisible(_field)"></g-field>
     <v-flex xs12>
-      <v-chip v-for="(addField, index) in getAddFields()" v-show="isVisible(addField)" :key="addField.key + index" color="#4dd8a7" text-color="white" @click="addNullValue(addField)">
-        <v-avatar><v-icon>add_circle</v-icon></v-avatar>
+      <v-chip v-for="(addField, index) in getAddFields()" v-show="isVisible(addField)" :key="addField.key + index"
+              color="#4dd8a7" text-color="white" @click="addNullValue(addField)">
+        <v-avatar>
+          <v-icon>add_circle</v-icon>
+        </v-avatar>
         {{addField.label || addField.key}}
       </v-chip>
     </v-flex>
@@ -104,7 +108,8 @@
 
   <v-flex xs12 v-else-if="isObjectArray">
     <v-layout row wrap>
-      <v-flex :class="[flex, flex !== 'xs12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]" :key="index" style="position: relative;">
+      <v-flex :class="[flex, flex !== 'xs12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]" :key="index"
+              style="position: relative;">
         <v-btn small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
           <v-icon>delete</v-icon>
         </v-btn>
@@ -144,7 +149,8 @@
             style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
           <td :colspan="field.fields.length + 2" style="height: 0 !important;">
             <VExpandTransition>
-              <v-card v-show="rowDetail === index" flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
+              <v-card v-show="rowDetail === index" flat
+                      style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
                 <v-card-text>
                   <g-field :fields="expansionFields" :model="model[field.key][index]"/>
                 </v-card-text>
@@ -156,7 +162,8 @@
       </tbody>
 
     </table>
-    <v-btn color="blue lighten-2" outline small @click="addObjectItem()" v-if="!field.addable">Add {{getLabel(field)}}</v-btn>
+    <v-btn color="blue lighten-2" outline small @click="addObjectItem()" v-if="!field.addable">Add {{getLabel(field)}}
+    </v-btn>
     <slot name="btn-append"></slot>
   </v-flex>
 
@@ -334,8 +341,13 @@
         return {key: index, type: 'object', label: this.label, fields};
       },
       createChoiceArrayField(index) {
-        return {key: index, type: 'choice', choiceKey: this.field.choiceKey,
-          label: this.field.label, fields: this.field.fields, dynamicFields: this.field.dynamicFields};
+        return {
+          key: index,
+          type: 'choice',
+          choiceKey: this.field.choiceKey,
+          label: this.field.label,
+          fields: this.field.fields
+        };
       },
       createChoiceField() {
         let field = _.cloneDeep(this._fields.find(choice => this.getChoiceName(choice) === this.choiceModel[this.choiceKey]));
@@ -438,7 +450,8 @@
         if (!this.field) {
           return null;
         }
-        const path = this.path ? `${this.path}.${this.field.key}` : this.field.key;
+        let key = this.field.key || '';
+        const path = this.path ? `${this.path}${key ? '.' + key : ''}` : key;
         return {
           path
         };
