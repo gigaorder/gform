@@ -55,12 +55,12 @@
   <input v-else-if="field.tableCell && inputType=== 'number'" :type="inputType" v-model.number="model[field.key]" class="form-control">
   <v-flex :class="flex" class="px-2" v-else-if="inputType === 'number'">
     <v-text-field v-model.number="model[field.key]" :label="label" :type="inputType">
-      <v-icon slot="append" v-if="inArray" @click="$emit('remove-field')">delete_outline</v-icon>
+      <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
     </v-text-field>
   </v-flex>
   <v-flex :class="flex" class="px-2" v-else>
     <v-text-field v-model="model[field.key]" :label="label" :type="inputType">
-      <v-icon slot="append" v-if="inArray" @click="$emit('remove-field')">delete_outline</v-icon>
+      <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
     </v-text-field>
   </v-flex>
 </template>
