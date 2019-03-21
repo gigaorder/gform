@@ -132,33 +132,39 @@
       </tr>
       </thead>
 
-      <tbody v-for="(val, index) in model[field.key]" :key="index">
-      <tr class="text-md-center">
-        <td v-if="field.expansion" style="width: 15px" @click="toggleRowDetail(index)">
-          <v-icon>keyboard_arrow_{{rowDetail === index ? 'down': 'right'}}</v-icon>
-        </td>
-        <td v-for="_field in mainFields" class="input-group-sm">
-          <g-field :field="makeTableCell(_field)" :model="model[field.key][index]"/>
-        </td>
-        <td>
-          <v-icon @click="model[field.key].splice(index, 1)">delete</v-icon>
-        </td>
-      </tr>
-      <VExpandTransition>
-        <tr v-if="field.expansion" v-show="rowDetail === index" class="g-expansion"
-            style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
-          <td :colspan="field.fields.length + 2" style="height: 0 !important;">
-            <VExpandTransition>
-              <v-card v-show="rowDetail === index" flat
-                      style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
-                <v-card-text>
-                  <g-field :fields="expansionFields" :model="model[field.key][index]"/>
-                </v-card-text>
-              </v-card>
-            </VExpandTransition>
-          </td>
-        </tr>
-      </VExpandTransition>
+      <tbody>
+      <fragment v-for="(val, index) in model[field.key]" :key="index">
+        <extend-path :extend="index">
+          <tr class="text-md-center">
+            <td v-if="field.expansion" style="width: 15px" @click="toggleRowDetail(index)">
+              <v-icon>keyboard_arrow_{{rowDetail === index ? 'down': 'right'}}</v-icon>
+            </td>
+            <td v-for="_field in mainFields" class="input-group-sm">
+              <g-field :field="makeTableCell(_field)" :model="model[field.key][index]"/>
+            </td>
+            <td>
+              <v-icon @click="model[field.key].splice(index, 1)">delete</v-icon>
+            </td>
+          </tr>
+          <VExpandTransition>
+            <tr v-if="field.expansion" v-show="rowDetail === index" class="g-expansion"
+                style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
+              <td :colspan="field.fields.length + 2" style="height: 0 !important;">
+                <VExpandTransition>
+                  <v-card v-show="rowDetail === index" flat
+                          style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
+                    <v-card-text>
+                      <g-field :fields="expansionFields" :model="model[field.key][index]"/>
+                    </v-card-text>
+                  </v-card>
+                </VExpandTransition>
+              </td>
+            </tr>
+          </VExpandTransition>
+        </extend-path>
+
+      </fragment>
+
       </tbody>
 
     </table>
@@ -174,10 +180,10 @@
 </template>
 
 <script>
-  import {Fragment} from 'vue-fragment';
-  import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash-es';
+  import { Fragment } from 'vue-fragment';
+  import { upperFirst, filter, values, assign, cloneDeep, map } from 'lodash-es';
 
-  const _ = {upperFirst, filter, values, assign, cloneDeep, map};
+  const _ = { upperFirst, filter, values, assign, cloneDeep, map };
 
   import {
     VTabs,
@@ -194,9 +200,11 @@
     VExpandTransition
   } from 'vuetify/lib';
   import Vue from 'vue';
+  import ExtendPath from "./ExtendPath";
 
   export default {
     components: {
+      ExtendPath,
       Fragment, VTabs, VTab, VTabItem, VLayout, VFlex,
       VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
     },
@@ -327,18 +335,18 @@
       },
       getTabs() {
         const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
-        return _.map(_.assign({}, basic.length > 0 ? {basic} : {}, this.tabs), (tabFields, name) => {
-          return {name, fields: _.filter(this.fields, f => tabFields.includes(f.key))};
+        return _.map(_.assign({}, basic.length > 0 ? { basic } : {}, this.tabs), (tabFields, name) => {
+          return { name, fields: _.filter(this.fields, f => tabFields.includes(f.key)) };
         });
       },
       createHeaders() {
-        return this.field.fields.map(f => _.assign(f, {sortable: false}));
+        return this.field.fields.map(f => _.assign(f, { sortable: false }));
       },
       createArrayField(fields, $index) {
-        return _.assign(_.cloneDeep(fields[0]), {key: $index, flex: this.field.flex, label: this.label});
+        return _.assign(_.cloneDeep(fields[0]), { key: $index, flex: this.field.flex, label: this.label });
       },
       createObjectArrayField(fields, index) {
-        return {key: index, type: 'object', label: this.label, fields};
+        return { key: index, type: 'object', label: this.label, fields };
       },
       createChoiceArrayField(index) {
         return {
@@ -376,7 +384,7 @@
         this.model[this.field.key].push({});
       },
       makeTableCell(field) {
-        return _.assign(field, {tableCell: true});
+        return _.assign(field, { tableCell: true });
       },
       getLabel(field) {
         if (field.label) {
@@ -392,7 +400,7 @@
       },
       selectChoiceInArray(choice) {
         if (!this.model[this.field.key]) this.$set(this.model, this.field.key, []);
-        this.model[this.field.key].push({[this.choiceKey]: this.getChoiceName(choice)});
+        this.model[this.field.key].push({ [this.choiceKey]: this.getChoiceName(choice) });
       },
       removeChoice() {
         if (this.inArray) {
@@ -443,8 +451,8 @@
       }
     },
     inject: {
-      rootModel: {default: null},
-      path: {default: null}
+      rootModel: { default: null },
+      path: { default: null }
     },
     provide() {
       if (this.rootModel) {
