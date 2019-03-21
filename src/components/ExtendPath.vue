@@ -6,7 +6,7 @@
 
 <script>
   import { Fragment } from 'vue-fragment';
-
+  // use to add suffix to path
   export default {
     name: "ExtendPath",
     components: { Fragment },
@@ -16,11 +16,7 @@
     },
     provide() {
       return {
-        path: {
-          [Symbol.toPrimitive]: () => {
-            return `${this.path}.${this.extend}`;
-          }
-        }
+        path: `${this.path}.${this.extend}`
       }
     }
   }
