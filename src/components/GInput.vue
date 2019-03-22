@@ -102,7 +102,7 @@
         return this.field.options;
       },
       flex() {
-        return this.noLayout ? 'xs-12' : this.field.flex;
+        return this.noLayout ? 'xs12' : this.field.flex;
       }
     },
     mounted() {
