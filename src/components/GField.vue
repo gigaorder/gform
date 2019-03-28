@@ -1,5 +1,5 @@
 <template>
-  <v-tabs style="width: 100%" v-if="tabs">
+  <v-tabs style="width: 100%" v-if="tabs" class="tab-wrapper">
     <v-tab v-for="tab in getTabs()" :key="tab.name">{{tab.name}}</v-tab>
     <v-tab-item v-for="tab in getTabs()" :key="tab.name" style="padding-top: 20px;">
       <g-field :fields="tab.fields" :model="model"></g-field>
@@ -7,7 +7,7 @@
     <slot name="tab-append"></slot>
   </v-tabs>
 
-  <v-layout row wrap v-else-if="fields">
+  <v-layout row wrap fill-height v-else-if="fields">
     <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field" :model="model"
              v-show="isVisible(_field)"></g-field>
     <v-flex xs12>
@@ -547,6 +547,22 @@
       right: 7px;
     }
   }
+</style>
 
+<style lang="scss">
+  .tab-wrapper {
+    .v-tabs__bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
+    .v-window {
+      height: calc(100% - 50px)
+    }
+
+    &, .v-window__container, .v-window-item {
+      height: 100%
+    }
+  }
 </style>
