@@ -1,13 +1,13 @@
 <template>
-  <v-tabs style="width: 100%" v-if="tabs" class="tab-wrapper">
+  <v-tabs style="width: 100%" v-if="tabs" :class="{'tab-wrapper': fillHeight}">
     <v-tab v-for="tab in getTabs()" :key="tab.name">{{tab.name}}</v-tab>
     <v-tab-item v-for="tab in getTabs()" :key="tab.name" style="padding-top: 20px;">
-      <g-field :fields="tab.fields" :model="model"></g-field>
+      <g-field :fields="tab.fields" :model="model" :fill-height="fillHeight"></g-field>
     </v-tab-item>
     <slot name="tab-append"></slot>
   </v-tabs>
 
-  <v-layout row wrap fill-height v-else-if="fields">
+  <v-layout row wrap :fill-height="fillHeight" v-else-if="fields">
     <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index" :field="_field" :model="model"
              v-show="isVisible(_field)"></g-field>
     <v-flex xs12>
@@ -209,7 +209,16 @@
       VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
     },
     name: 'GField',
-    props: ['model', 'fields', 'field', 'tabs', 'inArray', 'noLayout', 'domain'],
+    props: {
+      model: null,
+      fields: Array,
+      field: Object,
+      tabs: null,
+      inArray: Boolean,
+      noLayout: Boolean,
+      domain: String,
+      fillHeight: Boolean,
+    },
     domain: ':domain',
     data: () => ({
       collapse: false,
