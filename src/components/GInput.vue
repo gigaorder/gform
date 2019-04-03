@@ -1,28 +1,21 @@
 <template>
   <v-flex :class="flex" class="px-2" v-if="inputType === 'switch'">
-    <v-switch color="success" :label="field.tableCell ? '': label" v-model="model[field.key]"/>
+    <v-switch color="success" :label="field.tableCell ? '': label" v-model="value"/>
   </v-flex>
   <v-flex :class="flex" class="px-2" v-else-if="inputType === 'checkbox'">
-    <v-checkbox color="success" :label="field.tableCell ? '': label" v-model="model[field.key]"/>
+    <v-checkbox color="success" :label="field.tableCell ? '': label" v-model="value"/>
   </v-flex>
-  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'select'">
-    <v-autocomplete v-model="model[field.key]" :items="options" :label="field.tableCell ? '': label" clearable
+  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'select' || inputType === 'select:number'">
+    <v-autocomplete v-model="value" :items="options" :label="field.tableCell ? '': label" clearable
                     @change="onChange"
                     :return-object="!!field.returnObject"
                     :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
       <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
     </v-autocomplete>
   </v-flex>
-  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'select:number'">
-    <v-autocomplete v-model.number="model[field.key]" :items="options" :label="field.tableCell ? '': label" clearable
-                    :return-object="!!field.returnObject"
-                    :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
-      <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
-    </v-autocomplete>
-  </v-flex>
-  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'multiSelect'">
+  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'multiSelect' || inputType === 'multiSelect:number'">
     <v-combobox
-      v-model="model[field.key]"
+      v-model="value"
       :item-text="field.itemText" :item-value="field.itemValue"
       :items="options"
       hide-selected
@@ -36,47 +29,65 @@
       <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
     </v-combobox>
   </v-flex>
-  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'multiSelect:number'">
-    <v-combobox
-      v-model.number="model[field.key]"
-      :items="options"
-      hide-selected
-      :label="label"
-      multiple
-      small-chips
-      deletable-chips
-      :return-object="!!field.returnObject"
-      :menu-props="{'z-index': 1000, 'closeOnContentClick': true}"
-    >
-      <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
-    </v-combobox>
-  </v-flex>
-  <input v-else-if="field.tableCell && inputType!== 'number'" :type="inputType" v-model="model[field.key]" class="form-control">
-  <input v-else-if="field.tableCell && inputType=== 'number'" :type="inputType" v-model.number="model[field.key]" class="form-control">
-  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'number'">
-    <v-text-field v-model.number="model[field.key]" :label="label" :type="inputType">
-      <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
-    </v-text-field>
-  </v-flex>
+  <input v-else-if="field.tableCell" :type="inputType" v-model="value"
+         class="form-control">
   <v-flex :class="flex" class="px-2" v-else>
-    <v-text-field v-model="model[field.key]" :label="label" :type="inputType">
+    <v-text-field v-model="value" :label="label" :type="inputType">
       <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
     </v-text-field>
   </v-flex>
 </template>
 <script>
   //not required but this baseField has a lot of useful stuff already in it, check it out
-  import {Fragment} from 'vue-fragment';
-  import {upperFirst, get} from 'lodash-es';
-  import {VFlex, VSwitch, VSelect, VTextField, VIcon} from 'vuetify/lib';
+  import { Fragment } from 'vue-fragment';
+  import { upperFirst, get } from 'lodash-es';
+  import { VFlex, VSwitch, VSelect, VTextField, VIcon } from 'vuetify/lib';
 
-  const _ = {upperFirst, get};
+  const _ = { upperFirst, get };
+
+  function parseTimeLocale(date) {
+    if (!date) return null
+    return parseDateLocale(date) + 'T' + date.toLocaleString(undefined, {
+      hour: '2-digit',
+      hour12: false,
+      minute: '2-digit',
+      second: '2-digit'
+    })
+  }
+
+  function parseDateLocale(date) {
+    if (!date) return null
+    const [month, day, year] = date.toLocaleDateString().split('/')
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+  }
 
   export default {
-    components: {Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon},
+    components: { Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon },
     name: 'GInput',
     props: ['model', 'field', 'inArray', 'noFlex'],
     computed: {
+      value: {
+        get() {
+          try {
+            if (this.inputType === 'date') {
+              return parseDateLocale(this.model[this.field.key]);
+            } else if (this.inputType === 'datetime-local') {
+              return parseTimeLocale(this.model[this.field.key])
+            }
+          } catch (e) {
+          }
+          return this.model[this.field.key];
+        },
+        set(v) {
+          if (this.inputType.includes('number')) {
+            this.$set(this.model, this.field.key, parseFloat(v))
+          } else if (this.inputType.includes('date')) {
+            this.$set(this.model, this.field.key, new Date(v))
+          } else {
+            this.$set(this.model, this.field.key, v)
+          }
+        }
+      },
       inputType() {
         if (this.field.type.includes('@')) {
           return this.field.type.split('@')[1];
@@ -95,7 +106,7 @@
         }
         if (this.inputType.includes('number')) {
           return this.field.options.map(opt => {
-            if (typeof opt === 'object') return Object.assign(opt, {value: parseFloat(opt.value)});
+            if (typeof opt === 'object') return Object.assign(opt, { value: parseFloat(opt.value) });
             return parseFloat(opt);
           });
         }
@@ -121,9 +132,9 @@
       }
     },
     inject: {
-      rootModel: {default: null},
-      path: {default: null},
-      noLayout: {default: null}
+      rootModel: { default: null },
+      path: { default: null },
+      noLayout: { default: null }
     }
   };
 </script>
@@ -151,6 +162,7 @@
       color: #d3d3d3 !important;
     }
   }
+
   table tr:not(.g-expansion) {
     .v-select__slot {
       //height: calc(2.25rem + 2px);
