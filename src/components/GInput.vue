@@ -81,7 +81,9 @@
         set(v) {
           if (this.inputType.includes('number')) {
             this.$set(this.model, this.field.key, parseFloat(v))
-          } else if (this.inputType.includes('date')) {
+          } else if (this.inputType === 'date') {
+            this.$set(this.model, this.field.key, new Date(v + 'T00:00:00'))
+          } else if (this.inputType === 'datetime-local') {
             this.$set(this.model, this.field.key, new Date(v))
           } else {
             this.$set(this.model, this.field.key, v)
