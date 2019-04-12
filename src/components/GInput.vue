@@ -46,22 +46,6 @@
 
   const _ = { upperFirst, get };
 
-  function parseTimeLocale(date) {
-    if (!date) return null
-    return parseDateLocale(date) + 'T' + date.toLocaleString(undefined, {
-      hour: '2-digit',
-      hour12: false,
-      minute: '2-digit',
-      second: '2-digit'
-    })
-  }
-
-  function parseDateLocale(date) {
-    if (!date) return null
-    const [month, day, year] = date.toLocaleDateString().split('/')
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-  }
-
   export default {
     components: { Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon },
     name: 'GInput',
@@ -71,10 +55,8 @@
         get() {
           try {
             if (this.inputType === 'date') {
-              //return parseDateLocale(this.model[this.field.key]);
               return dayjs(this.model[this.field.key]).format('YYYY-MM-DD');
             } else if (this.inputType === 'datetime-local') {
-              //return parseTimeLocale(this.model[this.field.key])
               return dayjs(this.model[this.field.key]).format('YYYY-MM-DD[T]HH:mm');
             }
           } catch (e) {
