@@ -42,6 +42,7 @@
   import { Fragment } from 'vue-fragment';
   import { upperFirst, get } from 'lodash-es';
   import { VFlex, VSwitch, VSelect, VTextField, VIcon } from 'vuetify/lib';
+  import dayjs from 'dayjs'
 
   const _ = { upperFirst, get };
 
@@ -70,9 +71,11 @@
         get() {
           try {
             if (this.inputType === 'date') {
-              return parseDateLocale(this.model[this.field.key]);
+              //return parseDateLocale(this.model[this.field.key]);
+              return dayjs(this.model[this.field.key]).format('YYYY-MM-DD');
             } else if (this.inputType === 'datetime-local') {
-              return parseTimeLocale(this.model[this.field.key])
+              //return parseTimeLocale(this.model[this.field.key])
+              return dayjs(this.model[this.field.key]).format('YYYY-MM-DD[T]HH:mm');
             }
           } catch (e) {
           }
