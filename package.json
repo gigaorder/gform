@@ -34,7 +34,8 @@
     "@vue/cli-service": "^3.1.4",
     "vue-cli-plugin-storybook": "^0.4.8",
     "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "vue-columns-resizable": "^0.0.1"
   },
   "postcss": {
     "plugins": {
