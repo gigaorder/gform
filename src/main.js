@@ -1,9 +1,11 @@
 import GField from './components/GField';
 import GInput from './components/GInput';
+import VueColumnsResizable from 'vue-columns-resizable';
 
 let GForm = {
   install(Vue, options) {
     //Vue.yourMethod = (value) => value
+    Vue.use(VueColumnsResizable);
     Vue.component('GField', GField);
     Vue.$gform = {mapping: {}}
     Vue.addDynamicFormResolver = function (resolver) {

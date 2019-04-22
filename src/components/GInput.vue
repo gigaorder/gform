@@ -1,19 +1,20 @@
 <template>
-  <v-flex :class="flex" class="px-2" v-if="inputType === 'switch'">
+  <v-flex :class="[flex,paddingClass]" v-if="inputType === 'switch'">
     <v-switch color="success" :label="field.tableCell ? '': label" v-model="value"/>
   </v-flex>
-  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'checkbox'">
+  <v-flex :class="[flex,paddingClass]" v-else-if="inputType === 'checkbox'">
     <v-checkbox color="success" :label="field.tableCell ? '': label" v-model="value"/>
   </v-flex>
-  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'select' || inputType === 'select:number'">
-    <v-autocomplete v-model="value" :items="options" :label="field.tableCell ? '': label" clearable
+  <v-flex :class="[flex,paddingClass]" v-else-if="inputType === 'select' || inputType === 'select:number'">
+    <component :is="field.notOnlyValueInOptions ? 'v-combobox': 'v-autocomplete'" v-model="value" :items="options" :label="field.tableCell ? '': label" clearable
                     @change="onChange"
                     :return-object="!!field.returnObject"
                     :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
       <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
-    </v-autocomplete>
+    </component>
   </v-flex>
-  <v-flex :class="flex" class="px-2" v-else-if="inputType === 'multiSelect' || inputType === 'multiSelect:number'">
+  <v-flex :class="[flex,paddingClass]"
+          v-else-if="inputType === 'multiSelect' || inputType === 'multiSelect:number'">
     <v-combobox
       v-model="value"
       :item-text="field.itemText" :item-value="field.itemValue"
@@ -31,19 +32,20 @@
   </v-flex>
   <input v-else-if="field.tableCell" :type="inputType" v-model="value"
          class="form-control">
-  <v-flex :class="flex" class="px-2" v-else>
+  <v-flex :class="[flex,paddingClass]" v-else>
     <v-text-field v-model="value" :label="label" :type="inputType">
+      <v-icon slot="append" v-if="field.addable" style="opacity: 0.4" @click.stop="clearValue()">clear</v-icon>
       <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
     </v-text-field>
   </v-flex>
 </template>
 <script>
   //not required but this baseField has a lot of useful stuff already in it, check it out
-  import { Fragment } from 'vue-fragment';
-  import { upperFirst, get } from 'lodash-es';
-  import { VFlex, VSwitch, VSelect, VTextField, VIcon } from 'vuetify/lib';
+  import {Fragment} from 'vue-fragment';
+  import {upperFirst, get} from 'lodash-es';
+  import {VFlex, VSwitch, VSelect, VTextField, VIcon} from 'vuetify/lib';
 
-  const _ = { upperFirst, get };
+  const _ = {upperFirst, get};
 
   function parseTimeLocale(date) {
     if (!date) return null
@@ -62,10 +64,13 @@
   }
 
   export default {
-    components: { Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon },
+    components: {Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon},
     name: 'GInput',
     props: ['model', 'field', 'inArray', 'noFlex'],
     computed: {
+      paddingClass() {
+        return this.field.tableCell ? 'px-0' : 'px-2';
+      },
       value: {
         get() {
           try {
@@ -108,7 +113,7 @@
         }
         if (this.inputType.includes('number')) {
           return this.field.options.map(opt => {
-            if (typeof opt === 'object') return Object.assign(opt, { value: parseFloat(opt.value) });
+            if (typeof opt === 'object') return Object.assign(opt, {value: parseFloat(opt.value)});
             return parseFloat(opt);
           });
         }
@@ -130,13 +135,16 @@
       }
     },
     methods: {
+      clearValue() {
+        this.model[this.field.key] = undefined;
+      },
       onChange(e) {
       }
     },
     inject: {
-      rootModel: { default: null },
-      path: { default: null },
-      noLayout: { default: null }
+      rootModel: {default: null},
+      path: {default: null},
+      noLayout: {default: null}
     }
   };
 </script>
@@ -173,9 +181,18 @@
       border: 1px solid #0000002e;
       background-color: white;
 
-      .v-input__icon--clear .v-icon {
-        display: none;
+      .v-input__icon--clear {
+        display: none !important;
         color: #d3d3d3 !important;
+      }
+      input {
+        font-size: 1rem;
+      }
+
+      .v-input__icon.v-input__icon--append {
+        width: 12px !important;
+        min-width: 12px;
+        padding-right: 9px;
       }
     }
 

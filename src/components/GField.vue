@@ -23,8 +23,8 @@
 
   <div v-else-if="!field.type"></div>
 
-  <v-flex class="xs12" v-else-if="isChoiceArray">
-    <v-flex class="md12" v-for="(val, index) in model[field.key]" :key="index">
+  <fragment v-else-if="isChoiceArray">
+    <v-flex :class="[flex]" v-for="(val, index) in model[field.key]" :key="index">
       <g-field @remove-field="model[field.key].splice(index, 1)" :in-array="true"
                :field="createChoiceArrayField(index)" :model="model[field.key]"></g-field>
     </v-flex>
@@ -41,7 +41,7 @@
         </v-list>
       </v-menu>
     </v-flex>
-  </v-flex>
+  </fragment>
 
   <v-flex xs12 v-else-if="isChoice">
     <div v-if="choiceExist">
@@ -93,9 +93,9 @@
     <g-field :fields="_fields" :model="_model"/>
   </v-flex>
 
-  <v-flex xs12 v-else-if="isSimpleArray">
-    <v-flex class="xs12" v-for="(val, index) in model[field.key]" :key="index">
-      <g-field @remove-field="_model.splice(index, 1)" :in-array="true"
+  <fragment v-else-if="isSimpleArray">
+    <v-flex :class="[flex]" v-for="(val, index) in model[field.key]" :key="index">
+      <g-field @remove-field="_model.splice(index, 1)" :in-array="true" :no-layout="false"
                :field="createArrayField(field.fields, index)" :model="model[field.key]"></g-field>
     </v-flex>
     <v-flex class="xs12">
@@ -104,7 +104,7 @@
       </v-btn>
       <slot name="btn-append"></slot>
     </v-flex>
-  </v-flex>
+  </fragment>
 
   <v-flex xs12 v-else-if="isObjectArray">
     <v-layout row wrap>
@@ -123,7 +123,7 @@
   </v-flex>
 
   <v-flex xs12 v-else-if="isTableArray">
-    <table class="v-datatable v-table theme--light" v-show="model[field.key] && model[field.key].length > 0">
+    <table class="v-datatable v-table theme--light v-gfield-table" v-if="model[field.key] && model[field.key].length > 0" v-columns-resizable>
       <thead>
       <tr>
         <th v-if="field.expansion" style="width: 15px"></th>
@@ -133,7 +133,7 @@
       </thead>
 
       <tbody>
-      <fragment v-for="(val, index) in model[field.key]" :key="index">
+      <template v-for="(val, index) in model[field.key]">
         <extend-path :extend="index">
           <tr class="text-md-center">
             <td v-if="field.expansion" style="width: 15px" @click="toggleRowDetail(index)">
@@ -163,7 +163,7 @@
           </VExpandTransition>
         </extend-path>
 
-      </fragment>
+      </template>
 
       </tbody>
 
@@ -495,6 +495,14 @@
 
   .v-datatable.v-table tbody td {
     height: 44px;
+    padding: 0 10px !important;
+    .v-text-field .v-input__append-inner {
+      padding-left: 0 !important;
+    }
+  }
+
+  .v-datatable.v-table th {
+    padding: 0 18px;
   }
 
   .theme--light.v-table {
