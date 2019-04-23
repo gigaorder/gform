@@ -123,7 +123,7 @@
   </v-flex>
 
   <v-flex xs12 v-else-if="isTableArray">
-    <table class="v-datatable v-table theme--light v-gfield-table" v-if="model[field.key] && model[field.key].length > 0" v-columns-resizable>
+    <table class="v-datatable v-table theme--light v-gfield-table" v-if="model[field.key] && model[field.key].length > 0">
       <thead>
       <tr>
         <th v-if="field.expansion" style="width: 15px"></th>
