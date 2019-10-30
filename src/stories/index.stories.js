@@ -1,5 +1,12 @@
-import Vue from 'vue';
+import FormStory from './FormStory';
 
-import {storiesOf} from '@storybook/vue';
+export default {
+  title: 'Form',
+};
 
-storiesOf('Form Story', module).add('form', () => '<form-story/>')
+export const test1 = () => ({
+  components: { FormStory },
+  props: {
+  },
+  template: `<form-story></form-story>`,
+})

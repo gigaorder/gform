@@ -11,8 +11,8 @@
 </template>
 
 <script>
-  import _ from 'lodash';
-  import {VApp} from 'vuetify/lib';
+  //import _ from 'lodash';
+  //import {VApp} from 'vuetify/lib';
   import GForm from '../main';
   //import GForm from '../../dist/GForm.umd';
   import Vue from "vue";
@@ -21,7 +21,7 @@
 
   export default {
     name: 'form-story',
-    components: {VApp},
+    components: {},
     data() {
       return {
         dialog: false,
