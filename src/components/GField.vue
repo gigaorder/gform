@@ -73,8 +73,13 @@
     </v-menu>
   </v-flex>
 
+  <!--todo: object navigate-->
   <v-flex xs12 v-else-if="isObject && !noPanel">
-    <fieldset v-show="_fields && _fields.length > 0">
+    <fieldset v-show="_fields && _fields.length > 0" style="position: relative">
+      <v-btn small depressed class="remove-btn" @click="model[field.key] = undefined">
+        <v-icon>delete</v-icon>
+      </v-btn>
+
       <slot name="action"/>
       <legend v-if="label">
         <span @click="collapse = !collapse">{{label}} {{collapse ? '+' : ''}}</span>
@@ -110,11 +115,12 @@
     <v-layout row wrap>
       <v-flex :class="[flex, flex !== 'xs12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]" :key="index"
               style="position: relative;">
-        <v-btn small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
-          <v-icon>delete</v-icon>
-        </v-btn>
         <g-field :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
-                 :in-array="true"></g-field>
+                 :in-array="true">
+          <v-btn slot="action" small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
+            <v-icon>delete</v-icon>
+          </v-btn>
+        </g-field>
       </v-flex>
     </v-layout>
     <v-btn color="blue lighten-2" outline small @click="addObjectItem()" v-if="!field.addable">
@@ -123,7 +129,8 @@
   </v-flex>
 
   <v-flex xs12 v-else-if="isTableArray">
-    <table class="v-datatable v-table theme--light v-gfield-table" v-if="model[field.key] && model[field.key].length > 0">
+    <table class="v-datatable v-table theme--light v-gfield-table"
+           v-if="model[field.key] && model[field.key].length > 0">
       <thead>
       <tr>
         <th v-if="field.expansion" style="width: 15px"></th>
@@ -335,6 +342,7 @@
       },
       addNullValue(field) {
         if (field.type.includes('array') || field.type.includes('Array')) {
+          if (!this.model[field.key]) this.$set(this.model, field.key, []);
           this.model[field.key].push({});
         } else if (field.type && field.type.split('@')[0] === 'object') {
           this.model[field.key] = {};
@@ -437,11 +445,8 @@
       isVisible(field) {
         if (!field.isVisible) return true;
         return field.isVisible(this);
-      }
-    },
-    created() {
-      //make sure that the 'value' is always set
-      const setProperty = function (field) {
+      },
+      setProperty(field) {
         if (field.key && !this.model.hasOwnProperty(field.key)) {
           if (field.type && field.type.split('@')[0] === 'object' && !field.addable) {
             this.$set(this.model, field.key, {});
@@ -451,12 +456,13 @@
             this.$set(this.model, field.key);
           }
         }
-      };
-
+      }
+    },
+    created() {
       if (this.fields) {
-        this.fields.forEach(setProperty.bind(this));
+        this.fields.forEach(this.setProperty);
       } else if (!this.fields && this.field) {
-        setProperty.bind(this)(this.field);
+        this.setProperty(this.field);
       }
     },
     inject: {
@@ -496,6 +502,7 @@
   .v-datatable.v-table tbody td {
     height: 44px;
     padding: 0 10px !important;
+
     .v-text-field .v-input__append-inner {
       padding-left: 0 !important;
     }
@@ -564,6 +571,17 @@
       right: 7px;
     }
   }
+
+  /*.v-datatable.v-table.v-gfield-table {
+    thead tr {
+      height: 20px;
+    }
+
+    /deep/ .v-input input {
+      max-height: 28px;
+    }
+  }*/
+
 </style>
 
 <style lang="scss">

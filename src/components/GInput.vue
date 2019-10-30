@@ -6,10 +6,13 @@
     <v-checkbox color="success" :label="field.tableCell ? '': label" v-model="value"/>
   </v-flex>
   <v-flex :class="[flex,paddingClass]" v-else-if="inputType === 'select' || inputType === 'select:number'">
-    <component :is="field.notOnlyValueInOptions ? 'v-combobox': 'v-autocomplete'" v-model="value" :items="options" :label="field.tableCell ? '': label" clearable
-                    @change="onChange"
-                    :return-object="!!field.returnObject"
-                    :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
+    <component :is="field.notOnlyValueInOptions ? 'v-combobox': 'v-autocomplete'" v-model="value" :items="options"
+               :item-text="field.itemText" :item-value="field.itemValue"
+               :chips="field.chips" :small-chips="field.chips"
+               :label="field.tableCell ? '': label" clearable
+               @change="onChange"
+               :return-object="!!field.returnObject"
+               :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
       <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
     </component>
   </v-flex>
@@ -98,7 +101,7 @@
         }
         if (this.inputType.includes('number')) {
           return this.field.options.map(opt => {
-            if (typeof opt === 'object') return Object.assign(opt, {value: parseFloat(opt.value)});
+            if (typeof opt === 'object') return Object.assign(opt, { value: parseFloat(opt.value) });
             return parseFloat(opt);
           });
         }
@@ -124,6 +127,9 @@
         this.model[this.field.key] = undefined;
       },
       onChange(e) {
+        if (this.field.onChange) {
+          this.field.onChange(e, this.rootModel, this.model);
+        }
       }
     },
     inject: {
@@ -170,6 +176,7 @@
         display: none !important;
         color: #d3d3d3 !important;
       }
+
       input {
         font-size: 1rem;
       }
