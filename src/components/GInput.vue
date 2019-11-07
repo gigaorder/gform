@@ -111,7 +111,7 @@
         return this.noLayout ? 'xs12' : this.field.flex;
       }
     },
-    mounted() {
+    created() {
       if (this.field.default && typeof this.field.default !== 'function' && !this.model[this.field.key]) {
         if (this.inputType.includes('number')) {
           this.model[this.field.key] = parseFloat(this.field.default);
