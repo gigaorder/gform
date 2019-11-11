@@ -1,4 +1,4 @@
-import GField from './components/GField';
+import GField from './components/GField2';
 import GInput from './components/GInput';
 import VueColumnsResizable from 'vue-columns-resizable';
 

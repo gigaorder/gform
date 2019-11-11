@@ -180,7 +180,7 @@
     <slot name="btn-append"></slot>
   </v-flex>
 
-  <component v-else :is="type" :field="field" :model="model"
+  <component v-else :is="type" :field="field" :value="model"
              v-on="$listeners" :in-array="inArray">
     <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
   </component>
@@ -490,7 +490,7 @@
   };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   table.v-table tbody td:not(:nth-child(1)) {
     padding: 0 10px;
   }

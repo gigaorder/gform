@@ -1,25 +1,25 @@
 <template>
   <v-flex :class="[flex,paddingClass]" v-if="inputType === 'switch'">
-    <v-switch color="success" :label="field.tableCell ? '': label" v-model="value"/>
+    <v-switch color="success" :label="field.tableCell ? '': label" v-model="internalValue"/>
   </v-flex>
   <v-flex :class="[flex,paddingClass]" v-else-if="inputType === 'checkbox'">
-    <v-checkbox color="success" :label="field.tableCell ? '': label" v-model="value"/>
+    <v-checkbox color="success" :label="field.tableCell ? '': label" v-model="internalValue"/>
   </v-flex>
   <v-flex :class="[flex,paddingClass]" v-else-if="inputType === 'select' || inputType === 'select:number'">
-    <component :is="field.notOnlyValueInOptions ? 'v-combobox': 'v-autocomplete'" v-model="value" :items="options"
+    <component :is="field.notOnlyValueInOptions ? 'v-combobox': 'v-autocomplete'" v-model="internalValue" :items="options"
                :item-text="field.itemText" :item-value="field.itemValue"
                :chips="field.chips" :small-chips="field.chips"
                :label="field.tableCell ? '': label" clearable
                @change="onChange"
                :return-object="!!field.returnObject"
                :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
-      <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
+      <v-icon slot="append" v-if="inArray" @click.stop="removeField">delete_outline</v-icon>
     </component>
   </v-flex>
   <v-flex :class="[flex,paddingClass]"
           v-else-if="inputType === 'multiSelect' || inputType === 'multiSelect:number'">
     <v-combobox
-      v-model="value"
+      v-model="internalValue"
       :item-text="field.itemText" :item-value="field.itemValue"
       :items="options"
       hide-selected
@@ -30,15 +30,15 @@
       :return-object="!!field.returnObject"
       :menu-props="{'z-index': 1000, 'closeOnContentClick': true}"
     >
-      <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
+      <v-icon slot="append" v-if="inArray" @click.stop="removeField">delete_outline</v-icon>
     </v-combobox>
   </v-flex>
-  <input v-else-if="field.tableCell" :type="inputType" v-model="value"
+  <input v-else-if="field.tableCell" :type="inputType" v-model="internalValue"
          class="form-control">
   <v-flex :class="[flex,paddingClass]" v-else>
-    <v-text-field v-model="value" :label="label" :type="inputType">
+    <v-text-field v-model="internalValue" :label="label" :type="inputType">
       <v-icon slot="append" v-if="field.addable" style="opacity: 0.4" @click.stop="clearValue()">clear</v-icon>
-      <v-icon slot="append" v-if="inArray" @click.stop="$emit('remove-field')">delete_outline</v-icon>
+      <v-icon slot="append" v-if="inArray" @click.stop="removeField">delete_outline</v-icon>
     </v-text-field>
   </v-flex>
 </template>
@@ -54,32 +54,32 @@
   export default {
     components: { Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon },
     name: 'GInput',
-    props: ['model', 'field', 'inArray', 'noFlex'],
+    props: ['value', 'field', 'inArray', 'noFlex'],
     computed: {
       paddingClass() {
         return this.field.tableCell ? 'px-0' : 'px-2';
       },
-      value: {
+      internalValue: {
         get() {
           try {
             if (this.inputType === 'date') {
-              return dayjs(this.model[this.field.key]).format('YYYY-MM-DD');
+              return dayjs(this.value[this.field.key]).format('YYYY-MM-DD');
             } else if (this.inputType === 'datetime-local') {
-              return dayjs(this.model[this.field.key]).format('YYYY-MM-DD[T]HH:mm');
+              return dayjs(this.value[this.field.key]).format('YYYY-MM-DD[T]HH:mm');
             }
           } catch (e) {
           }
-          return this.model[this.field.key];
+          return this.value[this.field.key];
         },
         set(v) {
           if (this.inputType.includes('number')) {
-            this.$set(this.model, this.field.key, parseFloat(v))
+            this.$set(this.value, this.field.key, parseFloat(v))
           } else if (this.inputType === 'date') {
-            this.$set(this.model, this.field.key, new Date(v + 'T00:00:00'))
+            this.$set(this.value, this.field.key, new Date(v + 'T00:00:00'))
           } else if (this.inputType === 'datetime-local') {
-            this.$set(this.model, this.field.key, new Date(v))
+            this.$set(this.value, this.field.key, new Date(v))
           } else {
-            this.$set(this.model, this.field.key, v)
+            this.$set(this.value, this.field.key, v)
           }
         }
       },
@@ -111,25 +111,28 @@
         return this.noLayout ? 'xs12' : this.field.flex;
       }
     },
-    mounted() {
-      if (this.field.default && typeof this.field.default !== 'function' && !this.model[this.field.key]) {
+    created() {
+      if (this.field.default && typeof this.field.default !== 'function' && !this.value[this.field.key]) {
         if (this.inputType.includes('number')) {
-          this.model[this.field.key] = parseFloat(this.field.default);
+          this.value[this.field.key] = parseFloat(this.field.default);
         } else {
-          this.model[this.field.key] = this.field.default;
+          this.value[this.field.key] = this.field.default;
         }
-      } else if (this.field.default && typeof this.field.default === 'function' && !this.model[this.field.key]) {
-        this.model[this.field.key] = this.field.default();
+      } else if (this.field.default && typeof this.field.default === 'function' && !this.value[this.field.key]) {
+        this.value[this.field.key] = this.field.default();
       }
     },
     methods: {
       clearValue() {
-        this.model[this.field.key] = undefined;
+        this.value[this.field.key] = undefined;
       },
       onChange(e) {
         if (this.field.onChange) {
-          this.field.onChange(e, this.rootModel, this.model);
+          this.field.onChange(e, this.rootModel, this.value);
         }
+      },
+      removeField() {
+        this.value.splice(this.field.key, 1);
       }
     },
     inject: {

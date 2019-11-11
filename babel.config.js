@@ -1,5 +1,11 @@
 module.exports = {
   presets: [
-    '@vue/app'
-  ]
+    'vca-jsx',
+    '@vue/app',
+  ],
+  env: {
+    test: {
+      plugins: ["require-context-hook"]
+    }
+  }
 }

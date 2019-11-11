@@ -1,12 +1,11 @@
 import { configure, addParameters } from '@storybook/vue';
-import { themes } from '@storybook/theming';
+
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import VueCompositionAPI from '@vue/composition-api';
 
 addParameters({
   options: {
-    theme: themes.light,
     panelPosition: 'right',
     hierarchySeparator: /\//,
     hierarchyRootSeparator: /\|/,
