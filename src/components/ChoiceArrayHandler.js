@@ -3,22 +3,17 @@ import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, is
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 
-const getValueFromPath = getValueFromPathFactory(node => {
-  if (!node.choiceKeyOutside) return [];
-});
-
-function genChoiceArray({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent, slots) {
-  const value = getValueFromPath(model, node, pathToParent, path)
+function genChoiceArray({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
   const choiceKey = node.choiceKey || 'choice'
 
   function selectChoiceInArray(choice) {
-    if (!value[node.key]) vSet(value, node.key, []);
-    value[node.key].push({ [choiceKey]: getChoiceName(choice) });
+    if (!model[node.key]) vSet(model, node.key, []);
+    model[node.key].push({ [choiceKey]: getChoiceName(choice) });
   }
 
   return <render-v-nodes>
     {childrenVNodes && childrenVNodes.map((r, index) => r({
-      onRemove: () => value[node.key].splice(index, 1)
+      onRemove: () => model[node.key].splice(index, 1)
     }))}
     <v-flex class="md12">
       {<v-menu offset-y z-index="1000">
@@ -40,15 +35,16 @@ const ChoiceArrayHandler = {
   rule(node) {
     return node.type === 'choiceArray'
   },
-  itemChildren(node, { isNodeRootArray, path }, model) {
-    const value = getValueFromPath(model, node, path);
+  itemChildren(node, { isNodeRootArray, path }, { rootModel, getValue }) {
+    const value = getValue();
     const children = _.map(value, (item, index) => {
       return Object.assign({}, node, { key: index, type: 'choice', inArray: true });
     });
     return children;
   },
-  genNode({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent) {
-    return slots => genChoiceArray(...arguments, slots);
+  genNode: genChoiceArray,
+  genDefaultValue: node => {
+    if (!node.choiceKeyOutside) return [];
   },
   itemPath() {
   }

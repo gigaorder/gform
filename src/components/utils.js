@@ -1,5 +1,6 @@
 import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash-es';
 import { reactive, set as vSet, ref } from '@vue/composition-api';
+
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 import Vue from 'vue';
 
@@ -87,9 +88,13 @@ export function makeAddable(fields, childrenVNodes, value) {
 
 export function getValueFromPathFactory(genDefaultValue) {
   return function getValueFromModel(model, node, path, pathToField) {
-    if (pathToField && !_.get(model, pathToField.join('.')) && node.default) {
-      vSet(model, pathToField.join('.'), ref(node.default));
-    }
+    /*if (pathToField && !_.get(model, pathToField.join('.')) && node.default) {
+      if (typeof node.default === 'function') {
+        vSet(model, pathToField.join('.'), ref(node.default()));
+      } else {
+        vSet(model, pathToField.join('.'), ref(node.default));
+      }
+    }*/
 
     if (path.length === 0) {
       return model;
@@ -111,9 +116,9 @@ export function getValueFromPathFactory(genDefaultValue) {
   }
 }
 
-export function genField({ node, text, childrenVNodes, isLast, state, path }, value) {
+export function genField({ node, text, childrenVNodes, isLast, state, path }, {rootModel, model, slots}) {
   const Comp = Vue.$gform.mapping[node.type.split('@')[0]] || node.type;
-  let inArray = Array.isArray(value)
-  return <Comp field={node} value={value} {...{ props: { model: value } }} inArray={inArray} path={path.join('.')}/>
+  let inArray = Array.isArray(model)
+  return <Comp field={node} value={model} {...{ props: { model, rootModel } }} inArray={inArray} path={path.join('.')}/>
   //return h(field, { props: { field: node, value, inArray }/*, attrs: { node }*/ })
 }

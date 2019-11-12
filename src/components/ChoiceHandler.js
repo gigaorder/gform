@@ -4,17 +4,12 @@ import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, is
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 import { reactive, set as vSet, ref } from '@vue/composition-api';
 
-const getValueFromPath = getValueFromPathFactory(node => {
-  if (!node.choiceKeyOutside) return {};
-});
-
-function genChoice({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent, slots) {
-  const value = getValueFromPath(model, node, pathToParent, path)
+function genChoice({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
   const choiceKey = node.choiceKey || 'choice'
   const choiceExist = function () {
-    if (node.choiceKeyOutside) return !!value[choiceKey];
-    if (!value[node.key]) return false;
-    return !!value[node.key][choiceKey];
+    if (node.choiceKeyOutside) return !!model[choiceKey];
+    if (!model[node.key]) return false;
+    return !!model[node.key][choiceKey];
   }();
   const choiceBtnPrepend = function () {
     if (node.choiceKeyOutside) return 'Choose';
@@ -26,12 +21,12 @@ function genChoice({ node, text, childrenVNodes, isLast, state, path }, model, p
     if (node.choiceKeyOutside) {
       const fields = node.fields;
       fields && fields.map(v => v.key).forEach(k => {
-        delete value[k];
+        delete model[k];
       })
-      if (value[node.key]) value[node.key] = null;
-      value[choiceKey] = null;
+      if (model[node.key]) model[node.key] = null;
+      model[choiceKey] = null;
     } else {
-      value[node.key] = null;
+      model[node.key] = null;
     }
   }
 
@@ -65,9 +60,9 @@ function genChoice({ node, text, childrenVNodes, isLast, state, path }, model, p
         {_fields(node).map((choice, index) =>
           <v-list-tile key={index} vOn:click={() => {
             if (node.choiceKeyOutside) {
-              vSet(value, choiceKey, getChoiceName(choice));
+              vSet(model, choiceKey, getChoiceName(choice));
             } else {
-              vSet(value[node.key], choiceKey, getChoiceName(choice));
+              vSet(model[node.key], choiceKey, getChoiceName(choice));
             }
           }}>
             <v-list-tile-title>{getChoiceName(choice)}</v-list-tile-title>
@@ -82,8 +77,8 @@ const ChoiceHandler = {
   rule(node) {
     return node.type === 'choice'
   },
-  itemChildren(node, { isNodeRootArray, path }, model) {
-    const value = getValueFromPath(model, node, path);
+  itemChildren(node, { isNodeRootArray, path }, { rootModel, getValue }) {
+    const value = getValue();
     const choiceKey = node.choiceKey || 'choice';
     let field = _.cloneDeep(node.fields.find(field => (field.key || field.choiceName) === value[choiceKey]));
     if (!field) return null;
@@ -98,8 +93,9 @@ const ChoiceHandler = {
     }
     return [field]
   },
-  genNode({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent) {
-    return slots => genChoice(...arguments, slots);
+  genNode: genChoice,
+  genDefaultValue: node => {
+    if (!node.choiceKeyOutside) return {};
   },
   itemPath(node, { key, path, isRoot }) {
     if (node.choiceKeyOutside) return null;

@@ -170,7 +170,7 @@
       const genComp = function () {
         const fields = this.fields;
         const model = this.model;
-        const _fields = <g-field path="deep" tabs={this.tabs} fields={fields} value={model}></g-field>
+        const _fields = <g-field path="deep" tabs={this.tabs} fields={fields} propsModel={model}></g-field>
         /*{_fields.map((field, index) => {
 					const path = field.data.attrs.path;
 					return <template slot={path}>{field}</template>

@@ -20,7 +20,8 @@ export default function treeFactory({
                                       itemInfo = n => n,
                                       expandLevel = 1000,
                                       itemPath = (n, { key }) => key,
-                                      data
+                                      data,
+                                      treeStates = reactive({})
                                     }) {
   const childrenProp = '_children_'
 
@@ -28,7 +29,6 @@ export default function treeFactory({
   // key: node path
   // value: object contain state of current node
   //     { collapse: Boolean }
-  const treeStates = reactive({})
 
   const genText = computed(() => typeof itemText === 'function' ? itemText : (node, __) => node[itemText])
 

@@ -3,18 +3,11 @@ import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, is
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 
-const getValueFromPath = getValueFromPathFactory(node => {
-  if (node.key) return {};
-});
-
-
-function genObjectWithoutPanel({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent) {
-  const value = getValueFromPath(model, node, pathToParent, path)
-  return makeAddable(node.fields, childrenVNodes, value);
+function genObjectWithoutPanel({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
+  return makeAddable(node.fields, childrenVNodes, model);
 }
 
-function genObjectWithPanel({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent, slots) {
-  const value = getValueFromPath(model, node, pathToParent, path)
+function genObjectWithPanel({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
   /*const _fields = function () {
     if (typeof node.dynamicFields === 'function') {
       try {
@@ -35,10 +28,10 @@ function genObjectWithPanel({ node, text, childrenVNodes, isLast, state, path },
   const label = getLabel(node);
 
   function onRemove() {
-    if (Array.isArray(value)) {
-      return value.splice(node.key, 1);
+    if (Array.isArray(model)) {
+      return model.splice(node.key, 1);
     }
-    value[node.key] = undefined
+    model[node.key] = undefined
   }
 
   return <v-flex xs12>
@@ -56,7 +49,7 @@ function genObjectWithPanel({ node, text, childrenVNodes, isLast, state, path },
 
       <v-expand-transition>
         <v-layout row wrap style="padding-top: 5px;" v-show={!state.collapse}>
-          {makeAddable(node.fields, childrenVNodes, value)}
+          {makeAddable(node.fields, childrenVNodes, model)}
         </v-layout>
       </v-expand-transition>
     </fieldset>
@@ -67,13 +60,16 @@ const ObjectHandler = {
   rule(node) {
     return node.type === 'object'
   },
-  itemChildren(node, { isNodeRootArray, path }, model) {
-    getValueFromPath(model, node, path);
+  itemChildren(node, { isNodeRootArray, path }, { rootModel, getValue }) {
+    getValue();
     return node.fields;
   },
-  genNode({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent) {
-    if (!node.noPanel) return slots => genObjectWithPanel(...arguments, slots);
-    if (node.noPanel) return slots => genObjectWithoutPanel(...arguments, slots);
+  genNode({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
+    if (!node.noPanel) return genObjectWithPanel(...arguments);
+    if (node.noPanel) return genObjectWithoutPanel(...arguments);
+  },
+  genDefaultValue(node) {
+    if (node.key) return {};
   },
   itemPath(node, { key, path, isRoot }) {
     if (_.isNil(node.key)) return null;

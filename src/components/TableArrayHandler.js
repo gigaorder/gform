@@ -5,7 +5,7 @@ import { reactive, set as vSet, ref } from '@vue/composition-api';
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 
-function genTableArray({ node, text, childrenVNodes, isLast, state, path }, value, slots) {
+function genTableArray({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
   const mainFields = function () {
     if (!node.expansion) return node.fields;
     return node.fields.filter(f => !node.expansion.includes(f.key));
@@ -26,18 +26,19 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, valu
   }
 
   function addObjectItem() {
-    if (!value[node.key]) {
-      vSet(value, node.key, ref([]));
+    if (!model[node.key]) {
+      vSet(model, node.key, ref([]));
     }
-    value[node.key].push({});
+    model[node.key].push({});
   }
 
-  function renderTableField(field, val) {
-    return genField({ node: _.assign({}, field, { tableCell: true },), path: [node.key] }, val)
+  function renderTableField(field, _model, parentIndex) {
+    const _path = path.concat(parentIndex, field.key);
+    return genField({ node: _.assign({}, field, { tableCell: true },), path: _path }, {model: _model, rootModel})
   }
 
   return <v-flex xs12>
-    {!_.isEmpty(value[node.key]) && <table className="v-datatable v-table theme--light v-gfield-table">
+    {!_.isEmpty(model[node.key]) && <table className="v-datatable v-table theme--light v-gfield-table">
       <thead>
       <tr>
         {node.expansion && <th style="width: 15px"></th>}
@@ -47,7 +48,7 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, valu
       </thead>
 
       <tbody>
-      {value[node.key].map((val, index) => (
+      {model[node.key].map((val, index) => (
         <render-v-nodes>
           <tr className="text-md-center" key={index}>
             {node.expansion &&
@@ -55,10 +56,10 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, valu
               <v-icon>keyboard_arrow_{state.rowDetail === index ? 'down' : 'right'}</v-icon>
             </td>}
             {mainFields.map((_field, _index) => <td className="input-group-sm" key={_index}>
-              {renderTableField(_field, val)}
+              {renderTableField(_field, val, index)}
             </td>)}
             <td>
-              <v-icon vOn:click={() => value[node.key].splice(index, 1)}>delete</v-icon>
+              <v-icon vOn:click={() => model[node.key].splice(index, 1)}>delete</v-icon>
             </td>
           </tr>
 
@@ -70,7 +71,7 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, valu
                   <v-card v-show={state.rowDetail === index} flat
                           style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
                     <v-card-text>
-                      <g-field fields={expansionFields} value={value[node.key][index]}></g-field>
+                      <g-field fields={expansionFields} value={model[node.key][index]}></g-field>
                     </v-card-text>
                   </v-card>
                 </v-expand-transition>
@@ -93,11 +94,12 @@ const TableArrayHandler = {
   rule(node) {
     return node.type === 'tableArray'
   },
-  itemChildren(node, { isNodeRootArray, path }, getValueFromModel) {
+  itemChildren(node, { isNodeRootArray, path }, { rootModel, getValue }) {
     return [];
   },
-  genNode({ node, text, childrenVNodes, isLast, state, path }, value) {
-    return slots => genTableArray(...arguments, slots);
+  genNode: genTableArray,
+  genDefaultValue() {
+    return [];
   },
   itemPath() {
   }

@@ -3,16 +3,13 @@ import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, is
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 
-const getValueFromPath = getValueFromPathFactory(() => []);
-
-function genSimpleArray({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent, slots) {
-  const value = getValueFromPath(model, node, pathToParent, path)
+function genSimpleArray({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
   return <render-v-nodes>
     {childrenVNodes.map(r => r())}
     <v-flex class="xs12">
       <v-btn color="blue lighten-2" outline small vOn:click={() => {
-        if (!value) vSet(value, node.key, ref([]));
-        value[node.key].push(null);
+        if (!model) vSet(model, node.key, ref([]));
+        model[node.key].push(null);
       }}>
         Add {getLabel(node)}
       </v-btn>
@@ -25,15 +22,16 @@ const SimpleArrayHandler = {
   rule(node) {
     return node.type === 'array' && node.fields.length === 1
   },
-  itemChildren(node, { isNodeRootArray, path }, model) {
-    const value = getValueFromPath(model, node, path);
+  itemChildren(node, { isNodeRootArray, path }, { rootModel, getValue }) {
+    const value = getValue();
     const children = _.map(value, (item, index) => {
       return _.assign(_.cloneDeep(node.fields[0]), { key: index, flex: node.flex, label: node.label });
     });
     return children;
   },
-  genNode({ node, text, childrenVNodes, isLast, state, path }, model, pathToParent) {
-    return slots => genSimpleArray(...arguments, slots);
+  genNode: genSimpleArray,
+  genDefaultValue() {
+    return [];
   },
   itemPath() {
   }
