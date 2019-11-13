@@ -1,41 +1,27 @@
-import { getLabel, getValueFromPathFactory, makeAddable } from './utils';
+import { getLabel, getValueFromPathFactory, makeAddable, getFields } from './utils';
 import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash-es';
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 
-function genObjectWithoutPanel({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
-  return makeAddable(node.fields, childrenVNodes, model);
+function genObjectWithoutPanel({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, fieldModel }) {
+  const _fields = getFields.bind(this)(node);
+  return makeAddable(_fields, childrenVNodes, fieldModel);
 }
 
-function genObjectWithPanel({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
-  /*const _fields = function () {
-    if (typeof node.dynamicFields === 'function') {
-      try {
-        return node.dynamicFields(this);
-      } catch (e) {
-        return [];
-      }
-    } else if (node.dynamicFields && Vue.$gform.resolver) {
-      const resolver = Vue.$gform.resolver;
-      const fields = [];
-      if (node.fields) fields.push(...node.fields);
-      fields.push(...resolver(node.dynamicFields));
-      return fields;
-    }
-    return node.fields;
-  }()*/
+function genObjectWithPanel({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, fieldModel }) {
+  const _fields = getFields.bind(this)(node);
   //todo: dynamicFields
   const label = getLabel(node);
 
   function onRemove() {
-    if (Array.isArray(model)) {
-      return model.splice(node.key, 1);
+    if (Array.isArray(fieldModel)) {
+      return fieldModel.splice(node.key, 1);
     }
-    model[node.key] = undefined
+    fieldModel[node.key] = undefined
   }
 
   return <v-flex xs12>
-    <fieldset vShow={node.fields && node.fields.length > 0} style="position: relative">
+    <fieldset vShow={_fields && node.fields.length > 0} style="position: relative">
       <v-btn small depressed class="remove-btn" vOn:click={slots && slots.onRemove ? slots.onRemove : onRemove}>
         <v-icon>delete</v-icon>
       </v-btn>
@@ -49,28 +35,38 @@ function genObjectWithPanel({ node, text, childrenVNodes, isLast, state, path },
 
       <v-expand-transition>
         <v-layout row wrap style="padding-top: 5px;" v-show={!state.collapse}>
-          {makeAddable(node.fields, childrenVNodes, model)}
+          {makeAddable(node.fields, childrenVNodes, fieldModel, this.context)}
         </v-layout>
       </v-expand-transition>
     </fieldset>
   </v-flex>
 }
 
-const ObjectHandler = {
+const ObjectHandler = class {
+  constructor(context, rootPath) {
+    this.context = context;
+    this.rootPath = rootPath;
+  }
+
   rule(node) {
-    return node.type === 'object'
-  },
+    return !!(node.type && node.type.split('@')[0] === 'object');
+  }
+
   itemChildren(node, { isNodeRootArray, path }, { rootModel, getValue }) {
     getValue();
-    return node.fields;
-  },
-  genNode({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, model }) {
-    if (!node.noPanel) return genObjectWithPanel(...arguments);
-    if (node.noPanel) return genObjectWithoutPanel(...arguments);
-  },
+    const _fields = getFields.bind(this)(node);
+    return _fields;
+  }
+
+  genNode({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, fieldModel }) {
+    if (!node.noPanel) return genObjectWithPanel.bind(this)(...arguments);
+    if (node.noPanel) return genObjectWithoutPanel.bind(this)(...arguments);
+  }
+
   genDefaultValue(node) {
     if (node.key) return {};
-  },
+  }
+
   itemPath(node, { key, path, isRoot }) {
     if (_.isNil(node.key)) return null;
   }
