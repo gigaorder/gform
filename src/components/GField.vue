@@ -74,44 +74,40 @@
         rootModel: this.rootModel || this.model || this.value
       };
     },
-    setup(props, context) {
-      //const props = this.$props;
-      let model = props.model || props.value;
-      let rootModel = props.rootModel || model;
-      let rootPath = props.path ? props.path.split('.') : [];
-      //if (this.path) model = model[this.path];
-
-      /*if (this.field) {
-        return genField({ node: this.field, path: [] }, { rootModel: (this.rootModel || model), model: model });
-      }*/
-
-      return {
-        _model: model,
-        _rootModel: rootModel,
-        _rootPath: rootPath
-      }
-    },
     created() {
       if (this.tabs) {
-        const tabs = this.getTabs();
-        this.formRender = () => <v-tabs style="width: 100%" class={{ 'tab-wrapper': this.fillHeight }}>
-          {tabs.map((tab, index) => <v-tab key={index}>{tab.name}</v-tab>)}
-          {tabs.map((tab, index) => <v-tab-item key={index} style="padding-top: 20px;">
-            <g-field fields={tab.fields} propsModel={this._model}
-                     propsRootModel={this._rootModel} path={this._rootPath.join('.')}
-                     fill-height={this.fillHeight} no-layout={this.noLayout}></g-field>
-          </v-tab-item>)}
-          <slot name="tab-append"></slot>
-        </v-tabs>
+        this.formRender = formInTabsRender.bind(this)
         return;
       }
 
-      this.formRender = factory(this.$props, this._model, this._rootModel, this._rootPath, this);
+      let model = this.model || this.value;
+      let rootModel = this.rootModel || model;
+      let rootPath = this.path ? this.path.split('.') : [];
+
+      this.formRender = factory(this.$props, model, rootModel, rootPath, this);
     },
     render(h, context) {
       return this.formRender();
     }
   };
+
+  function formInTabsRender() {
+    const tabs = this.getTabs();
+
+    let model = this.model || this.value;
+    let rootModel = this.rootModel || model;
+    let rootPath = this.path ? this.path.split('.') : [];
+
+    return <v-tabs style="width: 100%" className={{ 'tab-wrapper': this.fillHeight }}>
+      {tabs.map((tab, index) => <v-tab key={index}>{tab.name}</v-tab>)}
+      {tabs.map((tab, index) => <v-tab-item key={index} style="padding-top: 20px;">
+        <g-field fields={tab.fields} propsModel={model}
+                 propsRootModel={rootModel} path={rootPath.join('.')}
+                 fill-height={this.fillHeight} no-layout={this.noLayout}></g-field>
+      </v-tab-item>)}
+      <slot name="tab-append"></slot>
+    </v-tabs>
+  }
 
   function factory(props, model, rootModel, rootPath, context) {
     let treeStates = reactive({});
@@ -166,7 +162,7 @@
     }
 
     const itemPath = function (node, { key, path, isRoot }) {
-      if (isRoot) return null;
+      if (isRoot && Array.isArray(node)) return null;
       for (const nodeHandler of nodeHandlers) {
         if (nodeHandler.rule(node)) {
           let result = nodeHandler.itemPath(...arguments);

@@ -54,7 +54,7 @@
   export default {
     components: { Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon },
     name: 'GInput',
-    props: ['model', 'field', 'inArray', 'noFlex', 'rootModel', 'path'],
+    props: ['model', 'field', 'inArray', 'noFlex', 'rootModel', 'path', 'noLayout'],
     computed: {
       paddingClass() {
         return this.field.tableCell ? 'px-0' : 'px-2';
@@ -138,7 +138,7 @@
       }
     },
     inject: {
-      noLayout: { default: null }
+      //noLayout: { default: null }
     }
   };
 </script>
