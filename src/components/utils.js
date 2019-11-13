@@ -31,7 +31,7 @@ export function getChoiceName(choice) {
   return choice.choiceName || choice.key;
 }
 
-export function makeAddable(fields, childrenVNodes, value) {
+export function makeAddable(fields, childrenVNodes, value, context) {
   function getAddFields(fields, value) {
     return fields.filter(field => {
       if (!field['addable']) return false;
@@ -51,9 +51,9 @@ export function makeAddable(fields, childrenVNodes, value) {
     })
   }
 
-  function isVisible(field) {
+  function isVisible(field, context) {
     if (!field.isVisible) return true;
-    return field.isVisible();
+    return field.isVisible(context);
   }
 
   function addNullValue(field) {
@@ -74,7 +74,7 @@ export function makeAddable(fields, childrenVNodes, value) {
     {childrenVNodes.filter((child, index) => formFields.includes(index)).map(r => r())}
     <v-flex xs12>
       {getAddFields(fields, value).map((addField, index) =>
-        <v-chip key={addField.key + index} v-show={isVisible(addField)}
+        <v-chip key={addField.key + index} v-show={isVisible(addField, context)}
                 color="#4dd8a7" text-color="white" vOn:click={() => addNullValue(addField)}>
           <v-avatar>
             <v-icon>add_circle</v-icon>
@@ -109,16 +109,33 @@ export function getValueFromPathFactory(genDefaultValue) {
       }
 
       if (node.addable) _defaultValue = undefined;
-
-      vSet(model, path.join('.'), ref(_defaultValue));
+      vSet(model, path.join('.'), _defaultValue);
       return _.get(model, path.join('.'));
     }
   }
 }
 
-export function genField({ node, text, childrenVNodes, isLast, state, path }, {rootModel, model, slots}) {
+export function genField({ node, text, childrenVNodes, isLast, state, path = [] }, { rootModel, fieldModel, slots }, fieldProps) {
+  if (!node.type) return;
   const Comp = Vue.$gform.mapping[node.type.split('@')[0]] || node.type;
-  let inArray = Array.isArray(model)
-  return <Comp field={node} value={model} {...{ props: { model, rootModel } }} inArray={inArray} path={path.join('.')}/>
+  let inArray = Array.isArray(fieldModel)
+  return <Comp field={node} {...{ props: { model: fieldModel, rootModel } }} inArray={inArray} path={path.join('.')} {...{ props: fieldProps }}/>
   //return h(field, { props: { field: node, value, inArray }/*, attrs: { node }*/ })
+}
+
+export function getFields(node) {
+  if (typeof node.dynamicFields === 'function') {
+    try {
+      return node.dynamicFields(this.context);
+    } catch (e) {
+      return [];
+    }
+  } else if (node.dynamicFields && Vue['$gform'].resolver) {
+    const resolver = Vue['$gform'].resolver;
+    const fields = [];
+    if (node.fields) fields.push(...node.fields);
+    fields.push(...resolver(node.dynamicFields));
+    return fields;
+  }
+  return node.fields;
 }

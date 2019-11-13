@@ -50,7 +50,8 @@
       noLayout: Boolean,
       domain: String,
       fillHeight: Boolean,
-      path: String
+      path: String,
+      rootModel: null
     },
     domain: ':domain',
     data: () => ({
@@ -70,7 +71,7 @@
     provide() {
       return {
         noLayout: this.noLayout,
-        rootModel: this.model || this.value
+        rootModel: this.rootModel || this.model || this.value
       };
     },
     render(h, context) {
@@ -78,27 +79,36 @@
       let { model } = props;*/
       const props = this.$props;
       let model = props.model || props.value;
-      if (this.path) model = model[this.path];
+      let rootModel = props.rootModel || model;
+      let rootPath = props.path ? props.path.split('.') : [];
+      //if (this.path) model = model[this.path];
       if (this.tabs) {
         const tabs = this.getTabs();
         return <v-tabs style="width: 100%" class={{ 'tab-wrapper': this.fillHeight }}>
           {tabs.map((tab, index) => <v-tab key={index}>{tab.name}</v-tab>)}
           {tabs.map((tab, index) => <v-tab-item key={index} style="padding-top: 20px;">
-            <g-field fields={tab.fields} value={model} fill-height={this.fillHeight}></g-field>
+            <g-field fields={tab.fields} propsModel={model}
+                     propsRootModel={rootModel} path={rootPath.join('.')}
+                     fill-height={this.fillHeight} no-layout={this.noLayout}></g-field>
           </v-tab-item>)}
           <slot name="tab-append"></slot>
         </v-tabs>
       }
 
-      return factory(props, model)();
+      /*if (this.field) {
+        return genField({ node: this.field, path: [] }, { rootModel: (this.rootModel || model), model: model });
+      }*/
+
+      return factory(props, model, rootModel, rootPath, this)();
     }
   };
 
-  function factory(props, rootModel) {
+  function factory(props, model, rootModel, rootPath, context) {
     let treeStates = reactive({});
     let nodeHandlers = [];
 
-    function registerNodeHandler(handler) {
+    function registerNodeHandler(HandlerClass) {
+      const handler = new HandlerClass(context, rootPath)
       nodeHandlers.push(handler);
     }
 
@@ -107,8 +117,12 @@
 
     function genRootWrapper(children) {
       //return makeAddable(props.fields, children, model);
-      return <v-layout row wrap fill-height={props.fillHeight}>{makeAddable(props.fields, children, rootModel)}</v-layout>
-      //return <fragment>{makeAddable(props.fields, children, rootModel)}</fragment>
+      if (props.fields) {
+        return <v-layout row wrap fill-height={props.fillHeight}>{makeAddable(props.fields, children, model, context)}</v-layout>
+      } else {
+        return <fragment>{children()}</fragment>;
+      }
+      //return <fragment>{makeAddable(props.fields, children, model)}</fragment>
     }
 
     function genNode({ node, text, childrenVNodes, isLast, state, path }) {
@@ -120,14 +134,14 @@
 
       for (const nodeHandler of nodeHandlers) {
         if (nodeHandler.rule(node)) {
-          const model = getValueFromPathFactory(nodeHandler.genDefaultValue)(rootModel, node, pathToParent, path)
-          return slots => nodeHandler.genNode(...arguments, { rootModel, pathToParent, treeStates, slots, model });
+          const fieldModel = getValueFromPathFactory(nodeHandler.genDefaultValue)(model, node, pathToParent, path)
+          return slots => nodeHandler.genNode(...arguments, { rootModel, pathToParent, treeStates, slots, fieldModel });
         }
       }
 
-      const model = getValueFromPathFactory()(rootModel, node, pathToParent, path);
+      const fieldModel = getValueFromPathFactory()(model, node, pathToParent, path);
 
-      return slots => genField(...arguments, {rootModel, model, slots})
+      return slots => genField(_.assign(arguments[0], { path: rootPath.concat(path) }), { rootModel, fieldModel, slots }, { noLayout: props.noLayout })
     }
 
     function itemChildren(node, { isNodeRootArray, path }) {
@@ -135,7 +149,7 @@
 
       for (const nodeHandler of nodeHandlers) {
         if (nodeHandler.rule(node)) {
-          const getValue = () => getValueFromPathFactory(nodeHandler.genDefaultValue)(rootModel, node, path)
+          const getValue = () => getValueFromPathFactory(nodeHandler.genDefaultValue)(model, node, path)
           return nodeHandler.itemChildren(...arguments, { rootModel, getValue });
         }
       }
@@ -159,7 +173,7 @@
 
     const { genTree } = treeFactory({
       treeStates,
-      data: props.fields,
+      data: props.fields || props.field,
       itemChildren,
       itemText,
       genRootWrapper,
@@ -172,113 +186,113 @@
 </script>
 
 <style lang="scss" scoped>
-	table.v-table tbody td:not(:nth-child(1)) {
-		padding: 0 10px;
-	}
+  table.v-table tbody td:not(:nth-child(1)) {
+    padding: 0 10px;
+  }
 
-	.v-datatable.v-table thead tr {
-		height: 40px;
-	}
+  .v-datatable.v-table thead tr {
+    height: 40px;
+  }
 
-	.v-datatable.v-table tbody td {
-		height: 44px;
-		padding: 0 10px !important;
+  .v-datatable.v-table tbody td {
+    height: 44px;
+    padding: 0 10px !important;
 
-		.v-text-field .v-input__append-inner {
-			padding-left: 0 !important;
-		}
-	}
+    .v-text-field .v-input__append-inner {
+      padding-left: 0 !important;
+    }
+  }
 
-	.v-datatable.v-table th {
-		padding: 0 18px;
-	}
+  .v-datatable.v-table th {
+    padding: 0 18px;
+  }
 
-	.theme--light.v-table {
-		//background-color: transparent;
-	}
+  .theme--light.v-table {
+    //background-color: transparent;
+  }
 
-	fieldset {
-		padding: 0 10px 10px 10px;
-		position: relative;
-		top: 0;
-		border: 1px solid #eee;
-		border-radius: 2px;
-		//background-color: rgba(128, 128, 128, 0.03);
-		width: 100%;
-		margin-bottom: 20px;
-	}
+  fieldset {
+    padding: 0 10px 10px 10px;
+    position: relative;
+    top: 0;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    //background-color: rgba(128, 128, 128, 0.03);
+    width: 100%;
+    margin-bottom: 20px;
+  }
 
-	legend {
-		color: #337ab7;
-		border: 0;
-		margin-left: 10px;
-		width: initial;
-		padding: 1px 5px;
-		font-size: 1.3em;
-		font-weight: 300;
-		font-family: Roboto, sans-serif;
-	}
+  legend {
+    color: #337ab7;
+    border: 0;
+    margin-left: 10px;
+    width: initial;
+    padding: 1px 5px;
+    font-size: 1.3em;
+    font-weight: 300;
+    font-family: Roboto, sans-serif;
+  }
 
-	.add-btn {
-		margin-left: 0;
-		box-shadow: 0 1px 1px 0 #9c9c9c;
-	}
+  .add-btn {
+    margin-left: 0;
+    box-shadow: 0 1px 1px 0 #9c9c9c;
+  }
 
-	.remove-btn {
-		position: absolute;
-		right: 0;
-		top: 14px;
-		margin: 0;
-		font-size: 1.3em;
-		padding: 0px;
-		min-width: 32px;
-		width: 32px;
-		border: 1px solid #eaeaea;
-		background-color: #f9f9f9 !important;
-		z-index: 10;
-		height: 23px;
+  .remove-btn {
+    position: absolute;
+    right: 0;
+    top: 14px;
+    margin: 0;
+    font-size: 1.3em;
+    padding: 0px;
+    min-width: 32px;
+    width: 32px;
+    border: 1px solid #eaeaea;
+    background-color: #f9f9f9 !important;
+    z-index: 10;
+    height: 23px;
 
-		.v-icon {
-			font-size: 0.9em;
-			color: #6d6d6d;
-		}
-	}
+    .v-icon {
+      font-size: 0.9em;
+      color: #6d6d6d;
+    }
+  }
 
-	.fix-inline {
-		padding-right: 7px;
-		padding-left: 7px;
+  .fix-inline {
+    padding-right: 7px;
+    padding-left: 7px;
 
-		.remove-btn {
-			right: 7px;
-		}
-	}
+    .remove-btn {
+      right: 7px;
+    }
+  }
 
-	/*.v-datatable.v-table.v-gfield-table {
-		thead tr {
-			height: 20px;
-		}
+  /*.v-datatable.v-table.v-gfield-table {
+    thead tr {
+      height: 20px;
+    }
 
-		/deep/ .v-input input {
-			max-height: 28px;
-		}
-	}*/
+    /deep/ .v-input input {
+      max-height: 28px;
+    }
+  }*/
 
 </style>
 
 <style lang="scss">
-	.tab-wrapper {
-		.v-tabs__bar {
-			position: sticky;
-			top: 0;
-			z-index: 10;
-		}
+  .tab-wrapper {
+    .v-tabs__bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-		.v-window {
-			height: calc(100% - 50px)
-		}
+    .v-window {
+      height: calc(100% - 50px)
+    }
 
-		&, .v-window__container, .v-window-item {
-			height: 100%
-		}
-	}
+    &, .v-window__container, .v-window-item {
+      height: 100%
+    }
+  }
 </style>

@@ -54,7 +54,7 @@
   export default {
     components: { Fragment, VFlex, VSwitch, VSelect, VTextField, VIcon },
     name: 'GInput',
-    props: ['value', 'field', 'inArray', 'noFlex', 'rootModel', 'path'],
+    props: ['model', 'field', 'inArray', 'noFlex', 'rootModel', 'path'],
     computed: {
       paddingClass() {
         return this.field.tableCell ? 'px-0' : 'px-2';
@@ -63,23 +63,23 @@
         get() {
           try {
             if (this.inputType === 'date') {
-              return this.value[this.field.key] && dayjs(this.value[this.field.key]).format('YYYY-MM-DD');
+              return this.model[this.field.key] && dayjs(this.model[this.field.key]).format('YYYY-MM-DD');
             } else if (this.inputType === 'datetime-local') {
-              return this.value[this.field.key] && dayjs(this.value[this.field.key]).format('YYYY-MM-DD[T]HH:mm');
+              return this.model[this.field.key] && dayjs(this.model[this.field.key]).format('YYYY-MM-DD[T]HH:mm');
             }
           } catch (e) {
           }
-          return this.value[this.field.key];
+          return this.model[this.field.key];
         },
         set(v) {
           if (this.inputType.includes('number')) {
-            this.$set(this.value, this.field.key, parseFloat(v))
+            this.$set(this.model, this.field.key, parseFloat(v))
           } else if (this.inputType === 'date') {
-            this.$set(this.value, this.field.key, new Date(v + 'T00:00:00'))
+            this.$set(this.model, this.field.key, new Date(v + 'T00:00:00'))
           } else if (this.inputType === 'datetime-local') {
-            this.$set(this.value, this.field.key, new Date(v))
+            this.$set(this.model, this.field.key, new Date(v))
           } else {
-            this.$set(this.value, this.field.key, v)
+            this.$set(this.model, this.field.key, v)
           }
         }
       },
@@ -112,27 +112,29 @@
       }
     },
     created() {
-      if (this.field.default && typeof this.field.default !== 'function' && !this.value[this.field.key]) {
+      if (this.field.default && typeof this.field.default !== 'function' && !this.model[this.field.key]) {
         if (this.inputType.includes('number')) {
-          this.value[this.field.key] = parseFloat(this.field.default);
+          this.$set(this.model, this.field.key, parseFloat(this.field.default));
         } else {
-          this.value[this.field.key] = this.field.default;
+          this.$set(this.model, this.field.key, this.field.default);
         }
-      } else if (this.field.default && typeof this.field.default === 'function' && !this.value[this.field.key]) {
-        this.value[this.field.key] = this.field.default();
+      } else if (this.field.default && typeof this.field.default === 'function' && !this.model[this.field.key]) {
+        this.$set(this.model, this.field.key, this.field.default());
+      } else if (!this.model.hasOwnProperty(this.field.key)) {
+        this.$set(this.model, this.field.key, undefined);
       }
     },
     methods: {
       clearValue() {
-        this.value[this.field.key] = undefined;
+        this.model[this.field.key] = undefined;
       },
       onChange(e) {
         if (this.field.onChange) {
-          this.field.onChange(e, this.rootModel, this.value);
+          this.field.onChange(e, this.rootModel, this.model);
         }
       },
       removeField() {
-        this.value.splice(this.field.key, 1);
+        this.model.splice(this.field.key, 1);
       }
     },
     inject: {
