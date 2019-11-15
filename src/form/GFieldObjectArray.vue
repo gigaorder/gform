@@ -4,7 +4,7 @@
 			<v-flex :class="[flex, flex !== 'xs12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]" :key="index"
 							style="position: relative;">
 				<g-field-object :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
-												:in-array="true" :rootModel="rootModel" :path="genPath(field.key)">
+												:in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
 					<v-btn slot="action" small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
 						<v-icon>delete</v-icon>
 					</v-btn>
@@ -23,7 +23,7 @@
 
   export default {
     name: 'GFieldObjectArray',
-    props: ['model', 'field', 'rootModel', 'path'],
+    props: ['model', 'field', 'rootModel', 'path', 'noLayout'],
     data: function () {
       return {}
     },

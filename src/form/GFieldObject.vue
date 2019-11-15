@@ -12,7 +12,7 @@
 
 			<VExpandTransition>
 				<v-layout row wrap style="padding-top: 5px;" v-show="!collapse">
-					<g-field :fields="_fields" :model="_model" :rootModel="rootModel" :path="objectPath"/>
+					<g-field :fields="_fields" :model="_model" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
 				</v-layout>
 			</VExpandTransition>
 		</fieldset>
@@ -20,7 +20,7 @@
 
 	<v-flex xs12 v-else-if="noPanel" style="position: relative">
 		<slot name="action"/>
-		<g-field :fields="_fields" :model="_model" :rootModel="rootModel" :path="objectPath"/>
+		<g-field :fields="_fields" :model="_model" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
 	</v-flex>
 </template>
 
@@ -30,7 +30,7 @@
 
   export default {
     name: 'GFieldObject',
-    props: ['model', 'field', 'rootModel', 'path'],
+    props: ['model', 'field', 'rootModel', 'path', 'noLayout'],
     data: () => ({
       collapse: false
     }),

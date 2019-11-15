@@ -2,7 +2,7 @@
 	<v-tabs style="width: 100%" v-if="tabs" :class="{'tab-wrapper': fillHeight}">
 		<v-tab v-for="tab in getTabs()" :key="tab.name">{{tab.name}}</v-tab>
 		<v-tab-item v-for="tab in getTabs()" :key="tab.name" style="padding-top: 20px;">
-			<g-field :fields="tab.fields" :model="model" :path="path"
+			<g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout"
 							 :fill-height="fillHeight" :rootModel="_rootModel"/>
 		</v-tab-item>
 		<slot name="tab-append"></slot>
@@ -11,7 +11,7 @@
 	<v-layout row wrap :fill-height="fillHeight" v-else-if="fields">
 		<g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index"
 						 :path="path"
-						 :field="_field" :model="model" :rootModel="_rootModel"
+						 :field="_field" :model="model" :rootModel="_rootModel" :no-layout="noLayout"
 						 v-show="isVisible(_field)"/>
 		<v-flex xs12>
 			<v-chip v-for="(addField, index) in getAddFields()" v-show="isVisible(addField)" :key="addField.key + index"
@@ -27,7 +27,7 @@
 	<!--todo: object navigate-->
 	<component v-else :is="genComponentName()" v-on="$listeners"
 						 :rootModel="_rootModel" :path="path"
-						 :model="model" :field="field" :in-array="inArray">
+						 :model="model" :field="field" :in-array="inArray" :no-layout="noLayout">
 		<slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
 	</component>
 </template>

@@ -3,7 +3,7 @@
 		<v-flex :class="[flex]" v-for="(val, index) in model[field.key]" :key="index">
 			<g-field-choice @remove-field="model[field.key].splice(index, 1)" :in-array="true"
 											:rootModel="rootModel" :path="genPath(field.key)"
-											:field="createChoiceArrayField(index)" :model="model[field.key]"></g-field-choice>
+											:field="createChoiceArrayField(index)" :model="model[field.key]" :no-layout="noLayout"></g-field-choice>
 		</v-flex>
 		<v-flex class="md12">
 			<v-menu offset-y v-if="!inArray" z-index="1000">
@@ -27,7 +27,7 @@
 
   export default {
     name: 'GFieldChoiceArray',
-    props: ['model', 'field', 'inArray', 'rootModel', 'path'],
+    props: ['model', 'field', 'inArray', 'rootModel', 'path', 'noLayout'],
     data: function () {
       return {}
     },
