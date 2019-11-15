@@ -48,33 +48,31 @@
       return {
         dialog: false,
         model: {
-          deep: {
-            name: 'test',
-            //nr: 3,
-            //addressArray0: {},
-            /*addressArray1: [
-							{ street: 'a1', city: 'b1' },
-							{ street: 'a2', city: 'b2' }
-						],*/
-            //addressArray2: ['a', 'b'],
-            addressArray3: [
-              { street: 'a1', city: 'b1' },
-              { street: 'a2', city: 'b2' }
-            ],
-            /*layout: {
-							layoutType: 'linear',
-							linearName: 'linear1'
-						},*/
-            //choice at root
-            type: 'linear',
-            linearName: 'test',
-            /*optionsChoice: "simple",
-						options: [ "a", "v" ]*/
-            /*layout2: [
-							{ type: 'linear', linearName: 'asdf' },
-							{ type: 'grid', gridName: 'asdf' }
-						]*/
-          }
+          name: 'test',
+          //nr: 3,
+          //addressArray0: {},
+          /*addressArray1: [
+						{ street: 'a1', city: 'b1' },
+						{ street: 'a2', city: 'b2' }
+					],*/
+          //addressArray2: ['a', 'b'],
+          addressArray3: [
+            { street: 'a1', city: 'b1' },
+            { street: 'a2', city: 'b2' }
+          ],
+          /*layout: {
+						layoutType: 'linear',
+						linearName: 'linear1'
+					},*/
+          //choice at root
+          type: 'linear',
+          linearName: 'test',
+          /*optionsChoice: "simple",
+					options: [ "a", "v" ]*/
+          /*layout2: [
+						{ type: 'linear', linearName: 'asdf' },
+						{ type: 'grid', gridName: 'asdf' }
+					]*/
         },
         tabs: {
           Simple: ['addressArray2'],
@@ -87,7 +85,7 @@
         },
         fields: [
           { key: 'name', type: 'input', flex: 'md6', default: 'name' },
-          { key: 'nr', type: 'input@number', flex: 'md6', addable: true},
+          { key: 'nr', type: 'input@number', flex: 'md6', addable: true },
           { key: 'switch', type: 'input', inputType: 'switch', flex: 'md6' },
           {
             key: 'sex', type: 'input', inputType: 'select', flex: 'md6',

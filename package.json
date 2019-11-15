@@ -88,7 +88,7 @@
     "traverse": "^0.6.6",
     "vue": "^2.6.10",
     "vue-columns-resizable": "0.0.1",
-    "vue-fragment": "^1.2.2",
+    "vue-fragment": "^1.5.1",
     "vue-jest": "^3.0.5",
     "vue-loader": "^15.7.1",
     "vue-router": "^3.1.3",
