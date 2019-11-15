@@ -3,7 +3,7 @@
 		<div v-if="choiceExist">
 			<v-flex xs12>
 				<g-field :field="choiceField" :model="choiceModel" @remove-field="removeChoice" :in-array="true"
-				:root-model="rootModel" :path="choicePath">
+				:root-model="rootModel" :path="choicePath" :no-layout="noLayout">
 					<template slot="action">
 						<v-btn small depressed class="remove-btn" @click="removeChoice()">
 							<v-icon>delete</v-icon>
@@ -37,7 +37,7 @@
 
   export default {
     name: 'GFieldChoice',
-    props: ['model', 'field', 'inArray', 'rootModel', 'path'],
+    props: ['model', 'field', 'inArray', 'rootModel', 'path','noLayout'],
     data: function () {
       return {}
     },
