@@ -20,7 +20,7 @@
 
   export default {
     name: 'GFieldSimpleArray',
-    props: ['model', 'field', 'path', 'rootModel'],
+    props: ['model', 'field', 'path', 'rootModel', 'noLayout'],
     data: function () {
       return {}
     },

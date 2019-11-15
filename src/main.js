@@ -24,16 +24,44 @@ let GForm = {
     Vue.component('Fragment', Fragment);
     Vue.component('ExtendPath', ExtendPath);
 
-    Vue.$gform = {mapping: {}}
+    Vue.$gform = {
+      rules: [],
+      resolveField: function (field) {
+        const rules = Vue.$gform.rules;
+        for (const rule of rules) {
+          if (rule.test(field)) {
+            return rule.component;
+          }
+        }
+      }
+    }
+
     Vue.addDynamicFormResolver = function (resolver) {
       Vue.$gform.resolver = resolver;
     }
-    Vue.addField = function (name, component) {
+    Vue.addField = function (match, component) {
       Vue.component(component.name, component);
-      Vue.$gform.mapping[name] = component.name;
+      if (typeof match === 'function') {
+        Vue.$gform.rules.push({
+          test: match,
+          component: component.name
+        })
+      } else {
+        Vue.$gform.rules.push({
+          test: field => field.type.split('@')[0] === match,
+          component: component.name
+        })
+      }
     }
-    Vue.addField('input', GInput);
+
+    Vue.addField(field => field.type.split('@')[0] === 'input', GInput);
+    Vue.addField('choiceArray', GFieldChoiceArray);
+    Vue.addField('choice', GFieldChoice);
+    Vue.addField('object', GFieldObject);
+    Vue.addField('tableArray', GFieldTableArray);
+    Vue.addField(field => field.type === 'array' && field.fields.length === 1, GFieldSimpleArray);
+    Vue.addField(field => field.type === 'array' && field.fields.length > 1, GFieldObjectArray);
   }
 };
 export default GForm;
-export {GForm, GInput, GField}
+export { GForm, GInput, GField }

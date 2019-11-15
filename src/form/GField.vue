@@ -25,7 +25,7 @@
 	</v-layout>
 
 	<!--todo: object navigate-->
-	<component v-else :is="genComponentName()" v-on="$listeners"
+	<component v-else :is="type" v-on="$listeners"
 						 :rootModel="_rootModel" :path="path"
 						 :model="model" :field="field" :in-array="inArray">
 		<slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
@@ -84,44 +84,14 @@
       return { _model, flex, label, getLabel, _rootModel }
     },
     computed: {
-      isChoiceArray() {
-        return !!(this.field && this.field.type === 'choiceArray');
-      },
-      isSimpleArray() {
-        return !!(this.field && this.field.type === 'array' && this.field.fields.length === 1);
-      },
-      isObjectArray() {
-        return !!(this.field && this.field.type === 'array' && this.field.fields);
-      },
-      isChoice() {
-        return !!(this.field && this.field.type === 'choice');
-      },
-      isObject() {
-        return !!(this.field && this.field.type.split('@')[0] === 'object');
-      },
-      isTableArray() {
-        return !!(this.field && this.field.type === 'tableArray');
-      },
-      isTableCellObject() {
-        return false;
-      },
       type() {
-        const _type = Vue.$gform.mapping[this.field.type.split('@')[0]];
+        const _type = Vue.$gform.resolveField(this.field);
         if (!_type) return this.field.type;
         return _type;
       },
     },
     methods: {
       genPath: genPath,
-      genComponentName() {
-        if (this.isSimpleArray) return 'GFieldSimpleArray';
-        if (this.isTableArray) return 'GFieldTableArray';
-        if (this.isChoice) return 'GFieldChoice';
-        if (this.isChoiceArray) return 'GFieldChoiceArray';
-        if (this.isObjectArray) return 'GFieldObjectArray';
-        if (this.isObject) return 'GFieldObject';
-        return this.type;
-      },
       getFormFields() {
         return this.fields.filter(f => {
           if (!f.addable) return true;
