@@ -3,7 +3,6 @@ import GInput from './form/GInput';
 import VueColumnsResizable from 'vue-columns-resizable';
 import GFieldSimpleArray from './form/GFieldSimpleArray';
 import { Fragment } from 'vue-fragment';
-import ExtendPath from './form/ExtendPath';
 import GFieldTableArray from './form/GFieldTableArray';
 import GFieldChoice from './form/GFieldChoice';
 import GFieldChoiceArray from './form/GFieldChoiceArray';
@@ -22,7 +21,6 @@ let GForm = {
     Vue.component('GFieldObjectArray', GFieldObjectArray);
     Vue.component('GFieldObject', GFieldObject);
     Vue.component('Fragment', Fragment);
-    Vue.component('ExtendPath', ExtendPath);
 
     Vue.$gform = {
       rules: [],

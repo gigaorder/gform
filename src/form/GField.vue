@@ -53,12 +53,10 @@
     VExpandTransition
   } from 'vuetify/lib';
   import Vue from 'vue';
-  import ExtendPath from './ExtendPath';
   import { _modelFactory, _rootModelFactory, addObjectItem, flexFactory, genPath, getLabel, labelFactory } from './FormFactory';
 
   export default {
     components: {
-      ExtendPath,
       Fragment, VTabs, VTab, VTabItem, VLayout, VFlex,
       VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
     },
@@ -85,6 +83,7 @@
     },
     computed: {
       type() {
+        if (!this.field.type) return null;
         const _type = Vue.$gform.resolveField(this.field);
         if (!_type) return this.field.type;
         return _type;
