@@ -134,7 +134,8 @@
         }
       },
       removeField() {
-        this.model.splice(this.field.key, 1);
+        //this.model.splice(this.field.key, 1);
+        this.$emit('remove-field');
       }
     },
     inject: {
