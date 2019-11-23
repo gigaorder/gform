@@ -1,53 +1,69 @@
 <template>
-	<v-flex xs12>
-		<div v-if="choiceExist">
-			<v-flex xs12>
-				<g-field :field="choiceField" :model="choiceModel" @remove-field="removeChoice" :in-array="true"
-				:root-model="rootModel" :path="choicePath" :no-layout="noLayout">
-					<template slot="action">
-						<v-btn small depressed class="remove-btn" @click="removeChoice()">
-							<v-icon>delete</v-icon>
-						</v-btn>
-					</template>
-					<template slot="btn-append">
-						<v-btn v-if="!inArray" depressed small color="gray" @click="removeChoice()">
-							<v-icon>delete_outline</v-icon>
-						</v-btn>
-					</template>
-				</g-field>
-			</v-flex>
-		</div>
-		<v-menu offset-y v-if="!choiceExist" z-index="1000">
-			<v-btn slot="activator" color="blue lighten-2" outline small>
-				{{choiceBtnPrepend}} {{getLabel(field)}}
-				<v-icon>arrow_drop_down</v-icon>
-			</v-btn>
-			<v-list>
-				<v-list-tile v-for="(choice, index) in _fields" :key="index" @click="selectChoice(choice)">
-					<v-list-tile-title>{{ getChoiceName(choice) }}</v-list-tile-title>
-				</v-list-tile>
-			</v-list>
-		</v-menu>
-	</v-flex>
+  <g-col xs12>
+    <div v-if="choiceExist">
+      <g-col xs12>
+        <g-field :field="choiceField" :model="choiceModel" @remove-field="removeChoice" :in-array="true"
+                 :root-model="rootModel" :path="choicePath" :no-layout="noLayout">
+          <template slot="action">
+            <g-btn icon depressed class="remove-btn" @click="removeChoice()">
+              <g-icon>delete</g-icon>
+            </g-btn>
+          </template>
+          <template slot="btn-append">
+            <g-btn v-if="!inArray" icon depressed textColor="gray" @click="removeChoice()">
+              <g-icon>delete_outline</g-icon>
+            </g-btn>
+          </template>
+        </g-field>
+      </g-col>
+    </div>
+    <g-menu offset-y v-if="!choiceExist" z-index="1000" v-model="showMenu" :closeOnContentClick="true">
+      <template #activator="{toggleContent}">
+        <g-btn @click="toggleContent" textColor="blue lighten-2" outlined small>
+          {{choiceBtnPrepend.toUpperCase()}} {{getLabel(field).toUpperCase()}}
+          <g-icon>arrow_drop_down</g-icon>
+        </g-btn>
+      </template>
+      <g-list :items="_fields">
+        <template #listItem="{item}">
+          <g-list-item :item="item" @singleItemClick="selectChoice(item)">
+            <g-list-item-content>
+              <g-list-item-text>{{ getChoiceName(item) }}</g-list-item-text>
+            </g-list-item-content>
+          </g-list-item>
+        </template>
+      </g-list>
+    </g-menu>
+  </g-col>
 </template>
 
 <script>
-  import { _fieldsFactory, _modelFactory, flexFactory, genPath, getChoiceName, getLabel, labelFactory } from './FormFactory';
+  import {
+    _fieldsFactory,
+    _modelFactory,
+    flexFactory,
+    genPath,
+    getChoiceName,
+    getLabel,
+    labelFactory
+  } from './FormFactory';
   import _ from 'lodash';
 
   export default {
     name: 'GFieldChoice',
-    props: ['model', 'field', 'inArray', 'rootModel', 'path','noLayout'],
+    props: ['model', 'field', 'inArray', 'rootModel', 'path', 'noLayout'],
     data: function () {
-      return {}
+      return {
+        showMenu: false,
+      }
     },
     setup(props, context) {
       const _model = _modelFactory(props);
-      const flex = flexFactory(props)
+      const flex = flexFactory(props);
       const label = labelFactory(props);
       const _fields = _fieldsFactory(props);
 
-      return { _model, flex, label, _fields }
+      return {_model, flex, label, _fields}
     },
     computed: {
       choiceExist() {
@@ -60,10 +76,10 @@
         if (!this.model[this.field.key]) this.$set(this.model, this.field.key, {});
         return this.model[this.field.key];
       },
-			choicePath() {
+      choicePath() {
         if (this.field.choiceKeyOutside) return this.path;
         return this.genPath(this.field.key)
-			},
+      },
       choiceBtnPrepend() {
         if (this.field.choiceKeyOutside) return 'Choose';
         return 'Add'

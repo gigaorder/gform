@@ -8,10 +8,12 @@ import GFieldChoice from './form/GFieldChoice';
 import GFieldChoiceArray from './form/GFieldChoiceArray';
 import GFieldObjectArray from './form/GFieldObjectArray';
 import GFieldObject from './form/GFieldObject';
+import GigaComponents from "./plugins/giga-components";
 
 let GForm = {
   install(Vue, options) {
     //Vue.yourMethod = (value) => value
+    Vue.use(GigaComponents);
     Vue.use(VueColumnsResizable);
     Vue.component('GField', GField);
     Vue.component('GFieldSimpleArray', GFieldSimpleArray);

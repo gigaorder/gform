@@ -1,24 +1,36 @@
 <template>
-	<v-flex xs12>
-		<v-layout row wrap>
-			<v-flex :class="[flex, flex !== 'xs12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]" :key="index"
-							style="position: relative;">
-				<g-field-object :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
-												:in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
-					<v-btn slot="action" small depressed class="remove-btn" @click="model[field.key].splice(index, 1)">
-						<v-icon>delete</v-icon>
-					</v-btn>
-				</g-field-object>
-			</v-flex>
-		</v-layout>
-		<v-btn color="blue lighten-2" outline small @click="addObjectItem()" v-if="!field.addable">
-			Add {{getLabel(field)}}
-		</v-btn>
-	</v-flex>
+  <g-col xs12>
+    <g-row>
+      <g-col :class="[flex, flex !== 'col-xs-12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]"
+             :key="index"
+             style="position: relative">
+        <g-field-object :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
+                        :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
+          <template #action="{collapse}">
+            <g-btn icon depressed :class="collapse ? 'remove-btn__collapsed' : ''"
+                   class="remove-btn" @click="model[field.key].splice(index, 1)">
+              <g-icon>delete</g-icon>
+            </g-btn>
+          </template>
+        </g-field-object>
+      </g-col>
+    </g-row>
+    <g-btn textColor="blue lighten-2" outlined small @click="addObjectItem()" v-if="!field.addable">
+      ADD {{getLabel(field).toUpperCase()}}
+    </g-btn>
+  </g-col>
 </template>
 
 <script>
-  import { _fieldsFactory, _modelFactory, addObjectItem, flexFactory, genPath, getLabel, labelFactory } from './FormFactory';
+  import {
+    _fieldsFactory,
+    _modelFactory,
+    addObjectItem,
+    flexFactory,
+    genPath,
+    getLabel,
+    labelFactory
+  } from './FormFactory';
   import _ from 'lodash';
 
   export default {
@@ -29,11 +41,11 @@
     },
     setup(props, context) {
       const _model = _modelFactory(props);
-      const flex = flexFactory(props)
+      const flex = flexFactory(props);
       const label = labelFactory(props);
       const _fields = _fieldsFactory(props);
 
-      return { _model, flex, label, _fields }
+      return {_model, flex, label, _fields}
     },
     computed: {},
     methods: {
@@ -41,7 +53,7 @@
       getLabel,
       addObjectItem,
       createObjectArrayField(fields, index) {
-        return { key: index, type: 'object', label: this.label, fields };
+        return {key: index, type: 'object', label: this.label, fields};
       },
     }
   }

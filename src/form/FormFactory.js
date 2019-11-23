@@ -1,4 +1,4 @@
-import { computed } from '@vue/composition-api';
+import {computed} from '@vue/composition-api';
 
 export const _modelFactory = (props) => computed(() => {
   if (typeof props.field.key !== 'undefined') return props.model[props.field.key];
@@ -6,7 +6,7 @@ export const _modelFactory = (props) => computed(() => {
 });
 
 export const flexFactory = (props) => computed(() => {
-  return props.noLayout ? 'xs12' : props.field.flex;
+  return props.noLayout ? 'xs-12' : props.field.flex;
 });
 
 export const _rootModelFactory = (props) => computed(() => {
