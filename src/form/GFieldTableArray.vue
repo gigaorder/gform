@@ -105,6 +105,12 @@
 		height: 40px;
 	}
 
+  .v-datatable.v-table {
+    ::v-deep input.form-control {
+      border: 1px solid #0000002e;;
+    }
+  }
+
 	.v-datatable.v-table tbody td {
 		height: 44px;
 		padding: 0 10px !important;
