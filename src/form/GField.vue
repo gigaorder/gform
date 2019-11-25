@@ -1,64 +1,60 @@
 <template>
-	<v-tabs style="width: 100%" v-if="tabs" :class="{'tab-wrapper': fillHeight}">
-		<v-tab v-for="tab in getTabs()" :key="tab.name">{{tab.name}}</v-tab>
-		<v-tab-item v-for="tab in getTabs()" :key="tab.name" style="padding-top: 20px;">
-			<g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout"
-							 :fill-height="fillHeight" :rootModel="_rootModel"/>
-		</v-tab-item>
-		<slot name="tab-append"></slot>
-	</v-tabs>
+  <g-tabs style="width: 100%" v-if="tabs" :items="tabsData" :class="{'tab-wrapper': fillHeight}" v-model="activeTab">
+    <template #tab="{item}">
+      <g-tab :key="item.name" :item="item">{{item.name}}</g-tab>
+    </template>
+    <template #default>
+      <g-tab-item v-for="tab in tabsData" :key="tab.name" style="padding-top: 20px;" :item="tab">
+        <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
+                 :rootModel="_rootModel"/>
+      </g-tab-item>
+      <slot name="tab-append"></slot>
+    </template>
+  </g-tabs>
 
-	<v-layout row wrap :fill-height="fillHeight" v-else-if="fields">
-		<g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index"
-						 :path="path"
-						 :field="_field" :model="model" :rootModel="_rootModel" :no-layout="noLayout"
-						 v-show="isVisible(_field)"/>
-		<v-flex xs12>
-			<v-chip v-for="(addField, index) in getAddFields()" v-show="isVisible(addField)" :key="addField.key + index"
-							color="#4dd8a7" text-color="white" @click="addNullValue(addField)">
-				<v-avatar>
-					<v-icon>add_circle</v-icon>
-				</v-avatar>
-				{{addField.label || addField.key}}
-			</v-chip>
-		</v-flex>
-	</v-layout>
+  <g-row :fill-height="fillHeight" v-else-if="fields">
+    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index"
+             :path="path"
+             :field="_field" :model="model" :rootModel="_rootModel" :no-layout="noLayout"
+             v-show="isVisible(_field)"/>
+    <g-col xs12>
+      <g-chip v-for="(addField, index) in getAddFields()" v-show="isVisible(addField)" :key="addField.key + index"
+              backgroundColor="#e5efff" textColor="#1080ec" @click="addNullValue(addField)">
+        <g-avatar class="g-avatar__left">
+          <g-icon>add_circle</g-icon>
+        </g-avatar>
+        {{addField.label || addField.key}}
+      </g-chip>
+    </g-col>
+  </g-row>
 
-	<!--todo: object navigate-->
-	<component v-else :is="type" v-on="$listeners"
-						 :rootModel="_rootModel" :path="path"
-						 :model="model" :field="field" :in-array="inArray" :no-layout="noLayout">
-		<slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
-	</component>
+  <!--todo: object navigate-->
+  <component v-else :is="type" v-on="$listeners"
+             :rootModel="_rootModel" :path="path"
+             :model="model" :field="field" :in-array="inArray" :no-layout="noLayout">
+    <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
+  </component>
 </template>
 
 <script>
-  import { Fragment } from 'vue-fragment';
-  import { upperFirst, filter, values, assign, cloneDeep, map } from 'lodash-es';
+  import {Fragment} from 'vue-fragment';
+  import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash-es';
+  import Vue from 'vue';
 
-  const _ = { upperFirst, filter, values, assign, cloneDeep, map };
+  const _ = {upperFirst, filter, values, assign, cloneDeep, map};
 
   import {
-    VTabs,
-    VTab,
-    VTabItem,
-    VLayout,
-    VFlex,
-    VMenu,
-    VBtn,
-    VList,
-    VListTile,
-    VListTileTitle,
-    VIcon,
-    VExpandTransition
-  } from 'vuetify/lib';
-  import Vue from 'vue';
-  import { _modelFactory, _rootModelFactory, addObjectItem, flexFactory, genPath, getLabel, labelFactory } from './FormFactory';
+    _modelFactory,
+    _rootModelFactory,
+    flexFactory,
+    genPath,
+    getLabel,
+    labelFactory
+  } from './FormFactory';
 
   export default {
     components: {
-      Fragment, VTabs, VTab, VTabItem, VLayout, VFlex,
-      VMenu, VBtn, VList, VListTile, VListTileTitle, VIcon
+      Fragment,
     },
     name: 'GField',
     props: {
@@ -73,13 +69,20 @@
       domain: String,
       fillHeight: Boolean,
     },
+    data() {
+      return {
+        tabsData: Array,
+        activeTab: Object,
+      }
+    },
     domain: ':domain',
     setup(props, context) {
       const _model = _modelFactory(props);
-      const flex = flexFactory(props)
+      const flex = flexFactory(props);
       const label = labelFactory(props);
       const _rootModel = _rootModelFactory(props);
-      return { _model, flex, label, getLabel, _rootModel }
+
+      return {_model, flex, label, getLabel, _rootModel}
     },
     computed: {
       type() {
@@ -94,18 +97,14 @@
       getFormFields() {
         return this.fields.filter(f => {
           if (!f.addable) return true;
-          if (typeof this.model[f.key] === 'undefined') return false;
-          return true;
+          return typeof this.model[f.key] !== 'undefined';
         })
       },
       getAddFields() {
         return this.fields.filter(f => {
           if (!f.addable) return false;
           if (typeof this.model[f.key] === 'undefined') return true;
-          if (f.type.includes('array') || f.type.includes('Array')) {
-            return true;
-          }
-          return false;
+          return !!(f.type.includes('array') || f.type.includes('Array'));
         })
       },
       addNullValue(field) {
@@ -120,8 +119,8 @@
       },
       getTabs() {
         const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
-        return _.map(_.assign({}, basic.length > 0 ? { basic } : {}, this.tabs), (tabFields, name) => {
-          return { name, fields: _.filter(this.fields, f => tabFields.includes(f.key)) };
+        return _.map(_.assign({}, basic.length > 0 ? {basic} : {}, this.tabs), (tabFields, name) => {
+          return {name, fields: _.filter(this.fields, f => tabFields.includes(f.key))};
         });
       },
       isVisible(field) {
@@ -141,6 +140,9 @@
       }
     },
     created() {
+      this.tabsData = this.getTabs();
+      this.activeTab = this.tabsData[0];
+
       if (this.fields) {
         this.fields.forEach(this.setProperty);
       } else if (!this.fields && this.field) {

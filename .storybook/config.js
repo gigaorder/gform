@@ -14,7 +14,6 @@ addParameters({
 
 Vue.use(VueRouter);
 Vue.use(VueCompositionAPI);
-import '../src/plugins/vuetify';
 
 import {
   storiesOf, specs, describe, it,

@@ -1,0 +1,4 @@
+[submodule "pos-vue-framework"]
+	path = pos-vue-framework
+	url = git@github.com:gigasource/pos-vue-framework.git
+	branch = master
