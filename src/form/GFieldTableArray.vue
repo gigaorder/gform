@@ -64,7 +64,7 @@
     }),
     setup(props, context) {
       const _model = _modelFactory(props);
-      const flex = flexFactory(props)
+      const flex = flexFactory(props);
       const label = labelFactory(props);
 
       return {_model, flex, label, getLabel}
@@ -98,8 +98,20 @@
 </script>
 
 <style lang="scss" scoped>
-  table.v-table tbody td:not(:nth-child(1)) {
-    padding: 0 10px;
+  table.v-table {
+    border-collapse: collapse;
+
+    tbody td:not(:nth-child(1)) {
+      padding: 0 10px;
+    }
+
+    thead tr:first-child, tbody tr:not(:last-child) {
+      border-bottom: 1px solid rgba(0,0,0,0.12);
+    }
+
+    .form-control {
+      border: 1px solid #ced4da;
+    }
   }
 
   .v-datatable.v-table thead tr {
