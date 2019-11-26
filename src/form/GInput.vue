@@ -13,7 +13,8 @@
                :label="field.tableCell ? '': label" clearable
                @change="onChange"
                :return-object="!!field.returnObject"
-               :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
+               :menu-props="{'z-index': 1000, 'closeOnContentClick': true}"
+               clearIconColor="#d3d3d3">
       <g-icon slot="append" v-if="inArray" @click.stop="removeField">delete_outline</g-icon>
     </component>
   </g-col>
