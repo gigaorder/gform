@@ -132,6 +132,8 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+  .fieldset__collapsed .remove-btn {
+      top: 10px !important;
+  }
 </style>

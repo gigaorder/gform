@@ -162,3 +162,20 @@
     }
   }
 </style>
+
+<style lang="scss" scoped>
+  table {
+    &.v-table {
+      border-radius: 2px;
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    &.theme--light.v-table {
+      background-color: #fff;
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+</style>

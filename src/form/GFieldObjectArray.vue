@@ -1,6 +1,6 @@
 <template>
   <g-col xs12>
-    <g-row>
+    <g-row no-gutters>
       <g-col :class="[flex, flex !== 'col-xs-12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]"
              :key="index"
              style="position: relative">

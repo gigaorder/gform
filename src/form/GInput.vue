@@ -13,8 +13,9 @@
                :label="field.tableCell ? '': label" clearable
                @change="onChange"
                :return-object="!!field.returnObject"
-               :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
-      <g-icon slot="append" v-if="inArray" @click.stop="removeField">delete_outline</g-icon>
+               :menu-props="{'z-index': 1000, 'closeOnContentClick': true}"
+               clearIconColor="#d3d3d3">
+      <g-icon slot="appendInner" v-if="inArray" @click.stop="removeField">delete_outline</g-icon>
     </component>
   </g-col>
   <g-col :class="[flex,paddingClass]"
@@ -31,14 +32,14 @@
         :return-object="!!field.returnObject"
         :menu-props="{'z-index': 1000, 'closeOnContentClick': true}"
     >
-      <g-icon slot="append" v-if="inArray" @click.stop="removeField">delete_outline</g-icon>
+      <g-icon slot="appendInner" v-if="inArray" @click.stop="removeField">delete_outline</g-icon>
     </g-combobox>
   </g-col>
   <input v-else-if="field.tableCell" :type="inputType" v-model="internalValue" class="form-control">
   <g-col :class="[flex,paddingClass]" v-else>
     <g-text-field v-model="internalValue" :label="label" :type="inputType">
-      <g-icon slot="append" v-if="field.addable" style="opacity: 0.4" @click.stop="clearValue()">clear</g-icon>
-      <g-icon slot="append" v-if="inArray" @click.stop="removeField">delete_outline</g-icon>
+      <g-icon slot="appendInner" v-if="field.addable" style="opacity: 0.4" @click.stop="clearValue()">clear</g-icon>
+      <g-icon slot="appendInner" v-if="inArray" @click.stop="removeField">delete_outline</g-icon>
     </g-text-field>
   </g-col>
 </template>
