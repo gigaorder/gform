@@ -1,10 +1,11 @@
 <template>
-  <g-tabs style="width: 100%" v-if="tabs" :items="tabsData" :class="{'tab-wrapper': fillHeight}" v-model="activeTab">
+  <g-tabs slider-color="primary" style="width: 100%" v-if="tabs" :items="tabsData" :class="{'tab-wrapper': fillHeight}"
+          v-model="activeTab">
     <template #tab="{item}">
       <g-tab :key="item.name" :item="item">{{item.name}}</g-tab>
     </template>
     <template #default>
-      <g-tab-item v-for="tab in tabsData" :key="tab.name" style="padding-top: 20px;" :item="tab">
+      <g-tab-item v-for="tab in tabsData" :key="tab.name" style="padding-top: 20px" :item="tab">
         <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
                  :rootModel="_rootModel"/>
       </g-tab-item>
@@ -19,9 +20,9 @@
              v-show="isVisible(_field)"/>
     <g-col xs12>
       <g-chip v-for="(addField, index) in getAddFields()" v-show="isVisible(addField)" :key="addField.key + index"
-              backgroundColor="#e5efff" textColor="#1080ec" @click="addNullValue(addField)">
+              backgroundColor="#e5efff" textColor="primary" @click="addNullValue(addField)">
         <g-avatar class="g-avatar__left">
-          <g-icon>add_circle</g-icon>
+          <g-icon color="primary">add_circle</g-icon>
         </g-avatar>
         {{addField.label || addField.key}}
       </g-chip>
@@ -151,3 +152,8 @@
     },
   };
 </script>
+<style scoped lang="scss">
+  ::v-deep .g-tab-items {
+    overflow: visible;
+  }
+</style>

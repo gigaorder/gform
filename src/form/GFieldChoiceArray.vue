@@ -15,7 +15,7 @@
           </g-btn>
         </template>
         <g-list :items="_fields">
-          <template #listItem="{item}">
+          <template #list-item="{item}">
             <g-list-item :item="item" @singleItemClick="selectChoiceInArray(item)">
               <g-list-item-content>
                 <g-list-item-text>{{ getChoiceName(item) }}</g-list-item-text>

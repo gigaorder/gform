@@ -15,7 +15,7 @@
         </g-field-object>
       </g-col>
     </g-row>
-    <g-btn textColor="blue lighten-2" outlined small @click="addObjectItem()" v-if="!field.addable">
+    <g-btn class="ma-2" textColor="blue lighten-2" outlined small @click="addObjectItem()" v-if="!field.addable">
       ADD {{getLabel(field).toUpperCase()}}
     </g-btn>
   </g-col>
