@@ -3,7 +3,7 @@
     <table class="v-datatable v-table theme--light v-gfield-table"
            v-if="model[field.key] && model[field.key].length > 0">
       <thead>
-      <tr>
+      <tr class="table-header">
         <th v-if="field.expansion" style="width: 15px"></th>
         <th v-for="_field in mainFields">{{getLabel(_field)}}</th>
         <th>X</th>
@@ -29,8 +29,7 @@
               style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
             <td :colspan="field.fields.length + 2" style="height: 0 !important;">
               <GExpandTransition>
-                <g-card v-show="rowDetail === index" flat
-                        style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
+                <g-card v-show="rowDetail === index" flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
                   <g-card-text>
                     <g-field :fields="expansionFields" :model="model[field.key][index]"
                              :root-model="rootModel" :path="genPath(field.key, index)"/>
@@ -41,11 +40,10 @@
           </tr>
         </GExpandTransition>
       </template>
-
       </tbody>
 
     </table>
-    <g-btn textColor="blue lighten-2" outlined small @click="addObjectItem()" v-if="!field.addable">Add
+    <g-btn class="ma-2" textColor="blue lighten-2" outlined small @click="addObjectItem()" v-if="!field.addable">Add
       {{getLabel(field)}}
     </g-btn>
     <slot name="btn-append"></slot>
@@ -176,6 +174,11 @@
     &.theme--light.v-table {
       background-color: #fff;
       color: rgba(0, 0, 0, 0.87);
+    }
+
+    .table-header {
+      color: rgba(0, 0, 0, 0.54);
+      font-size: 0.75rem;
     }
   }
 </style>

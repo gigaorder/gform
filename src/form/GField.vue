@@ -5,7 +5,7 @@
       <g-tab :key="item.name" :item="item">{{item.name}}</g-tab>
     </template>
     <template #default>
-      <g-tab-item v-for="tab in tabsData" :key="tab.name" style="padding-top: 20px" :item="tab">
+      <g-tab-item class="pt-3" v-for="tab in tabsData" :key="tab.name" :item="tab">
         <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
                  :rootModel="_rootModel"/>
       </g-tab-item>

@@ -4,8 +4,8 @@
               style="position: relative">
       <div v-if="collapse" @click="collapse = !collapse" class="fieldset-activator"></div>
       <slot name="action" :collapse="collapse">
-        <g-btn icon depressed class="remove-btn" @click="model[field.key] = undefined">
-          <g-icon>delete</g-icon>
+        <g-btn small icon depressed class="remove-btn" @click="model[field.key] = undefined">
+          <g-icon :size="20">delete</g-icon>
         </g-btn>
       </slot>
       <legend :class="collapse ? 'legend__collapsed' : ''" v-if="label">

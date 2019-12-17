@@ -7,9 +7,9 @@
         <g-field-object :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
                         :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
           <template #action="{collapse}">
-            <g-btn icon depressed :class="collapse ? 'remove-btn__collapsed' : ''"
+            <g-btn small icon depressed :class="collapse ? 'remove-btn__collapsed' : ''"
                    class="remove-btn" @click="model[field.key].splice(index, 1)">
-              <g-icon>delete</g-icon>
+              <g-icon :size="20">delete</g-icon>
             </g-btn>
           </template>
         </g-field-object>

@@ -5,13 +5,13 @@
         <g-field :field="choiceField" :model="choiceModel" @remove-field="removeChoice" :in-array="true"
                  :root-model="rootModel" :path="choicePath" :no-layout="noLayout">
           <template slot="action">
-            <g-btn icon depressed class="remove-btn" @click="removeChoice()">
-              <g-icon>delete</g-icon>
+            <g-btn small icon depressed class="remove-btn" @click="removeChoice()">
+              <g-icon :size="20">delete</g-icon>
             </g-btn>
           </template>
           <template slot="btn-append">
-            <g-btn v-if="!inArray" icon depressed textColor="gray" @click="removeChoice()">
-              <g-icon>delete_outline</g-icon>
+            <g-btn small v-if="!inArray" icon depressed textColor="gray" @click="removeChoice()">
+              <g-icon :size="20">delete_outline</g-icon>
             </g-btn>
           </template>
         </g-field>

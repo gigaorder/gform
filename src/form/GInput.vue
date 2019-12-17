@@ -2,8 +2,8 @@
   <g-col :class="[flex,paddingClass]" v-if="inputType === 'switch'">
     <g-switch :label="field.tableCell ? '': label" v-model="internalValue"/>
   </g-col>
-  <g-col :class="[flex,paddingClass]" v-else-if="inputType === 'checkbox'">
-    <g-checkbox :label="field.tableCell ? '': label" v-model="internalValue"/>
+  <g-col :class="[flex,paddingClass]" class="row-flex align-items-center" v-else-if="inputType === 'checkbox'">
+    <g-checkbox color="primary" :label="field.tableCell ? '': label" v-model="internalValue"/>
   </g-col>
   <g-col :class="[flex,paddingClass]" v-else-if="inputType === 'select' || inputType === 'select:number'">
     <component :is="field.notOnlyValueInOptions ? 'g-combobox': 'g-autocomplete'" v-model="internalValue"
