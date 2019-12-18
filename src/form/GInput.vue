@@ -148,4 +148,42 @@
   @import "~bootstrap/scss/variables";
   @import "~bootstrap/scss/mixins";
   @import "~bootstrap/scss/forms";
+
+  table.gfield-table tr:not(.g-expansion) {
+    .g-combobox, .g-autocomplete {
+      .g-tf-wrapper {
+        height: 38px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        background-color: white;
+      }
+
+      .g-tf-input {
+        font-size: 0.9rem;
+        padding-left: 10px;
+      }
+
+      .g-tf {
+        .inputGroup {
+          min-width: 80px;
+        }
+
+        &::before {
+          display: none;
+        }
+      }
+
+      fieldset {
+        border: none;
+      }
+
+      .g-tf-append__inner {
+        padding-left: 0;
+
+        i:first-child {
+          display: none !important;
+        }
+      }
+    }
+  }
 </style>

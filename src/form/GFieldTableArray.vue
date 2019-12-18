@@ -1,6 +1,6 @@
 <template>
   <g-col xs12>
-    <table class="v-datatable v-table theme--light v-gfield-table"
+    <table class="g-datatable g-table theme--light gfield-table"
            v-if="model[field.key] && model[field.key].length > 0">
       <thead>
       <tr class="table-header">
@@ -29,7 +29,8 @@
               style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
             <td :colspan="field.fields.length + 2" style="height: 0 !important;">
               <GExpandTransition>
-                <g-card v-show="rowDetail === index" flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
+                <g-card v-show="rowDetail === index" flat
+                        style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
                   <g-card-text>
                     <g-field :fields="expansionFields" :model="model[field.key][index]"
                              :root-model="rootModel" :path="genPath(field.key, index)"/>
@@ -96,7 +97,13 @@
 </script>
 
 <style lang="scss" scoped>
-  table.v-table {
+  table.g-table ::v-deep {
+    .g-tf-wrapper {
+      margin: 8px 0;
+    }
+  }
+
+  table.g-table {
     border-collapse: collapse;
 
     tbody td:not(:nth-child(1)) {
@@ -104,7 +111,7 @@
     }
 
     thead tr:first-child, tbody tr:not(:last-child) {
-      border-bottom: 1px solid rgba(0,0,0,0.12);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
 
     .form-control {
@@ -112,12 +119,12 @@
     }
   }
 
-  .v-datatable.v-table thead tr {
-    height: 40px;
+  .g-datatable.g-table thead tr {
+    height: 40px !important;
   }
 
-  .v-datatable.v-table tbody td {
-    height: 44px;
+  .g-datatable.g-table tbody td {
+    height: 44px !important;
     padding: 0 10px !important;
 
     .v-text-field .v-input__append-inner {
@@ -125,11 +132,11 @@
     }
   }
 
-  .v-datatable.v-table th {
+  .g-datatable.g-table th {
     padding: 0 18px;
   }
 
-  .theme--light.v-table {
+  .theme--light.g-table {
     //background-color: transparent;
   }
 
@@ -139,6 +146,26 @@
 
     .remove-btn {
       right: 7px;
+    }
+  }
+
+  table {
+    &.g-table {
+      border-radius: 2px;
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    &.theme--light.g-table {
+      background-color: #fff;
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    .table-header {
+      color: rgba(0, 0, 0, 0.54);
+      font-size: 0.75rem;
     }
   }
 </style>
@@ -157,28 +184,6 @@
 
     &, .v-window__container, .v-window-item {
       height: 100%
-    }
-  }
-</style>
-
-<style lang="scss" scoped>
-  table {
-    &.v-table {
-      border-radius: 2px;
-      border-collapse: collapse;
-      border-spacing: 0;
-      width: 100%;
-      max-width: 100%;
-    }
-
-    &.theme--light.v-table {
-      background-color: #fff;
-      color: rgba(0, 0, 0, 0.87);
-    }
-
-    .table-header {
-      color: rgba(0, 0, 0, 0.54);
-      font-size: 0.75rem;
     }
   }
 </style>
