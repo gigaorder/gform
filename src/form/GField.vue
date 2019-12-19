@@ -13,7 +13,7 @@
     </template>
   </g-tabs>
 
-  <g-row no-gutters :fill-height="fillHeight" v-else-if="fields">
+  <g-row no-gutters :class="fillHeight ? 'fill-height' : ''" v-else-if="fields">
     <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index"
              :path="path"
              :field="_field" :model="model" :rootModel="_rootModel" :no-layout="noLayout"
