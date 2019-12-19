@@ -13,8 +13,7 @@
                :label="field.tableCell ? '': label" clearable
                @change="onChange"
                :return-object="!!field.returnObject"
-               :menu-props="{'z-index': 1000, 'closeOnContentClick': true}"
-               clearIconColor="#d3d3d3">
+               :menu-props="{'z-index': 1000, 'closeOnContentClick': true}">
       <g-icon slot="append-inner" v-if="inArray" @click.stop="removeField">delete_outline</g-icon>
     </component>
   </g-col>
@@ -150,7 +149,7 @@
   @import "~bootstrap/scss/forms";
 
   table.gfield-table tr:not(.g-expansion) {
-    .g-combobox, .g-autocomplete {
+    .g-combobox, .g-autocomplete, .g-date-picker {
       .g-tf-wrapper {
         height: 38px;
         border-radius: 4px;
@@ -180,7 +179,7 @@
       .g-tf-append__inner {
         padding-left: 0;
 
-        i:first-child {
+        .g-icon__clear {
           display: none !important;
         }
       }
