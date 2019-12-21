@@ -126,7 +126,7 @@
   }
 
   ::v-deep .action-container {
-    position: absolute;
+    position: absolute !important;
     right: 0;
     top: -6px;
     margin: 0;

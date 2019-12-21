@@ -150,7 +150,7 @@
       },
       getChoiceName,
       saveCollapseState(key, collapse) {
-        if (!key) return
+        if (!key || !this.collapseStates) return
 
         this.collapseStates[key] = collapse
         this.$emit('saveLocalStorage');
