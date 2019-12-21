@@ -31,7 +31,7 @@
 
   <!--todo: object navigate-->
   <component v-else :is="type" v-on="$listeners"
-             :rootModel="_rootModel" :path="path"
+             :rootModel="_rootModel" :path="path" :collapse-states="collapseStates"
              :model="model" :field="field" :in-array="inArray" :no-layout="noLayout">
     <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
   </component>
@@ -69,6 +69,7 @@
       noLayout: Boolean,
       domain: String,
       fillHeight: Boolean,
+      collapseStates: Object,
     },
     data() {
       return {

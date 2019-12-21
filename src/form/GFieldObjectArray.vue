@@ -7,10 +7,11 @@
         <g-field-object :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
                         :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
           <template #action="{collapse}">
-            <g-btn small icon depressed :class="collapse ? 'remove-btn__collapsed' : ''"
-                   class="remove-btn" @click="model[field.key].splice(index, 1)">
-              <g-icon :size="20">delete</g-icon>
-            </g-btn>
+            <g-card background-color="white" class="action-container" :elevation="0">
+              <g-btn xSmall icon @click="model[field.key].splice(index, 1)">
+                <g-icon small>delete</g-icon>
+              </g-btn>
+            </g-card>
           </template>
         </g-field-object>
       </g-col>

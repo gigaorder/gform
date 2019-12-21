@@ -3,13 +3,28 @@
     <div v-if="choiceExist">
       <g-col xs12>
         <g-field :field="choiceField" :model="choiceModel" @remove-field="removeChoice" :in-array="true"
-                 :root-model="rootModel" :path="choicePath" :no-layout="noLayout">
-          <template slot="action">
-            <g-btn small icon depressed class="remove-btn" @click="removeChoice()">
-              <g-icon :size="20">delete</g-icon>
-            </g-btn>
+                 :root-model="rootModel" :path="choicePath" :no-layout="noLayout"
+                 :collapse-states="collapseStates" @toggle-collapse="saveCollapseState">
+          <template #action>
+            <g-card background-color="white" class="action-container" :elevation="0">
+              <g-btn xSmall icon @click="pushItemUp(field.key)">
+                <g-icon small>
+                  keyboard_arrow_up
+                </g-icon>
+              </g-btn>
+              <g-btn xSmall icon @click="pushItemDown(field.key)">
+                <g-icon small>
+                  keyboard_arrow_down
+                </g-icon>
+              </g-btn>
+              <g-btn xSmall icon @click="removeChoice()">
+                <g-icon small>
+                  delete
+                </g-icon>
+              </g-btn>
+            </g-card>
           </template>
-          <template slot="btn-append">
+          <template #btn-append>
             <g-btn small v-if="!inArray" icon depressed textColor="gray" @click="removeChoice()">
               <g-icon :size="20">delete_outline</g-icon>
             </g-btn>
@@ -52,6 +67,12 @@
   export default {
     name: 'GFieldChoice',
     props: ['model', 'field', 'inArray', 'rootModel', 'path', 'noLayout'],
+    initLocalStoragePath() {
+      return `${this.rootModel._id}/${this.field.key}/GFieldChoice/collapseStates`;
+    },
+    injectLocalStorage: {
+      collapseStates: {default: {}},
+    },
     data: function () {
       return {
         showMenu: false,
@@ -128,12 +149,34 @@
         this.$set(this.choiceModel, this.choiceKey, this.getChoiceName(choice));
       },
       getChoiceName,
+      saveCollapseState(key, collapse) {
+        if (!key) return
+
+        this.collapseStates[key] = collapse
+        this.$emit('saveLocalStorage');
+      },
+      pushItemDown(index) {
+        index = parseInt(index)
+        const itemsLength = this.model && this.model.length
+        if (!itemsLength || isNaN(index) || index === itemsLength - 1) return
+
+        const newModel = _.clone(this.model)
+        const temp = newModel[index]
+        newModel[index] = newModel[index + 1]
+        newModel[index + 1] = temp
+        this.$emit('update:model', newModel)
+      },
+      pushItemUp(index) {
+        index = parseInt(index)
+        const itemsLength = this.model && this.model.length
+        if (!itemsLength || isNaN(index) || index === 0) return
+
+        const newModel = _.clone(this.model)
+        const temp = newModel[index]
+        newModel[index] = newModel[index - 1]
+        newModel[index - 1] = temp
+        this.$emit('update:model', newModel)
+      }
     }
   }
 </script>
-
-<style lang="scss">
-  .fieldset__collapsed .remove-btn {
-    top: 10px !important;
-  }
-</style>

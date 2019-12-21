@@ -3,8 +3,8 @@
     <g-col :class="[flex]" v-for="(val, index) in model[field.key]" :key="index">
       <g-field-choice @remove-field="model[field.key].splice(index, 1)" :in-array="true"
                       :rootModel="rootModel" :path="genPath(field.key)"
-                      :field="createChoiceArrayField(index)" :model="model[field.key]"
-                      :no-layout="noLayout"></g-field-choice>
+                      :field="createChoiceArrayField(index)" :model.sync="model[field.key]"
+                      :no-layout="noLayout"/>
     </g-col>
     <g-col md12>
       <g-menu offset-y v-if="!inArray" z-index="1000" v-model="showMenu" :closeOnContentClick="true">
