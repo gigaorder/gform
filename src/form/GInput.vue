@@ -151,7 +151,7 @@
   table.gfield-table tr:not(.g-expansion) {
     .g-combobox, .g-autocomplete, .g-date-picker {
       .g-tf-wrapper {
-        height: 38px;
+        min-height: 38px;
         border-radius: 4px;
         border: 1px solid #ced4da;
         background-color: white;
