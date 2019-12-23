@@ -1,11 +1,11 @@
 <template>
-  <g-tabs slider-color="primary" style="width: 100%" v-if="tabs" :items="tabsData" :class="{'tab-wrapper': fillHeight}"
+  <g-tabs slider-color="primary" style="width: 100%" v-if="tabs" :items="Object.keys(getTabs())" :class="{'tab-wrapper': fillHeight}"
           v-model="activeTab">
-    <template #tab="{item}">
-      <g-tab :key="item.name" :item="item">{{item.name}}</g-tab>
+    <template #tabs>
+      <g-tab v-for="(tab, index) in getTabs()" :item="`${index}`" :key="tab.name">{{tab.name}}</g-tab>
     </template>
     <template #default>
-      <g-tab-item class="pt-3" v-for="tab in tabsData" :key="tab.name" :item="tab">
+      <g-tab-item class="pt-3" v-for="(tab, index) in getTabs()" :key="tab.name" :item="`${index}`">
         <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
                  :rootModel="_rootModel"/>
       </g-tab-item>
@@ -73,8 +73,7 @@
     },
     data() {
       return {
-        tabsData: Array,
-        activeTab: Object,
+        activeTab: '0',
       }
     },
     domain: ':domain',
@@ -142,9 +141,6 @@
       }
     },
     created() {
-      this.tabsData = this.getTabs();
-      this.activeTab = this.tabsData[0];
-
       if (this.fields) {
         this.fields.forEach(this.setProperty);
       } else if (!this.fields && this.field) {
