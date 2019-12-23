@@ -14,7 +14,7 @@
   </g-tabs>
 
   <g-row no-gutters :class="fillHeight ? 'fill-height' : ''" v-else-if="fields">
-    <g-field v-for="(_field, index) in getFormFields()" :key="_field.key + index"
+    <g-field v-for="(_field, index) in getFormFields()" :key="'field_' + _field.key + '_' + index"
              :path="path"
              :field="_field" :model="model" :rootModel="_rootModel" :no-layout="noLayout"
              v-show="isVisible(_field)"/>
@@ -38,11 +38,11 @@
 </template>
 
 <script>
-  import {Fragment} from 'vue-fragment';
-  import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash-es';
+  import { Fragment } from 'vue-fragment';
+  import { upperFirst, filter, values, assign, cloneDeep, map } from 'lodash-es';
   import Vue from 'vue';
 
-  const _ = {upperFirst, filter, values, assign, cloneDeep, map};
+  const _ = { upperFirst, filter, values, assign, cloneDeep, map };
 
   import {
     _modelFactory,
@@ -84,7 +84,7 @@
       const label = labelFactory(props);
       const _rootModel = _rootModelFactory(props);
 
-      return {_model, flex, label, getLabel, _rootModel}
+      return { _model, flex, label, getLabel, _rootModel }
     },
     computed: {
       type() {
@@ -121,8 +121,8 @@
       },
       getTabs() {
         const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
-        return _.map(_.assign({}, basic.length > 0 ? {basic} : {}, this.tabs), (tabFields, name) => {
-          return {name, fields: _.filter(this.fields, f => tabFields.includes(f.key))};
+        return _.map(_.assign({}, basic.length > 0 ? { basic } : {}, this.tabs), (tabFields, name) => {
+          return { name, fields: _.filter(this.fields, f => tabFields.includes(f.key)) };
         });
       },
       isVisible(field) {
