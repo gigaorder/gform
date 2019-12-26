@@ -1,9 +1,17 @@
 <template>
   <g-col :class="[flex,paddingClass]" v-if="inputType === 'switch'">
-    <g-switch :label="field.tableCell ? '': label" v-model="internalValue"/>
+    <g-switch :label="field.tableCell ? '': label" v-model="internalValue">
+      <template #label v-if="inArray">
+        {{field.tableCell ? '': label}} (<g-icon slot="append-inner"  @click.stop="removeField">clear</g-icon>)
+      </template>
+    </g-switch>
   </g-col>
   <g-col :class="[flex,paddingClass]" class="row-flex align-items-center" v-else-if="inputType === 'checkbox'">
-    <g-checkbox color="primary" :label="field.tableCell ? '': label" v-model="internalValue"/>
+    <g-checkbox color="primary" :label="field.tableCell ? '': label" v-model="internalValue">
+      <template #label v-if="inArray">
+        {{field.tableCell ? '': label}} (<g-icon slot="append-inner"  @click.stop="removeField">clear</g-icon>)
+      </template>
+    </g-checkbox>
   </g-col>
   <g-col :class="[flex,paddingClass]" v-else-if="inputType === 'select' || inputType === 'select:number'">
     <component :is="field.notOnlyValueInOptions ? 'g-combobox': 'g-autocomplete'" v-model="internalValue"
