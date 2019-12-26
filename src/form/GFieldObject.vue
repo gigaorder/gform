@@ -46,7 +46,13 @@
 
   export default {
     name: 'GFieldObject',
-    props: ['model', 'field', 'rootModel', 'path', 'noLayout', 'collapseStates'],
+    props: ['model', 'field', 'rootModel', 'path', 'noLayout'],
+    initLocalStoragePath() {
+      return `${this.rootModel._id}/${this.field.key ? this.field.key : 'no-key'}/${this.path}/GFieldObject/collapseState`;
+    },
+    injectLocalStorage: {
+      collapseHistory: {default: false},
+    },
     data: () => ({
       collapse: false,
       showAction: false,
@@ -60,8 +66,7 @@
       return {_model, flex, label, _fields}
     },
     created() {
-      const key = `${this.model._id}/${this.path}`
-      if (this.collapseStates && this.collapseStates[key]) this.collapse = true
+      this.collapse = this.collapseHistory
     },
     computed: {
       noPanel() {
@@ -75,7 +80,8 @@
       getLabel,
       toggleCollapse() {
         this.collapse = !this.collapse
-        this.$emit('toggle-collapse', `${this.model._id}/${this.path}`, this.collapse)
+        this.collapseHistory = this.collapse
+        this.$emit('saveLocalStorage')
       }
     },
   }

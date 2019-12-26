@@ -1,11 +1,12 @@
 <template>
-  <g-tabs slider-color="primary" style="width: 100%" v-if="tabs" :items="tabsData" :class="{'tab-wrapper': fillHeight}"
+  <g-tabs slider-color="primary" style="width: 100%" v-if="tabs" :items="Object.keys(getTabs())"
+          :class="{'tab-wrapper': fillHeight}"
           v-model="activeTab">
-    <template #tab="{item}">
-      <g-tab :key="item.name" :item="item">{{item.name}}</g-tab>
+    <template #tabs>
+      <g-tab v-for="(tab, index) in getTabs()" :item="`${index}`" :key="tab.name">{{tab.name}}</g-tab>
     </template>
     <template #default>
-      <g-tab-item class="pt-3" v-for="tab in tabsData" :key="tab.name" :item="tab">
+      <g-tab-item class="pt-3" v-for="(tab, index) in getTabs()" :key="tab.name" :item="`${index}`">
         <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
                  :rootModel="_rootModel"/>
       </g-tab-item>
@@ -31,18 +32,18 @@
 
   <!--todo: object navigate-->
   <component v-else :is="type" v-on="$listeners"
-             :rootModel="_rootModel" :path="path" :collapse-states="collapseStates"
+             :rootModel="_rootModel" :path="path"
              :model="model" :field="field" :in-array="inArray" :no-layout="noLayout">
     <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
   </component>
 </template>
 
 <script>
-  import { Fragment } from 'vue-fragment';
-  import { upperFirst, filter, values, assign, cloneDeep, map } from 'lodash-es';
+  import {Fragment} from 'vue-fragment';
+  import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash-es';
   import Vue from 'vue';
 
-  const _ = { upperFirst, filter, values, assign, cloneDeep, map };
+  const _ = {upperFirst, filter, values, assign, cloneDeep, map};
 
   import {
     _modelFactory,
@@ -73,8 +74,7 @@
     },
     data() {
       return {
-        tabsData: Array,
-        activeTab: Object,
+        activeTab: '0',
       }
     },
     domain: ':domain',
@@ -84,7 +84,7 @@
       const label = labelFactory(props);
       const _rootModel = _rootModelFactory(props);
 
-      return { _model, flex, label, getLabel, _rootModel }
+      return {_model, flex, label, getLabel, _rootModel}
     },
     computed: {
       type() {
@@ -121,8 +121,8 @@
       },
       getTabs() {
         const basic = _.filter(this.fields, f => ![].concat(..._.values(this.tabs)).includes(f.key)).map(f => f.key);
-        return _.map(_.assign({}, basic.length > 0 ? { basic } : {}, this.tabs), (tabFields, name) => {
-          return { name, fields: _.filter(this.fields, f => tabFields.includes(f.key)) };
+        return _.map(_.assign({}, basic.length > 0 ? {basic} : {}, this.tabs), (tabFields, name) => {
+          return {name, fields: _.filter(this.fields, f => tabFields.includes(f.key))};
         });
       },
       isVisible(field) {
@@ -142,9 +142,6 @@
       }
     },
     created() {
-      this.tabsData = this.getTabs();
-      this.activeTab = this.tabsData[0];
-
       if (this.fields) {
         this.fields.forEach(this.setProperty);
       } else if (!this.fields && this.field) {

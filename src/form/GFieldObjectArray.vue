@@ -8,6 +8,16 @@
                         :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
           <template #action="{collapse}">
             <g-card background-color="white" class="action-container" :elevation="0">
+              <g-btn xSmall icon @click="pushItemUp(index)">
+                <g-icon small>
+                  keyboard_arrow_up
+                </g-icon>
+              </g-btn>
+              <g-btn xSmall icon @click="pushItemDown(index)">
+                <g-icon small>
+                  keyboard_arrow_down
+                </g-icon>
+              </g-btn>
               <g-btn xSmall icon @click="model[field.key].splice(index, 1)">
                 <g-icon small>delete</g-icon>
               </g-btn>
@@ -56,6 +66,32 @@
       createObjectArrayField(fields, index) {
         return {key: index, type: 'object', label: this.label, fields};
       },
+      pushItemDown(index) {
+        const model = this.model[this.field.key]
+        index = parseInt(index)
+        const itemsLength = model && model.length
+        if (!itemsLength || isNaN(index) || index === itemsLength - 1) return
+
+        const newModel = _.clone(model)
+        const temp = newModel[index]
+        newModel[index] = newModel[index + 1]
+        newModel[index + 1] = temp
+
+        model.splice(0, model.length, ...newModel)
+      },
+      pushItemUp(index) {
+        const model = this.model[this.field.key]
+        index = parseInt(index)
+        const itemsLength = model && model.length
+        if (!itemsLength || isNaN(index) || index === 0) return
+
+        const newModel = _.clone(model)
+        const temp = newModel[index]
+        newModel[index] = newModel[index - 1]
+        newModel[index - 1] = temp
+
+        model.splice(0, model.length, ...newModel)
+      }
     }
   }
 </script>

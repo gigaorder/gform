@@ -3,8 +3,7 @@
     <div v-if="choiceExist">
       <g-col xs12>
         <g-field :field="choiceField" :model="choiceModel" @remove-field="removeChoice" :in-array="true"
-                 :root-model="rootModel" :path="choicePath" :no-layout="noLayout"
-                 :collapse-states="collapseStates" @toggle-collapse="saveCollapseState">
+                 :root-model="rootModel" :path="choicePath" :no-layout="noLayout">
           <template #action>
             <g-card background-color="white" class="action-container" :elevation="0">
               <g-btn xSmall icon @click="pushItemUp(field.key)">
@@ -67,12 +66,6 @@
   export default {
     name: 'GFieldChoice',
     props: ['model', 'field', 'inArray', 'rootModel', 'path', 'noLayout'],
-    initLocalStoragePath() {
-      return `${this.rootModel._id}/${this.field.key}/GFieldChoice/collapseStates`;
-    },
-    injectLocalStorage: {
-      collapseStates: {default: {}},
-    },
     data: function () {
       return {
         showMenu: false,
@@ -149,12 +142,6 @@
         this.$set(this.choiceModel, this.choiceKey, this.getChoiceName(choice));
       },
       getChoiceName,
-      saveCollapseState(key, collapse) {
-        if (!key || !this.collapseStates) return
-
-        this.collapseStates[key] = collapse
-        this.$emit('saveLocalStorage');
-      },
       pushItemDown(index) {
         index = parseInt(index)
         const itemsLength = this.model && this.model.length
