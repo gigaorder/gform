@@ -25,7 +25,8 @@
           </td>
         </tr>
         <GExpandTransition>
-          <tr v-if="field.expansion" v-show="rowDetail === index" class="g-expansion"
+          <tr v-if="field.expansion && (!field.lazy || rowDetail === index || expansionInitialized[index])"
+              v-show="rowDetail === index" class="g-expansion"
               style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
             <td :colspan="field.fields.length + 2" style="height: 0 !important;">
               <GExpandTransition>
@@ -59,7 +60,8 @@
     name: 'GFieldTableArray',
     props: ['model', 'field', 'rootModel', 'path'],
     data: () => ({
-      rowDetail: null
+      rowDetail: null,
+      expansionInitialized: [],
     }),
     setup(props, context) {
       const _model = _modelFactory(props);
@@ -87,6 +89,7 @@
           this.rowDetail = null;
         } else {
           this.rowDetail = index;
+          this.expansionInitialized[index] = true
         }
       },
       makeTableCell(field) {
