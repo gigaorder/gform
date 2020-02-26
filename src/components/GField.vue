@@ -23,7 +23,7 @@
   import ObjectArrayHandler from './ObjectArrayHandler';
   import { _fields, genField, getChoiceName, getLabel, getValueFromPathFactory, makeAddable } from './utils';
   import ChoiceHandler from './ChoiceHandler';
-  import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash-es';
+  import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash';
   import ChoiceArrayHandler from './ChoiceArrayHandler';
   import TableArrayHandler from './TableArrayHandler';
   import ObjectHandler from './ObjectHandler';

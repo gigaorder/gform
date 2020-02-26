@@ -1,5 +1,5 @@
 import { genField, getLabel, getValueFromPathFactory } from './utils';
-import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash-es';
+import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash';
 import Vue from 'vue';
 import { reactive, set as vSet, ref } from '@vue/composition-api';
 

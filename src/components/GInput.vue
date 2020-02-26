@@ -45,7 +45,7 @@
 <script>
   //not required but this baseField has a lot of useful stuff already in it, check it out
   import { Fragment } from 'vue-fragment';
-  import { upperFirst, get } from 'lodash-es';
+  import { upperFirst, get } from 'lodash';
   import { VFlex, VSwitch, VSelect, VTextField, VIcon } from 'vuetify/lib';
   import dayjs from 'dayjs'
 

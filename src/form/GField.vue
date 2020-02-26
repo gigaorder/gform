@@ -40,7 +40,7 @@
 
 <script>
   import {Fragment} from 'vue-fragment';
-  import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash-es';
+  import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash';
   import Vue from 'vue';
 
   const _ = {upperFirst, filter, values, assign, cloneDeep, map};

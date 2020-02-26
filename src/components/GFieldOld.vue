@@ -188,7 +188,7 @@
 
 <script>
   import { Fragment } from 'vue-fragment';
-  import { upperFirst, filter, values, assign, cloneDeep, map } from 'lodash-es';
+  import { upperFirst, filter, values, assign, cloneDeep, map } from 'lodash';
 
   const _ = { upperFirst, filter, values, assign, cloneDeep, map };
 

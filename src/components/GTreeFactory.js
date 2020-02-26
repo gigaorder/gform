@@ -1,6 +1,6 @@
 import { reactive, set, computed } from '@vue/composition-api'
 import traverse from 'traverse'
-import { upperFirst, filter, values, assign, cloneDeep, map, get, set as lodashSet } from 'lodash-es';
+import { upperFirst, filter, values, assign, cloneDeep, map, get, set as lodashSet } from 'lodash';
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set: lodashSet };
 
