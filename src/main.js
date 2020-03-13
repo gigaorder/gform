@@ -8,12 +8,10 @@ import GFieldChoice from './form/GFieldChoice';
 import GFieldChoiceArray from './form/GFieldChoiceArray';
 import GFieldObjectArray from './form/GFieldObjectArray';
 import GFieldObject from './form/GFieldObject';
-import GigaComponents from "./plugins/giga-components";
 
 let GForm = {
   install(Vue, options) {
     //Vue.yourMethod = (value) => value
-    Vue.use(GigaComponents);
     Vue.use(VueColumnsResizable);
     Vue.component('GField', GField);
     Vue.component('GFieldSimpleArray', GFieldSimpleArray);
@@ -33,11 +31,15 @@ let GForm = {
             return rule.component;
           }
         }
-      }
-    }
+      },
+      preprocess: {}
+    };
 
     Vue.addDynamicFormResolver = function (resolver) {
       Vue.$gform.resolver = resolver;
+    }
+    Vue.addPreprocess = function (key, process) {
+      Vue.$gform.preprocess[key] = process;
     }
     Vue.addField = function (match, component) {
       Vue.component(component.name, component);

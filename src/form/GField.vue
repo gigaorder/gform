@@ -14,6 +14,8 @@
     </template>
   </g-tabs>
 
+  <g-field :path="path" v-else-if="metadata" :fields="resolveMetadata()" :model="model" :no-layout="noLayout"/>
+
   <g-row no-gutters :class="fillHeight ? 'fill-height' : ''" v-else-if="fields">
     <g-field v-for="(_field, index) in getFormFields()" :key="'field_' + _field.key + '_' + index"
              :path="path"
@@ -33,7 +35,7 @@
   <!--todo: object navigate-->
   <component v-else :is="type" v-on="$listeners"
              :rootModel="_rootModel" :path="path"
-             :model="model" :field="field" :in-array="inArray" :no-layout="noLayout">
+             :model="model" :field="field" :in-array="inArray" :no-layout="noLayout" :fields="fields">
     <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
   </component>
 </template>
@@ -63,6 +65,7 @@
       model: null,
       rootModel: null,
       path: String,
+      metadata: null,
       fields: Array,
       field: Object,
       tabs: null,
@@ -71,6 +74,7 @@
       domain: String,
       fillHeight: Boolean,
       collapseStates: Object,
+      preprocess: Array | String
     },
     data() {
       return {
@@ -83,7 +87,6 @@
       const flex = flexFactory(props);
       const label = labelFactory(props);
       const _rootModel = _rootModelFactory(props);
-
       return {_model, flex, label, getLabel, _rootModel}
     },
     computed: {
@@ -139,6 +142,20 @@
             this.$set(this.model, field.key);
           }
         }
+      },
+      resolveMetadata() {
+        const preprocess = this.preprocess;
+        let result = this.fields;
+        if (preprocess) {
+          if (Array.isArray(preprocess)) {
+            preprocess.forEach(process => {
+              result = Vue.$gform.preprocess[process](this.metadata, result);
+            });
+          } else {
+            result = Vue.$gform.preprocess[preprocess](this.metadata, result);
+          }
+        }
+        return result;
       }
     },
     created() {
