@@ -1,5 +1,7 @@
 <template>
-  <g-tabs slider-color="primary" style="width: 100%" v-if="tabs" :items="Object.keys(getTabs())"
+  <g-field :path="path" v-if="metadata" :fields="resolveMetadata()" :model="model" :no-layout="noLayout"/>
+
+  <g-tabs slider-color="primary" style="width: 100%" v-else-if="tabs" :items="Object.keys(getTabs())"
           :class="{'tab-wrapper': fillHeight}"
           v-model="activeTab">
     <template #tabs>
@@ -13,8 +15,6 @@
       <slot name="tab-append"></slot>
     </template>
   </g-tabs>
-
-  <g-field :path="path" v-else-if="metadata" :fields="resolveMetadata()" :model="model" :no-layout="noLayout"/>
 
   <g-row no-gutters :class="fillHeight ? 'fill-height' : ''" v-else-if="fields">
     <g-field v-for="(_field, index) in getFormFields()" :key="'field_' + _field.key + '_' + index"
@@ -74,7 +74,7 @@
       domain: String,
       fillHeight: Boolean,
       collapseStates: Object,
-      preprocess: Array | String
+      preprocess: [Boolean, String]
     },
     data() {
       return {
@@ -147,13 +147,7 @@
         const preprocess = this.preprocess;
         let result = this.fields;
         if (preprocess) {
-          if (Array.isArray(preprocess)) {
-            preprocess.forEach(process => {
-              result = Vue.$gform.preprocess[process](this.metadata, result);
-            });
-          } else {
-            result = Vue.$gform.preprocess[preprocess](this.metadata, result);
-          }
+          result = Vue.$gform.preprocess[typeof preprocess === 'string' ? preprocess : 'normalize'](this.metadata, result);
         }
         return result;
       }
