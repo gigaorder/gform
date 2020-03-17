@@ -1,5 +1,7 @@
 <template>
-  <g-tabs slider-color="primary" style="width: 100%" v-if="tabs" :items="Object.keys(getTabs())"
+  <g-field :path="path" v-if="metadata" :fields="resolveMetadata()" :model="model" :no-layout="noLayout"/>
+
+  <g-tabs slider-color="primary" style="width: 100%" v-else-if="tabs" :items="Object.keys(getTabs())"
           :class="{'tab-wrapper': fillHeight}"
           v-model="activeTab">
     <template #tabs>
@@ -33,7 +35,7 @@
   <!--todo: object navigate-->
   <component v-else :is="type" v-on="$listeners"
              :rootModel="_rootModel" :path="path"
-             :model="model" :field="field" :in-array="inArray" :no-layout="noLayout">
+             :model="model" :field="field" :in-array="inArray" :no-layout="noLayout" :fields="fields">
     <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
   </component>
 </template>
@@ -63,6 +65,7 @@
       model: null,
       rootModel: null,
       path: String,
+      metadata: null,
       fields: Array,
       field: Object,
       tabs: null,
@@ -71,6 +74,7 @@
       domain: String,
       fillHeight: Boolean,
       collapseStates: Object,
+      preprocess: [Boolean, String]
     },
     data() {
       return {
@@ -83,7 +87,6 @@
       const flex = flexFactory(props);
       const label = labelFactory(props);
       const _rootModel = _rootModelFactory(props);
-
       return {_model, flex, label, getLabel, _rootModel}
     },
     computed: {
@@ -139,6 +142,14 @@
             this.$set(this.model, field.key);
           }
         }
+      },
+      resolveMetadata() {
+        const preprocess = this.preprocess;
+        let result = this.fields;
+        if (preprocess) {
+          result = Vue.$gform.preprocess[typeof preprocess === 'string' ? preprocess : 'normalize'](this.metadata, result);
+        }
+        return result;
       }
     },
     created() {
