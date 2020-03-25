@@ -30,6 +30,7 @@
     <g-combobox
       v-model="internalValue"
       :item-text="field.itemText" :item-value="field.itemValue"
+      :allowDuplicates="field.allowDuplicates"
       :items="options"
       hide-selected
       :label="field.tableCell ? '': label"
