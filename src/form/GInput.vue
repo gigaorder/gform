@@ -15,6 +15,7 @@
   </g-col>
   <g-col :class="[flex,paddingClass]" v-else-if="inputType === 'select' || inputType === 'select:number'">
     <component :is="field.notOnlyValueInOptions ? 'g-combobox': 'g-autocomplete'" v-model="internalValue"
+               :normalize="field.normalize"
                :items="options"
                :item-text="field.itemText" :item-value="field.itemValue"
                :chips="field.chips" :small-chips="field.chips"
@@ -29,6 +30,7 @@
          v-else-if="inputType === 'multiSelect' || inputType === 'multiSelect:number'">
     <g-combobox
       v-model="internalValue"
+      :normalize="field.normalize"
       :item-text="field.itemText" :item-value="field.itemValue"
       :allowDuplicates="field.allowDuplicates"
       :items="options"
