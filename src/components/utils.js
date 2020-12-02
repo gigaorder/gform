@@ -1,5 +1,5 @@
 import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash';
-import { reactive, set as vSet, ref } from '@vue/composition-api';
+import { reactive, set as vSet, ref } from 'vue';
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 import Vue from 'vue';
@@ -58,13 +58,12 @@ export function makeAddable(fields, childrenVNodes, value, context) {
 
   function addNullValue(field) {
     if (field.type.includes('array') || field.type.includes('Array')) {
-      if (!value[field.key]) vSet(value, field.key, []);
+      if (!value[field.key]) value[field.key] = []
       value[field.key].push({});
     } else if (field.type && field.type.split('@')[0] === 'object') {
-      vSet(value, field.key, {});
+      value[field.key] = {}
     } else {
-      vSet(value, field.key, null)
-      //value[field.key] = null;
+      value[field.key] = null;
     }
   }
 
@@ -86,13 +85,13 @@ export function makeAddable(fields, childrenVNodes, value, context) {
   </render-v-nodes>
 }
 
-function getParentAndKey(model, path = []) {
+function setParentValue(model, path = [], value) {
   const parentPath = [...path];
   const key = parentPath.pop();
   if (parentPath.length === 0) {
     return [model, key];
   }
-  return [_.get(model, parentPath.join('.')), key];
+  _.get(model, parentPath.join('.'))[key] = value
 }
 
 export function getValueFromPathFactory(genDefaultValue) {
@@ -120,7 +119,7 @@ export function getValueFromPathFactory(genDefaultValue) {
       if (node.addable) _defaultValue = undefined;
       // get parent
 
-      vSet(...getParentAndKey(model, path), _defaultValue);
+      setParentValue(model, path, _defaultValue)
       return _.get(model, path.join('.'));
     }
   }

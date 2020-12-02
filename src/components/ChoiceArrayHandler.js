@@ -7,7 +7,7 @@ function genChoiceArray({ node, text, childrenVNodes, isLast, state, path }, { r
   const choiceKey = node.choiceKey || 'choice'
 
   function selectChoiceInArray(choice) {
-    if (!fieldModel[node.key]) vSet(fieldModel, node.key, []);
+    if (!fieldModel[node.key]) fieldModel[node.key] = []
     fieldModel[node.key].push({ [choiceKey]: getChoiceName(choice) });
   }
 

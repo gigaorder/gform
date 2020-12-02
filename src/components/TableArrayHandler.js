@@ -1,7 +1,7 @@
 import { genField, getLabel, getValueFromPathFactory } from './utils';
 import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash';
 import Vue from 'vue';
-import { reactive, set as vSet, ref } from '@vue/composition-api';
+import { reactive, set as vSet, ref } from 'vue';
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 
@@ -17,7 +17,7 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, { ro
   }();
 
   function toggleRowDetail(index) {
-    if (!state.hasOwnProperty('rowDetail')) vSet(state, 'rowDetail', null);
+    if (!state.hasOwnProperty('rowDetail')) state['rowDetail'] = null
     if (state.rowDetail === index) {
       state.rowDetail = null;
     } else {
@@ -27,7 +27,7 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, { ro
 
   function addObjectItem() {
     if (!fieldModel[node.key]) {
-      vSet(fieldModel, node.key, []);
+      fieldModel[node.key] = []
     }
     fieldModel[node.key].push({});
   }

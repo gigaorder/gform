@@ -1,4 +1,4 @@
-import {computed} from '@vue/composition-api';
+import {computed} from 'vue';
 
 export const _modelFactory = (props) => computed(() => {
   if (typeof props.field.key !== 'undefined') return props.model[props.field.key];

@@ -1,6 +1,5 @@
 import GField from './form/GField';
 import GInput from './form/GInput';
-import VueColumnsResizable from 'vue-columns-resizable';
 import GFieldSimpleArray from './form/GFieldSimpleArray';
 import { Fragment } from 'vue-fragment';
 import GFieldTableArray from './form/GFieldTableArray';
@@ -10,22 +9,22 @@ import GFieldObjectArray from './form/GFieldObjectArray';
 import GFieldObject from './form/GFieldObject';
 
 let GForm = {
-  install(Vue, options) {
+  install(app, options) {
     //Vue.yourMethod = (value) => value
-    Vue.use(VueColumnsResizable);
-    Vue.component('GField', GField);
-    Vue.component('GFieldSimpleArray', GFieldSimpleArray);
-    Vue.component('GFieldTableArray', GFieldTableArray);
-    Vue.component('GFieldChoice', GFieldChoice);
-    Vue.component('GFieldChoiceArray', GFieldChoiceArray);
-    Vue.component('GFieldObjectArray', GFieldObjectArray);
-    Vue.component('GFieldObject', GFieldObject);
-    Vue.component('Fragment', Fragment);
+    // app.use(VueColumnsResizable);
+    app.component('GField', GField);
+    app.component('GFieldSimpleArray', GFieldSimpleArray);
+    app.component('GFieldTableArray', GFieldTableArray);
+    app.component('GFieldChoice', GFieldChoice);
+    app.component('GFieldChoiceArray', GFieldChoiceArray);
+    app.component('GFieldObjectArray', GFieldObjectArray);
+    app.component('GFieldObject', GFieldObject);
+    app.component('Fragment', Fragment);
 
-    Vue.$gform = {
+    app.$gform = {
       rules: [],
       resolveField: function (field) {
-        const rules = Vue.$gform.rules;
+        const rules = app.$gform.rules;
         for (const rule of rules) {
           if (rule.test(field)) {
             return rule.component;
@@ -35,34 +34,34 @@ let GForm = {
       preprocess: {}
     };
 
-    Vue.addDynamicFormResolver = function (resolver) {
-      Vue.$gform.resolver = resolver;
+    app.addDynamicFormResolver = function (resolver) {
+      app.$gform.resolver = resolver;
     }
-    Vue.addPreprocess = function (key, process) {
-      Vue.$gform.preprocess[key] = process;
+    app.addPreprocess = function (key, process) {
+      app.$gform.preprocess[key] = process;
     }
-    Vue.addField = function (match, component) {
-      Vue.component(component.name, component);
+    app.addField = function (match, component) {
+      app.component(component.name, component);
       if (typeof match === 'function') {
-        Vue.$gform.rules.push({
+        app.$gform.rules.push({
           test: match,
           component: component.name
         })
       } else {
-        Vue.$gform.rules.push({
+        app.$gform.rules.push({
           test: field => field.type.split('@')[0] === match,
           component: component.name
         })
       }
     }
 
-    Vue.addField(field => field.type.split('@')[0] === 'input', GInput);
-    Vue.addField('choiceArray', GFieldChoiceArray);
-    Vue.addField('choice', GFieldChoice);
-    Vue.addField('object', GFieldObject);
-    Vue.addField('tableArray', GFieldTableArray);
-    Vue.addField(field => field.type === 'array' && field.fields.length === 1, GFieldSimpleArray);
-    Vue.addField(field => field.type === 'array' && field.fields.length > 1, GFieldObjectArray);
+    app.addField(field => field.type.split('@')[0] === 'input', GInput);
+    app.addField('choiceArray', GFieldChoiceArray);
+    app.addField('choice', GFieldChoice);
+    app.addField('object', GFieldObject);
+    app.addField('tableArray', GFieldTableArray);
+    app.addField(field => field.type === 'array' && field.fields.length === 1, GFieldSimpleArray);
+    app.addField(field => field.type === 'array' && field.fields.length > 1, GFieldObjectArray);
   }
 };
 export default GForm;

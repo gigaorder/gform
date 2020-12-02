@@ -18,7 +18,7 @@
   import { Fragment } from 'vue-fragment';
   import treeFactory from './GTreeFactory';
   import RenderVNodes from './RenderVNodes';
-  import { reactive, set as vSet, ref } from '@vue/composition-api';
+  import { reactive, set as vSet, ref } from 'vue';
   import SimpleArrayHandler from './SimpleArrayHandler';
   import ObjectArrayHandler from './ObjectArrayHandler';
   import { _fields, genField, getChoiceName, getLabel, getValueFromPathFactory, makeAddable } from './utils';
@@ -41,7 +41,7 @@
     },
     name: 'GField',
     props: {
-      value: null,
+      modelValue: null,
       model: null,
       fields: Array,
       field: Object,
@@ -71,7 +71,7 @@
     provide() {
       return {
         noLayout: this.noLayout,
-        rootModel: this.rootModel || this.model || this.value
+        rootModel: this.rootModel || this.model || this.modelValue
       };
     },
     created() {
@@ -80,7 +80,7 @@
         return;
       }
 
-      let model = this.model || this.value;
+      let model = this.model || this.modelValue;
       let rootModel = this.rootModel || model;
       let rootPath = this.path ? this.path.split('.') : [];
 
@@ -94,7 +94,7 @@
   function formInTabsRender() {
     const tabs = this.getTabs();
 
-    let model = this.model || this.value;
+    let model = this.model || this.modelValue;
     let rootModel = this.rootModel || model;
     let rootPath = this.path ? this.path.split('.') : [];
 
