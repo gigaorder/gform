@@ -1,14 +1,9 @@
 <script>
-  import GForm from '../main';
-  import Vue from 'vue';
-  import {Fragment} from 'vue-fragment';
   import RenderVNodes from '../components/RenderVNodes';
-
-  Vue.use(GForm);
 
   export default {
     name: 'form-story2',
-    components: {Fragment, RenderVNodes},
+    components: {RenderVNodes},
     data() {
       return {
         dialog: false,
@@ -130,7 +125,7 @@
       }
     },
     render(h) {
-      return this.genComp.bind(this)();
+      return this.genComp();
     }
   }
 </script>

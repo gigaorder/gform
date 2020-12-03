@@ -1,5 +1,4 @@
 <template>
-  <fragment>
     <g-col :class="[flex]" v-for="(val, index) in model[field.key]" :key="index">
       <g-field-choice @remove-field="model[field.key].splice(index, 1)" :in-array="true"
                       :rootModel="rootModel" :path="genPath(field.key)"
@@ -25,7 +24,6 @@
         </g-list>
       </g-menu>
     </g-col>
-  </fragment>
 </template>
 
 <script>
@@ -39,6 +37,7 @@
     labelFactory
   } from './FormFactory';
   import _ from 'lodash';
+  import { inject } from 'vue';
 
   export default {
     name: 'GFieldChoiceArray',
@@ -49,10 +48,11 @@
       }
     },
     setup(props, context) {
+      const gForm = inject('$gform')
       const _model = _modelFactory(props);
       const flex = flexFactory(props)
       const label = labelFactory(props);
-      const _fields = _fieldsFactory(props);
+      const _fields = _fieldsFactory(props, gForm);
 
       return {_model, flex, label, _fields}
     },

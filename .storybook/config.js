@@ -1,8 +1,7 @@
-import { configure, addParameters } from '@storybook/vue';
-
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import VueCompositionAPI from '@vue/composition-api';
+import { configure, addParameters } from '@andoshin11/storybook-vue3';
+import { createRouter, createWebHistory } from 'vue-router';
+import GigaComponents from 'pos-vue-framework';
+import GForm from '../src/main';
 
 addParameters({
   options: {
@@ -12,8 +11,14 @@ addParameters({
   },
 });
 
-Vue.use(VueRouter);
-Vue.use(VueCompositionAPI);
+const router = createRouter({
+  history: createWebHistory(),
+  routes: []
+})
+
+global.root.use(router);
+global.root.use(GForm);
+global.root.use(GigaComponents)
 
 import {
   storiesOf, specs, describe, it,
@@ -35,7 +40,6 @@ global.expect = expect;
 
 //for jest
 /*import VueTest from 'vue/dist/vue.common.js'
-import VueCompositionApi from '@vue/composition-api'
 // init plugin first
 VueTest.use(VueCompositionApi)*/
 

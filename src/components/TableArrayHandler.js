@@ -17,7 +17,7 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, { ro
   }();
 
   function toggleRowDetail(index) {
-    if (!state.hasOwnProperty('rowDetail')) state['rowDetail'] = null
+    if (!state.hasOwnProperty('rowDetail')) vSet(state, 'rowDetail', null);
     if (state.rowDetail === index) {
       state.rowDetail = null;
     } else {
@@ -27,7 +27,7 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, { ro
 
   function addObjectItem() {
     if (!fieldModel[node.key]) {
-      fieldModel[node.key] = []
+      vSet(fieldModel, node.key, []);
     }
     fieldModel[node.key].push({});
   }

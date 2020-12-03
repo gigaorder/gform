@@ -41,9 +41,7 @@
 </template>
 
 <script>
-  import {Fragment} from 'vue-fragment';
   import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash';
-  import Vue from 'vue';
 
   const _ = {upperFirst, filter, values, assign, cloneDeep, map};
 
@@ -57,9 +55,6 @@
   } from './FormFactory';
 
   export default {
-    components: {
-      Fragment,
-    },
     name: 'GField',
     props: {
       model: null,
@@ -76,6 +71,7 @@
       collapseStates: Object,
       preprocess: [Boolean, String]
     },
+    inject: ['$gform'],
     data() {
       return {
         activeTab: '0',
@@ -92,7 +88,7 @@
     computed: {
       type() {
         if (!this.field.type) return null;
-        const _type = Vue.$gform.resolveField(this.field);
+        const _type = this.$gform.resolveField(this.field);
         if (!_type) return this.field.type;
         return _type;
       },
@@ -147,7 +143,7 @@
         const preprocess = this.preprocess;
         let result = this.fields;
         if (preprocess) {
-          result = Vue.$gform.preprocess[typeof preprocess === 'string' ? preprocess : 'normalize'](this.metadata, result);
+          result = this.$gform.preprocess[typeof preprocess === 'string' ? preprocess : 'normalize'](this.metadata, result);
         }
         return result;
       }

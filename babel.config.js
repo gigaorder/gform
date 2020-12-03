@@ -1,9 +1,6 @@
 module.exports = {
   presets: [
-    'vca-jsx',
-    ['@vue/app',
-      {
-        "useBuiltIns": "entry"
-      }]
-  ]
+    '@vue/cli-plugin-babel/preset'
+  ],
+  plugins: ['@vue/babel-plugin-jsx'],
 }

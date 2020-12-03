@@ -1,4 +1,4 @@
-import FormStory from './FormStory';
+// import FormStory from './FormStory';
 import FormStory2 from './FormStory2';
 
 export default {

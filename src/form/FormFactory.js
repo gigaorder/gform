@@ -30,15 +30,15 @@ export function getLabel(field) {
   return _.upperFirst(field.key);
 }
 
-export const _fieldsFactory = (props) => computed(() => {
+export const _fieldsFactory = (props, gForm) => computed(() => {
   if (typeof props.field.dynamicFields === 'function') {
     try {
       return props.field.dynamicFields(props);
     } catch (e) {
       return [];
     }
-  } else if (props.field.dynamicFields && Vue.$gform.resolver) {
-    const resolver = Vue.$gform.resolver;
+  } else if (props.field.dynamicFields && gForm.resolver) {
+    const resolver = gForm.resolver;
     const fields = [];
     if (props.field.fields) fields.push(...props.field.fields);
     fields.push(...resolver(props.field.dynamicFields));

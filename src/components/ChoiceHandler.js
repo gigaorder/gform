@@ -2,6 +2,7 @@ import { _fields, getChoiceName, getLabel, getFields } from './utils';
 import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash';
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
+import { reactive, set as vSet, ref } from 'vue';
 
 function genChoice({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, fieldModel }) {
   const choiceKey = node.choiceKey || 'choice'
@@ -57,9 +58,9 @@ function genChoice({ node, text, childrenVNodes, isLast, state, path }, { rootMo
         {_fields(node).map((choice, index) =>
           <v-list-tile key={index} vOn:click={() => {
             if (node.choiceKeyOutside) {
-              fieldModel[choiceKey] = getChoiceName(choice)
+              vSet(fieldModel, choiceKey, getChoiceName(choice));
             } else {
-              fieldModel[node.key][choiceKey] = getChoiceName(choice)
+              vSet(fieldModel[node.key], choiceKey, getChoiceName(choice));
             }
           }}>
             <v-list-tile-title>{getChoiceName(choice)}</v-list-tile-title>

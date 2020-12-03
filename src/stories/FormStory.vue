@@ -15,9 +15,6 @@
   //import {VApp} from 'vuetify/lib';
   import GForm from '../main';
   //import GForm from '../../dist/GForm.umd';
-  import Vue from "vue";
-
-  Vue.use(GForm);
 
   export default {
     name: 'form-story',

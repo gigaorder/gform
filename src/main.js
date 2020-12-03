@@ -1,7 +1,6 @@
 import GField from './form/GField';
 import GInput from './form/GInput';
 import GFieldSimpleArray from './form/GFieldSimpleArray';
-import { Fragment } from 'vue-fragment';
 import GFieldTableArray from './form/GFieldTableArray';
 import GFieldChoice from './form/GFieldChoice';
 import GFieldChoiceArray from './form/GFieldChoiceArray';
@@ -19,12 +18,11 @@ let GForm = {
     app.component('GFieldChoiceArray', GFieldChoiceArray);
     app.component('GFieldObjectArray', GFieldObjectArray);
     app.component('GFieldObject', GFieldObject);
-    app.component('Fragment', Fragment);
 
-    app.$gform = {
+    const $gform = {
       rules: [],
       resolveField: function (field) {
-        const rules = app.$gform.rules;
+        const rules = $gform.rules;
         for (const rule of rules) {
           if (rule.test(field)) {
             return rule.component;
@@ -35,20 +33,20 @@ let GForm = {
     };
 
     app.addDynamicFormResolver = function (resolver) {
-      app.$gform.resolver = resolver;
+      $gform.resolver = resolver;
     }
     app.addPreprocess = function (key, process) {
-      app.$gform.preprocess[key] = process;
+      $gform.preprocess[key] = process;
     }
     app.addField = function (match, component) {
       app.component(component.name, component);
       if (typeof match === 'function') {
-        app.$gform.rules.push({
+        $gform.rules.push({
           test: match,
           component: component.name
         })
       } else {
-        app.$gform.rules.push({
+        $gform.rules.push({
           test: field => field.type.split('@')[0] === match,
           component: component.name
         })
@@ -62,6 +60,8 @@ let GForm = {
     app.addField('tableArray', GFieldTableArray);
     app.addField(field => field.type === 'array' && field.fields.length === 1, GFieldSimpleArray);
     app.addField(field => field.type === 'array' && field.fields.length > 1, GFieldObjectArray);
+
+    app.provide('$gform', $gform)
   }
 };
 export default GForm;

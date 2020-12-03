@@ -43,6 +43,7 @@
     labelFactory
   } from './FormFactory';
   import _ from 'lodash';
+  import { inject } from 'vue';
 
   export default {
     name: 'GFieldObject',
@@ -58,10 +59,11 @@
       showAction: false,
     }),
     setup(props, context) {
+      const gForm = inject('$gform')
       const _model = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
-      const _fields = _fieldsFactory(props);
+      const _fields = _fieldsFactory(props, gForm);
 
       return {_model, flex, label, _fields}
     },

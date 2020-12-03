@@ -54,14 +54,12 @@
 </template>
 <script>
   //not required but this baseField has a lot of useful stuff already in it, check it out
-  import {Fragment} from 'vue-fragment';
   import {upperFirst, get} from 'lodash';
   import dayjs from 'dayjs';
 
   const _ = {upperFirst, get};
 
   export default {
-    components: {Fragment},
     name: 'GInput',
     props: ['model', 'field', 'inArray', 'noFlex', 'rootModel', 'path', 'noLayout'],
     computed: {

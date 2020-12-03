@@ -58,12 +58,13 @@ export function makeAddable(fields, childrenVNodes, value, context) {
 
   function addNullValue(field) {
     if (field.type.includes('array') || field.type.includes('Array')) {
-      if (!value[field.key]) value[field.key] = []
+      if (!value[field.key]) vSet(value, field.key, []);
       value[field.key].push({});
     } else if (field.type && field.type.split('@')[0] === 'object') {
-      value[field.key] = {}
+      vSet(value, field.key, {});
     } else {
-      value[field.key] = null;
+      vSet(value, field.key, null)
+      //value[field.key] = null;
     }
   }
 
@@ -85,13 +86,13 @@ export function makeAddable(fields, childrenVNodes, value, context) {
   </render-v-nodes>
 }
 
-function setParentValue(model, path = [], value) {
+function getParentAndKey(model, path = []) {
   const parentPath = [...path];
   const key = parentPath.pop();
   if (parentPath.length === 0) {
     return [model, key];
   }
-  _.get(model, parentPath.join('.'))[key] = value
+  return [_.get(model, parentPath.join('.')), key];
 }
 
 export function getValueFromPathFactory(genDefaultValue) {
@@ -119,7 +120,7 @@ export function getValueFromPathFactory(genDefaultValue) {
       if (node.addable) _defaultValue = undefined;
       // get parent
 
-      setParentValue(model, path, _defaultValue)
+      vSet(...getParentAndKey(model, path), _defaultValue);
       return _.get(model, path.join('.'));
     }
   }
