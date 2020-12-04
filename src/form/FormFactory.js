@@ -48,7 +48,7 @@ export const _fieldsFactory = (props, gForm) => computed(() => {
 });
 
 export function addObjectItem() {
-  if (!this.model[this.field.key]) this.$set(this.model, this.field.key, []);
+  if (!this.model[this.field.key]) this.model[this.field.key] = []
   this.model[this.field.key].push({});
 }
 

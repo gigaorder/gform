@@ -73,13 +73,13 @@
         },
         set(v) {
           if (this.inputType.includes('number')) {
-            this.$set(this.model, this.field.key, parseFloat(v))
+            this.model[this.field.key] = parseFloat(v)
           } else if (this.inputType === 'date') {
-            this.$set(this.model, this.field.key, new Date(v + 'T00:00:00'))
+            this.model[this.field.key] = new Date(v + 'T00:00:00')
           } else if (this.inputType === 'datetime-local') {
-            this.$set(this.model, this.field.key, new Date(v))
+            this.model[this.field.key] = new Date(v)
           } else {
-            this.$set(this.model, this.field.key, v)
+            this.model[this.field.key] = v
           }
         }
       },
@@ -114,14 +114,14 @@
     created() {
       if (this.field.default && typeof this.field.default !== 'function' && !this.model[this.field.key]) {
         if (this.inputType.includes('number')) {
-          this.$set(this.model, this.field.key, parseFloat(this.field.default));
+          this.model[this.field.key] = parseFloat(this.field.default)
         } else {
-          this.$set(this.model, this.field.key, this.field.default);
+          this.model[this.field.key] = this.field.default
         }
       } else if (this.field.default && typeof this.field.default === 'function' && !this.model[this.field.key]) {
-        this.$set(this.model, this.field.key, this.field.default());
+        this.model[this.field.key] = this.field.default()
       } else if (!this.model.hasOwnProperty(this.field.key)) {
-        this.$set(this.model, this.field.key, undefined);
+        this.model[this.field.key] = undefined
       }
     },
     methods: {

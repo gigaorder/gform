@@ -1,6 +1,6 @@
 <template>
   <g-col xs12 v-for="(val, index) in model[field.key]" :key="index">
-    <g-field @remove-field="_model.splice(index, 1)" :in-array="true" :no-layout="false"
+    <g-field @remove-field="internalModel.splice(index, 1)" :in-array="true" :no-layout="false"
              :path="genPath(field.key)" :root-model="rootModel"
              :field="createArrayField(field.fields, index)" :model="model[field.key]"></g-field>
   </g-col>
@@ -23,12 +23,12 @@
       return {}
     },
     setup(props, context) {
-      const _model = _modelFactory(props);
+      const internalModel = _modelFactory(props);
       const flex = flexFactory(props)
       const label = labelFactory(props);
       const _fields = _fieldsFactory(props);
 
-      return {_model, flex, label, _fields}
+      return {internalModel, flex, label, _fields}
     },
     computed: {},
     methods: {
@@ -37,7 +37,7 @@
         return _.assign(_.cloneDeep(fields[0]), {key: $index, flex: this.field.flex, label: this.label});
       },
       addItem() {
-        if (!this.model[this.field.key]) this.$set(this.model, this.field.key, []);
+        if (!this.model[this.field.key]) this.model[this.field.key] = []
         this.model[this.field.key].push(null);
       }
     }

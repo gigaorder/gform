@@ -53,12 +53,12 @@
     },
     setup(props) {
       const gForm = inject('$gform')
-      const _model = _modelFactory(props);
+      const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
       const _fields = _fieldsFactory(props, gForm);
 
-      return {_model, flex, label, _fields}
+      return {internalModel, flex, label, _fields}
     },
     computed: {},
     methods: {

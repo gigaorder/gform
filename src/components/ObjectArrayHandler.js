@@ -12,8 +12,8 @@ function genObjectArray({ node, text, childrenVNodes, isLast, state, path }, { r
         {r()}
       </v-flex>)}
     </v-layout>
-    {!node['addable'] && <v-btn color="blue lighten-2" outline small vOn:click={() => {
-      if (!fieldModel) vSet(fieldModel, node.key, []);
+    {!node['addable'] && <v-btn color="blue lighten-2" outline small onClick={() => {
+      if (!fieldModel) fieldModel[node.key] = [];
       fieldModel[node.key].push({});
     }}>
       Add {getLabel(node)}

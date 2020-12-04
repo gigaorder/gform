@@ -20,7 +20,7 @@
 
       <GExpandTransition>
         <g-row v-show="!collapse">
-          <g-field :fields="_fields" :model="_model" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
+          <g-field :fields="_fields" :model="internalModel" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
         </g-row>
       </GExpandTransition>
     </fieldset>
@@ -28,7 +28,7 @@
 
   <g-col xs12 v-else-if="noPanel" style="position: relative">
     <slot name="action"/>
-    <g-field :fields="_fields" :model="_model" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
+    <g-field :fields="_fields" :model="internalModel" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
   </g-col>
 </template>
 
@@ -60,12 +60,12 @@
     }),
     setup(props, context) {
       const gForm = inject('$gform')
-      const _model = _modelFactory(props);
+      const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
       const _fields = _fieldsFactory(props, gForm);
 
-      return {_model, flex, label, _fields}
+      return {internalModel, flex, label, _fields}
     },
     created() {
       this.collapse = this.collapseHistory

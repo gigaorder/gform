@@ -7,7 +7,7 @@ function genChoiceArray({ node, text, childrenVNodes, isLast, state, path }, { r
   const choiceKey = node.choiceKey || 'choice'
 
   function selectChoiceInArray(choice) {
-    if (!fieldModel[node.key]) vSet(fieldModel, node.key, []);
+    if (!fieldModel[node.key]) fieldModel[node.key] = []
     fieldModel[node.key].push({ [choiceKey]: getChoiceName(choice) });
   }
 
@@ -22,7 +22,7 @@ function genChoiceArray({ node, text, childrenVNodes, isLast, state, path }, { r
           <v-icon>arrow_drop_down</v-icon>
         </v-btn>
         <v-list>
-          {_fields(node).map((choice, index) => <v-list-tile key={index} vOn:click={() => selectChoiceInArray(choice)}>
+          {_fields(node).map((choice, index) => <v-list-tile key={index} onClick={() => selectChoiceInArray(choice)}>
             <v-list-tile-title>{getChoiceName(choice)}</v-list-tile-title>
           </v-list-tile>)}
         </v-list>

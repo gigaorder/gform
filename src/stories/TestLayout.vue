@@ -16,7 +16,7 @@
     data: function () {
       return {}
     },
-		render(h) {
+		render() {
       const children = this.$slots.default;
       return <div>{children}</div>;
 		},

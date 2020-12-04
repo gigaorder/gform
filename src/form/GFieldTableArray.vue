@@ -64,11 +64,11 @@
       expansionInitialized: [],
     }),
     setup(props, context) {
-      const _model = _modelFactory(props);
+      const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
 
-      return {_model, flex, label, getLabel}
+      return {internalModel, flex, label, getLabel}
     },
     computed: {
       mainFields() {

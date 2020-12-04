@@ -49,12 +49,12 @@
     },
     setup(props, context) {
       const gForm = inject('$gform')
-      const _model = _modelFactory(props);
+      const internalModel = _modelFactory(props);
       const flex = flexFactory(props)
       const label = labelFactory(props);
       const _fields = _fieldsFactory(props, gForm);
 
-      return {_model, flex, label, _fields}
+      return {internalModel, flex, label, _fields}
     },
     computed: {
       choiceKey() {
@@ -69,7 +69,7 @@
         return _.assign(_.cloneDeep(fields[0]), {key: $index, flex: this.field.flex, label: this.label});
       },
       addItem() {
-        if (!this.model[this.field.key]) this.$set(this.model, this.field.key, []);
+        if (!this.model[this.field.key]) this.model[this.field.key] = []
         this.model[this.field.key].push(null);
       },
       createChoiceArrayField(index) {
@@ -83,7 +83,7 @@
         };
       },
       selectChoiceInArray(choice) {
-        if (!this.model[this.field.key]) this.$set(this.model, this.field.key, []);
+        if (!this.model[this.field.key]) this.model[this.field.key] = []
         this.model[this.field.key].push({[this.choiceKey]: this.getChoiceName(choice)});
       },
     }

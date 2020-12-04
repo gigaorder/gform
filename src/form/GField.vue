@@ -5,36 +5,43 @@
           :class="{'tab-wrapper': fillHeight}"
           v-model="activeTab">
     <template #tabs>
-      <g-tab v-for="(tab, index) in getTabs()" :item="`${index}`" :key="tab.name">{{tab.name}}</g-tab>
+      <template v-for="(tab, index) in getTabs()" :key="tab.name">
+        <g-tab :item="`${index}`">{{ tab.name }}</g-tab>
+      </template>
     </template>
     <template #default>
-      <g-tab-item class="pt-3" v-for="(tab, index) in getTabs()" :key="tab.name" :item="`${index}`">
-        <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
-                 :rootModel="_rootModel"/>
-      </g-tab-item>
+      <template v-for="(tab, index) in getTabs()" :key="tab.name">
+        <g-tab-item class="pt-3" :item="`${index}`">
+          <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
+                   :rootModel="internalRootModel"/>
+        </g-tab-item>
+      </template>
       <slot name="tab-append"></slot>
     </template>
   </g-tabs>
 
   <g-row no-gutters :class="fillHeight ? 'fill-height' : ''" v-else-if="fields">
-    <g-field v-for="(_field, index) in getFormFields()" :key="'field_' + _field.key + '_' + index"
-             :path="path"
-             :field="_field" :model="model" :rootModel="_rootModel" :no-layout="noLayout"
-             v-show="isVisible(_field)"/>
+    <template v-for="(_field, index) in getFormFields()" :key="'field_' + _field.key + '_' + index">
+      <g-field :path="path"
+               :field="_field" :model="model" :rootModel="internalRootModel" :no-layout="noLayout"
+               v-show="isVisible(_field)"/>
+    </template>
     <g-col xs12>
-      <g-chip v-for="(addField, index) in getAddFields()" v-show="isVisible(addField)" :key="addField.key + index"
-              backgroundColor="#e5efff" textColor="primary" @click="addNullValue(addField)">
-        <g-avatar class="g-avatar__left">
-          <g-icon color="primary">add_circle</g-icon>
-        </g-avatar>
-        {{addField.label || addField.key}}
-      </g-chip>
+      <template v-for="(addField, index) in getAddFields()" :key="addField.key + index">
+        <g-chip v-show="isVisible(addField)"
+                backgroundColor="#e5efff" textColor="primary" @click="addNullValue(addField)">
+          <g-avatar class="g-avatar__left">
+            <g-icon color="primary">add_circle</g-icon>
+          </g-avatar>
+          {{ addField.label || addField.key }}
+        </g-chip>
+      </template>
     </g-col>
   </g-row>
 
   <!--todo: object navigate-->
-  <component v-else :is="type" v-on="$listeners"
-             :rootModel="_rootModel" :path="path"
+  <component v-else :is="type" v-bind="$attrs"
+             :rootModel="internalRootModel" :path="path"
              :model="model" :field="field" :in-array="inArray" :no-layout="noLayout" :fields="fields">
     <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
   </component>
@@ -42,9 +49,6 @@
 
 <script>
   import {upperFirst, filter, values, assign, cloneDeep, map} from 'lodash';
-
-  const _ = {upperFirst, filter, values, assign, cloneDeep, map};
-
   import {
     _modelFactory,
     _rootModelFactory,
@@ -53,6 +57,8 @@
     getLabel,
     labelFactory
   } from './FormFactory';
+
+  const _ = {upperFirst, filter, values, assign, cloneDeep, map};
 
   export default {
     name: 'GField',
@@ -79,11 +85,11 @@
     },
     domain: ':domain',
     setup(props, context) {
-      const _model = _modelFactory(props);
+      const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
-      const _rootModel = _rootModelFactory(props);
-      return {_model, flex, label, getLabel, _rootModel}
+      const internalRootModel = _rootModelFactory(props);
+      return {internalModel, flex, label, getLabel, internalRootModel}
     },
     computed: {
       type() {
@@ -110,7 +116,7 @@
       },
       addNullValue(field) {
         if (field.type.includes('array') || field.type.includes('Array')) {
-          if (!this.model[field.key]) this.$set(this.model, field.key, []);
+          if (!this.model[field.key]) this.model[field.key] = []
           this.model[field.key].push({});
         } else if (field.type && field.type.split('@')[0] === 'object') {
           this.model[field.key] = {};
@@ -131,11 +137,11 @@
       setProperty(field) {
         if (field.key && !this.model.hasOwnProperty(field.key)) {
           if (field.type && field.type.split('@')[0] === 'object' && !field.addable) {
-            this.$set(this.model, field.key, {});
+            this.model[field.key] = {}
           } else if (['array', 'tableArray', 'choiceArray'].includes(field.type)) {
-            this.$set(this.model, field.key, []);
+            this.model[field.key] = []
           } else if (!['choice'].includes(field.type)) {
-            this.$set(this.model, field.key);
+            this.model[field.key] = undefined
           }
         }
       },

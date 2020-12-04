@@ -7,8 +7,8 @@ function genSimpleArray({ node, text, childrenVNodes, isLast, state, path }, { r
   return <render-v-nodes>
     {childrenVNodes.map(r => r())}
     <v-flex class="xs12">
-      <v-btn color="blue lighten-2" outline small vOn:click={() => {
-        if (!fieldModel) vSet(fieldModel, node.key, []);
+      <v-btn color="blue lighten-2" outline small onClick={() => {
+        if (!fieldModel) fieldModel[node.key] = []
         fieldModel[node.key].push(null);
       }}>
         Add {getLabel(node)}

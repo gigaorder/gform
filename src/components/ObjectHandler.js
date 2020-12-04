@@ -22,13 +22,13 @@ function genObjectWithPanel({ node, text, childrenVNodes, isLast, state, path },
 
   return <v-flex xs12>
     <fieldset vShow={_fields && node.fields.length > 0} style="position: relative">
-      <v-btn small depressed class="remove-btn" vOn:click={slots && slots.onRemove ? slots.onRemove : onRemove}>
+      <v-btn small depressed class="remove-btn" onClick={slots && slots.onRemove ? slots.onRemove : onRemove}>
         <v-icon>delete</v-icon>
       </v-btn>
 
       <slot name="action">{slots && slots.action}</slot>
       {label && <legend>
-        <span vOn:click={() => state.collapse = !state.collapse}>
+        <span onClick={() => state.collapse = !state.collapse}>
           {label} {state.collapse ? '+' : ''}
         </span>
       </legend>}

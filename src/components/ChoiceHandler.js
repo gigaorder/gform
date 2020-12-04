@@ -2,7 +2,6 @@ import { _fields, getChoiceName, getLabel, getFields } from './utils';
 import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash';
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
-import { reactive, set as vSet, ref } from 'vue';
 
 function genChoice({ node, text, childrenVNodes, isLast, state, path }, { rootModel, pathToParent, treeStates, slots, fieldModel }) {
   const choiceKey = node.choiceKey || 'choice'
@@ -31,7 +30,7 @@ function genChoice({ node, text, childrenVNodes, isLast, state, path }, { rootMo
   }
 
   function removeChoiceBtnFn() {
-    return !node.inArray && <v-btn depressed small color="gray" vOn:click={removeChoice}>
+    return !node.inArray && <v-btn depressed small color="gray" onClick={removeChoice}>
       <v-icon>delete_outline</v-icon>
     </v-btn>
   }
@@ -58,9 +57,9 @@ function genChoice({ node, text, childrenVNodes, isLast, state, path }, { rootMo
         {_fields(node).map((choice, index) =>
           <v-list-tile key={index} vOn:click={() => {
             if (node.choiceKeyOutside) {
-              vSet(fieldModel, choiceKey, getChoiceName(choice));
+              fieldModel[choiceKey] = getChoiceName(choice)
             } else {
-              vSet(fieldModel[node.key], choiceKey, getChoiceName(choice));
+              fieldModel[node.key][choiceKey] = getChoiceName(choice)
             }
           }}>
             <v-list-tile-title>{getChoiceName(choice)}</v-list-tile-title>

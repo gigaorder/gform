@@ -13,12 +13,11 @@
     VIcon,
     VExpandTransition
   } from 'vuetify/lib';
-  import Vue from 'vue';
   import ExtendPath from './ExtendPath';
   import { Fragment } from 'vue-fragment';
   import treeFactory from './GTreeFactory';
   import RenderVNodes from './RenderVNodes';
-  import { reactive, set as vSet, ref } from 'vue';
+  import { reactive } from 'vue';
   import SimpleArrayHandler from './SimpleArrayHandler';
   import ObjectArrayHandler from './ObjectArrayHandler';
   import { _fields, genField, getChoiceName, getLabel, getValueFromPathFactory, makeAddable } from './utils';
@@ -86,7 +85,7 @@
 
       this.formRender = factory(this.$props, model, rootModel, rootPath, this);
     },
-    render(h, context) {
+    render() {
       return this.formRender();
     }
   };

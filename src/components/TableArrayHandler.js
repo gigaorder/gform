@@ -1,7 +1,5 @@
 import { genField, getLabel, getValueFromPathFactory } from './utils';
 import { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty } from 'lodash';
-import Vue from 'vue';
-import { reactive, set as vSet, ref } from 'vue';
 
 const _ = { upperFirst, filter, values, assign, cloneDeep, map, get, set, isNil, isEmpty };
 
@@ -17,7 +15,7 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, { ro
   }();
 
   function toggleRowDetail(index) {
-    if (!state.hasOwnProperty('rowDetail')) vSet(state, 'rowDetail', null);
+    if (!state.hasOwnProperty('rowDetail')) state['rowDetail'] = null
     if (state.rowDetail === index) {
       state.rowDetail = null;
     } else {
@@ -27,7 +25,7 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, { ro
 
   function addObjectItem() {
     if (!fieldModel[node.key]) {
-      vSet(fieldModel, node.key, []);
+      fieldModel[node.key] = []
     }
     fieldModel[node.key].push({});
   }
@@ -56,14 +54,14 @@ function genTableArray({ node, text, childrenVNodes, isLast, state, path }, { ro
         <render-v-nodes>
           <tr className="text-md-center" key={index}>
             {node.expansion &&
-            <td style="width: 15px" vOn:click={() => toggleRowDetail(index)}>
+            <td style="width: 15px" onClick={() => toggleRowDetail(index)}>
               <v-icon>keyboard_arrow_{state.rowDetail === index ? 'down' : 'right'}</v-icon>
             </td>}
-            {mainFields.map((_field, _index) => <td className="input-group-sm" key={_index}>
-              {renderTableField(_field, val, index)}
+            {mainFields.map((field, _index) => <td className="input-group-sm" key={_index}>
+              {renderTableField(field, val, index)}
             </td>)}
             <td>
-              <v-icon vOn:click={() => fieldModel[node.key].splice(index, 1)}>delete</v-icon>
+              <v-icon onClick={() => fieldModel[node.key].splice(index, 1)}>delete</v-icon>
             </td>
           </tr>
 

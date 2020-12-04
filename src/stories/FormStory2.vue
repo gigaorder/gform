@@ -1,3 +1,17 @@
+<template>
+  <div data-app>
+    <g-row style="width: 90%; padding: 20px">
+      <g-field path="deep" :tabs="tabs" :fields="fields" :model="model"/>
+        <br/><br/>
+        <g-row class="col-xs-12">
+          <div>
+            {{ modelTxt }}
+          </div>
+        </g-row>
+    </g-row>
+  </div>
+</template>
+
 <script>
   import RenderVNodes from '../components/RenderVNodes';
 
@@ -102,30 +116,10 @@
         ]
       }
     },
-    setup(props, context) {
-      const genComp = function () {
-        const fields = this.fields;
-        const model = this.model;
-        const _fields = <g-field path="deep" tabs={this.tabs} fields={fields} propsModel={model}/>
-
-        return <div data-app>
-          <g-row style="width: 90%;padding: 20px">
-            {_fields}
-            <br/><br/>
-            <g-row class="col-xs-12">
-              <div>
-                {JSON.stringify(model)}
-              </div>
-            </g-row>
-          </g-row>
-        </div>
+    computed: {
+      modelTxt() {
+        return JSON.stringify(this.model)
       }
-      return {
-        genComp
-      }
-    },
-    render(h) {
-      return this.genComp();
     }
   }
 </script>

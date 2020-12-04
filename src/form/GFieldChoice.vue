@@ -74,12 +74,12 @@
     },
     setup(props, context) {
       const gForm = inject('$gform')
-      const _model = _modelFactory(props);
+      const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
       const _fields = _fieldsFactory(props, gForm);
 
-      return {_model, flex, label, _fields}
+      return {internalModel, flex, label, _fields}
     },
     computed: {
       choiceExist() {
@@ -89,7 +89,7 @@
       },
       choiceModel() {
         if (this.field.choiceKeyOutside) return this.model;
-        if (!this.model[this.field.key]) this.$set(this.model, this.field.key, {});
+        if (!this.model[this.field.key]) this.model[this.field.key] = {}
         return this.model[this.field.key];
       },
       choicePath() {
@@ -133,15 +133,15 @@
             fields && fields.map(v => v.key).forEach(k => {
               delete this.model[k];
             })
-            if (this.model[this.field.key]) this.$set(this.model, this.field.key, null);
-            this.$set(this.model, this.choiceKey, null);
+            if (this.model[this.field.key]) this.model[this.field.key] = null
+            this.model[this.choiceKey] = null
           } else {
-            this.$set(this.model, this.field.key, null);
+            this.model[this.field.key] = null
           }
         }
       },
       selectChoice(choice) {
-        this.$set(this.choiceModel, this.choiceKey, this.getChoiceName(choice));
+        this.choiceModel[this.choiceKey] = this.getChoiceName(choice)
       },
       getChoiceName,
       pushItemDown(index) {

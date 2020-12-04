@@ -6,7 +6,7 @@
     render(createElement, context) {
       //const {vNodes} = context.props;
       //return Array.isArray(vNodes) ? vNodes.map(item => item) : vNodes;
-			const vNodes = context.slots().default;
+			const vNodes = context.slots.default();
       return Array.isArray(vNodes) ? vNodes.map(item => item) : vNodes;
     }
   };
