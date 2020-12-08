@@ -12,12 +12,6 @@ let GForm = {
     //Vue.yourMethod = (value) => value
     // app.use(VueColumnsResizable);
     app.component('GField', GField);
-    app.component('GFieldSimpleArray', GFieldSimpleArray);
-    app.component('GFieldTableArray', GFieldTableArray);
-    app.component('GFieldChoice', GFieldChoice);
-    app.component('GFieldChoiceArray', GFieldChoiceArray);
-    app.component('GFieldObjectArray', GFieldObjectArray);
-    app.component('GFieldObject', GFieldObject);
 
     const $gform = {
       rules: [],

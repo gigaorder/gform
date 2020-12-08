@@ -1,32 +1,32 @@
 <template>
   <g-col xs12>
-    <g-row no-gutters>
-      <g-col :class="[flex, flex !== 'col-xs-12' ? 'fix-inline': '']" v-for="(val, index) in model[field.key]"
-             :key="index"
-             style="position: relative">
-        <g-field-object :field="createObjectArrayField(field.fields, index)" :model="model[field.key]"
-                        :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
-          <template #action="{collapse}">
-            <g-card background-color="white" class="action-container" :elevation="0">
-              <g-btn xSmall icon @click="pushItemUp(index)">
-                <g-icon small>
-                  keyboard_arrow_up
-                </g-icon>
-              </g-btn>
-              <g-btn xSmall icon @click="pushItemDown(index)">
-                <g-icon small>
-                  keyboard_arrow_down
-                </g-icon>
-              </g-btn>
-              <g-btn xSmall icon @click="model[field.key].splice(index, 1)">
-                <g-icon small>delete</g-icon>
-              </g-btn>
-            </g-card>
-          </template>
-        </g-field-object>
-      </g-col>
-    </g-row>
-    <g-btn class="ma-2" textColor="blue lighten-2" outlined small @click="addObjectItem()" v-if="!field.addable">
+<!--    <g-row no-gutters>-->
+      <template v-for="val in model[field.key]">
+        <g-col :class="[flex, flex !== 'col-xs-12' ? 'fix-inline': '']" style="position: relative">
+          <g-field-object :field="createObjectArrayField(field.fields, val)" :model="model[field.key]"
+                          :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
+            <template #action="{collapse}">
+              <g-card background-color="white" class="action-container" :elevation="0">
+                <g-btn xSmall icon @click="pushItemUp(val)">
+                  <g-icon small>
+                    keyboard_arrow_up
+                  </g-icon>
+                </g-btn>
+                <g-btn xSmall icon @click="pushItemDown(val)">
+                  <g-icon small>
+                    keyboard_arrow_down
+                  </g-icon>
+                </g-btn>
+                <g-btn xSmall icon @click="deleteItem(val)">
+                  <g-icon small>delete</g-icon>
+                </g-btn>
+              </g-card>
+            </template>
+          </g-field-object>
+        </g-col>
+      </template>
+<!--    </g-row>-->
+    <g-btn class="ma-2" textColor="blue lighten-2" outlined small @click="addObjectItem" v-if="!field.addable">
       ADD {{getLabel(field).toUpperCase()}}
     </g-btn>
   </g-col>
@@ -36,7 +36,6 @@
   import {
     _fieldsFactory,
     _modelFactory,
-    addObjectItem,
     flexFactory,
     genPath,
     getLabel,
@@ -56,21 +55,25 @@
       const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
-      const _fields = _fieldsFactory(props, gForm);
+      const fields = _fieldsFactory(props, gForm);
 
-      return {internalModel, flex, label, _fields}
+      return {internalModel, flex, label, fields}
     },
     computed: {},
     methods: {
       genPath,
       getLabel,
-      addObjectItem,
-      createObjectArrayField(fields, index) {
-        return {key: index, type: 'object', label: this.label, fields};
+      addObjectItem() {
+        if (!this.model[this.field.key] || !Array.isArray(this.model[this.field.key])) this.model[this.field.key] = []
+        this.model[this.field.key].push({})
       },
-      pushItemDown(index) {
+      createObjectArrayField(fields, val) {
+        const index = this.model[this.field.key].indexOf(val)
+        return {key: index, type: 'object', label: this.label, fields };
+      },
+      pushItemDown(val) {
         const model = this.model[this.field.key]
-        index = parseInt(index)
+        const index = model.indexOf(val)
         const itemsLength = model && model.length
         if (!itemsLength || isNaN(index) || index === itemsLength - 1) return
 
@@ -81,9 +84,9 @@
 
         model.splice(0, model.length, ...newModel)
       },
-      pushItemUp(index) {
+      pushItemUp(val) {
         const model = this.model[this.field.key]
-        index = parseInt(index)
+        const index = model.indexOf(val)
         const itemsLength = model && model.length
         if (!itemsLength || isNaN(index) || index === 0) return
 
@@ -93,6 +96,11 @@
         newModel[index - 1] = temp
 
         model.splice(0, model.length, ...newModel)
+      },
+      deleteItem(val) {
+        const model = this.model[this.field.key]
+        const index = model.indexOf(val)
+        model.splice(index, 1)
       }
     }
   }

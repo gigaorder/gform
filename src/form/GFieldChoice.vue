@@ -38,7 +38,7 @@
           <g-icon>arrow_drop_down</g-icon>
         </g-btn>
       </template>
-      <g-list :items="_fields">
+      <g-list :items="fields">
         <template #list-item="{item}">
           <g-list-item :item="item" @singleItemClick="selectChoice(item)">
             <g-list-item-content>
@@ -77,9 +77,9 @@
       const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
-      const _fields = _fieldsFactory(props, gForm);
+      const fields = _fieldsFactory(props, gForm);
 
-      return {internalModel, flex, label, _fields}
+      return {internalModel, flex, label, fields}
     },
     computed: {
       choiceExist() {
@@ -104,7 +104,7 @@
         return this.field.choiceKey || 'choice';
       },
       choiceField() {
-        let field = _.cloneDeep(this._fields.find(choice => this.getChoiceName(choice) === this.choiceModel[this.choiceKey]));
+        let field = _.cloneDeep(this.fields.find(choice => this.getChoiceName(choice) === this.choiceModel[this.choiceKey]));
         /*if (!['array', 'object', 'tableArray', 'input', 'input@number', 'input@multiSelect'].includes(field.type)) {
           field = {
             label: this.choiceModel[this.choiceKey],

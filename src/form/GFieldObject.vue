@@ -1,6 +1,6 @@
 <template>
   <g-col xs12 v-if="!noPanel">
-    <fieldset :class="collapse ? 'fieldset__collapsed' : ''" v-show="_fields && _fields.length > 0"
+    <fieldset :class="collapse ? 'fieldset__collapsed' : ''" v-show="fields && fields.length > 0"
               style="position: relative" @mouseenter="showAction = true" @mouseleave="showAction = false">
       <div v-if="collapse" @click="toggleCollapse" class="fieldset-activator"/>
       <div v-show="showAction">
@@ -15,20 +15,20 @@
         </slot>
       </div>
       <legend :class="collapse ? 'legend__collapsed' : ''" v-if="label">
-        <span @click="toggleCollapse">{{label}} {{collapse ? '+' : ''}}</span>
+        <span @click="toggleCollapse">{{ label }} {{ collapse ? '+' : '' }}</span>
       </legend>
 
-      <GExpandTransition>
+      <g-expand-transition>
         <g-row v-show="!collapse">
-          <g-field :fields="_fields" :model="internalModel" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
+          <g-field :fields="fields" :model="internalModel" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
         </g-row>
-      </GExpandTransition>
+      </g-expand-transition>
     </fieldset>
   </g-col>
 
   <g-col xs12 v-else-if="noPanel" style="position: relative">
     <slot name="action"/>
-    <g-field :fields="_fields" :model="internalModel" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
+    <g-field :fields="fields" :model="internalModel" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
   </g-col>
 </template>
 
@@ -36,13 +36,11 @@
   import {
     _fieldsFactory,
     _modelFactory,
-    addObjectItem,
     flexFactory,
     genPath,
     getLabel,
     labelFactory
   } from './FormFactory';
-  import _ from 'lodash';
   import { inject } from 'vue';
 
   export default {
@@ -63,9 +61,9 @@
       const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
-      const _fields = _fieldsFactory(props, gForm);
+      const fields = _fieldsFactory(props, gForm);
 
-      return {internalModel, flex, label, _fields}
+      return {internalModel, flex, label, fields}
     },
     created() {
       this.collapse = this.collapseHistory
@@ -76,6 +74,9 @@
       },
       objectPath() {
         return genPath.bind(this)(this.field.key);
+      },
+      formattedField() {
+
       }
     },
     methods: {

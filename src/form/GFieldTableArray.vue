@@ -24,12 +24,12 @@
             <g-icon @click="model[field.key].splice(index, 1)">delete</g-icon>
           </td>
         </tr>
-        <GExpandTransition>
+        <g-expand-transition>
           <tr v-if="field.expansion && (!field.lazy || rowDetail === index || expansionInitialized[index])"
               v-show="rowDetail === index" class="g-expansion"
               style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
             <td :colspan="field.fields.length + 2" style="height: 0 !important;">
-              <GExpandTransition>
+              <g-expand-transition>
                 <g-card v-show="rowDetail === index" flat
                         style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
                   <g-card-text>
@@ -37,15 +37,15 @@
                              :root-model="rootModel" :path="genPath(field.key, index)"/>
                   </g-card-text>
                 </g-card>
-              </GExpandTransition>
+              </g-expand-transition>
             </td>
           </tr>
-        </GExpandTransition>
+        </g-expand-transition>
       </template>
       </tbody>
 
     </table>
-    <g-btn class="ma-2" textColor="blue lighten-2" outlined small @click="addObjectItem()" v-if="!field.addable">Add
+    <g-btn class="ma-2" textColor="blue lighten-2" outlined small @click.stop="addObjectItem" v-if="!field.addable">Add
       {{getLabel(field)}}
     </g-btn>
     <slot name="btn-append"></slot>
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-  import {_modelFactory, addObjectItem, flexFactory, genPath, getLabel, labelFactory} from './FormFactory';
+  import {_modelFactory, flexFactory, genPath, getLabel, labelFactory} from './FormFactory';
   import _ from 'lodash';
 
   export default {
@@ -63,7 +63,7 @@
       rowDetail: null,
       expansionInitialized: [],
     }),
-    setup(props, context) {
+    setup(props) {
       const internalModel = _modelFactory(props);
       const flex = flexFactory(props);
       const label = labelFactory(props);
@@ -82,7 +82,10 @@
     },
     methods: {
       genPath,
-      addObjectItem: addObjectItem,
+      addObjectItem() {
+        if (!this.model[this.field.key]) this.model[this.field.key] = []
+        this.model[this.field.key].push({});
+      },
       //todo: use stateTree
       toggleRowDetail(index) {
         if (this.rowDetail === index) {

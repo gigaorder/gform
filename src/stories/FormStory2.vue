@@ -13,11 +13,8 @@
 </template>
 
 <script>
-  import RenderVNodes from '../components/RenderVNodes';
-
   export default {
     name: 'form-story2',
-    components: {RenderVNodes},
     data() {
       return {
         dialog: false,
@@ -26,6 +23,9 @@
           addressArray3: [
             {street: 'a1', city: 'b1'},
             {street: 'a2', city: 'b2'}
+          ],
+          addressArray1: [
+            // {street: 'a1', city: 'b1'}
           ],
           //choice at root
           type: 'linear',

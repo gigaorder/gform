@@ -1,29 +1,29 @@
 <template>
-    <g-col :class="[flex]" v-for="(val, index) in model[field.key]" :key="index">
-      <g-field-choice @remove-field="model[field.key].splice(index, 1)" :in-array="true"
-                      :rootModel="rootModel" :path="genPath(field.key)"
-                      :field="createChoiceArrayField(index)" :model.sync="model[field.key]"
-                      :no-layout="noLayout"/>
-    </g-col>
-    <g-col md12>
-      <g-menu offset-y v-if="!inArray" z-index="1000" v-model="showMenu" :closeOnContentClick="true">
-        <template #activator="{toggleContent}">
-          <g-btn @click="toggleContent" backgroundColor="blue" textColor="white" small>
-            ADD {{getLabel(field).toUpperCase()}}
-            <g-icon>arrow_drop_down</g-icon>
-          </g-btn>
+  <g-col :class="[flex]" v-for="(val, index) in model[field.key]" :key="index">
+    <g-field-choice @remove-field="model[field.key].splice(index, 1)" :in-array="true"
+                    :rootModel="rootModel" :path="genPath(field.key)"
+                    :field="createChoiceArrayField(index)" :model.sync="model[field.key]"
+                    :no-layout="noLayout"/>
+  </g-col>
+  <g-col md12>
+    <g-menu offset-y v-if="!inArray" z-index="1000" v-model="showMenu" :closeOnContentClick="true">
+      <template #activator="{toggleContent}">
+        <g-btn @click="toggleContent" backgroundColor="blue" textColor="white" small>
+          ADD {{getLabel(field).toUpperCase()}}
+          <g-icon>arrow_drop_down</g-icon>
+        </g-btn>
+      </template>
+      <g-list :items="fields">
+        <template #list-item="{item}">
+          <g-list-item :item="item" @singleItemClick="selectChoiceInArray(item)">
+            <g-list-item-content>
+              <g-list-item-text>{{ getChoiceName(item) }}</g-list-item-text>
+            </g-list-item-content>
+          </g-list-item>
         </template>
-        <g-list :items="_fields">
-          <template #list-item="{item}">
-            <g-list-item :item="item" @singleItemClick="selectChoiceInArray(item)">
-              <g-list-item-content>
-                <g-list-item-text>{{ getChoiceName(item) }}</g-list-item-text>
-              </g-list-item-content>
-            </g-list-item>
-          </template>
-        </g-list>
-      </g-menu>
-    </g-col>
+      </g-list>
+    </g-menu>
+  </g-col>
 </template>
 
 <script>
@@ -42,6 +42,7 @@
   export default {
     name: 'GFieldChoiceArray',
     props: ['model', 'field', 'inArray', 'rootModel', 'path', 'noLayout'],
+    inheritAttrs: false,
     data: function () {
       return {
         showMenu: false,
@@ -52,9 +53,9 @@
       const internalModel = _modelFactory(props);
       const flex = flexFactory(props)
       const label = labelFactory(props);
-      const _fields = _fieldsFactory(props, gForm);
+      const fields = _fieldsFactory(props, gForm);
 
-      return {internalModel, flex, label, _fields}
+      return {internalModel, flex, label, fields}
     },
     computed: {
       choiceKey() {
@@ -85,6 +86,7 @@
       selectChoiceInArray(choice) {
         if (!this.model[this.field.key]) this.model[this.field.key] = []
         this.model[this.field.key].push({[this.choiceKey]: this.getChoiceName(choice)});
+        console.log('this.model[this.field.key]', this.model[this.field.key])
       },
     }
   }

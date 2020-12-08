@@ -1,7 +1,7 @@
 import {computed} from 'vue';
 
 export const _modelFactory = (props) => computed(() => {
-  if (typeof props.field.key !== 'undefined') return props.model[props.field.key];
+  if (props.field && typeof props.field.key !== 'undefined') return props.model[props.field.key];
   return props.model;
 });
 

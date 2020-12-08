@@ -1,50 +1,52 @@
 <template>
-  <g-field :path="path" v-if="metadata" :fields="resolveMetadata()" :model="model" :no-layout="noLayout"/>
+  <div>
+    <g-field :path="path" v-if="metadata" :fields="resolveMetadata()" :model="model" :no-layout="noLayout"/>
 
-  <g-tabs slider-color="primary" style="width: 100%" v-else-if="tabs" :items="Object.keys(getTabs())"
-          :class="{'tab-wrapper': fillHeight}"
-          v-model="activeTab">
-    <template #tabs>
-      <template v-for="(tab, index) in getTabs()" :key="tab.name">
-        <g-tab :item="`${index}`">{{ tab.name }}</g-tab>
+    <g-tabs slider-color="primary" style="width: 100%" v-else-if="tabs" :items="Object.keys(getTabs())"
+            :class="{'tab-wrapper': fillHeight}"
+            v-model="activeTab">
+      <template #tabs>
+        <template v-for="(tab, index) in getTabs()" :key="tab.name">
+          <g-tab :item="`${index}`">{{ tab.name }}</g-tab>
+        </template>
       </template>
-    </template>
-    <template #default>
-      <template v-for="(tab, index) in getTabs()" :key="tab.name">
-        <g-tab-item class="pt-3" :item="`${index}`">
-          <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
-                   :rootModel="internalRootModel"/>
-        </g-tab-item>
+      <template #default>
+        <template v-for="(tab, index) in getTabs()" :key="tab.name">
+          <g-tab-item class="pt-3" :item="`${index}`">
+            <g-field :fields="tab.fields" :model="model" :path="path" :no-layout="noLayout" :fill-height="fillHeight"
+                     :rootModel="internalRootModel"/>
+          </g-tab-item>
+        </template>
+        <slot name="tab-append"></slot>
       </template>
-      <slot name="tab-append"></slot>
-    </template>
-  </g-tabs>
+    </g-tabs>
 
-  <g-row no-gutters :class="fillHeight ? 'fill-height' : ''" v-else-if="fields">
-    <template v-for="(_field, index) in getFormFields()" :key="'field_' + _field.key + '_' + index">
-      <g-field :path="path"
-               :field="_field" :model="model" :rootModel="internalRootModel" :no-layout="noLayout"
-               v-show="isVisible(_field)"/>
-    </template>
-    <g-col xs12>
-      <template v-for="(addField, index) in getAddFields()" :key="addField.key + index">
-        <g-chip v-show="isVisible(addField)"
-                backgroundColor="#e5efff" textColor="primary" @click="addNullValue(addField)">
-          <g-avatar class="g-avatar__left">
-            <g-icon color="primary">add_circle</g-icon>
-          </g-avatar>
-          {{ addField.label || addField.key }}
-        </g-chip>
+    <g-row no-gutters :class="fillHeight ? 'fill-height' : ''" v-else-if="fields">
+      <template v-for="(_field, index) in getFormFields()" :key="'field_' + _field.key + '_' + index">
+        <g-field :path="path"
+                 :field="_field" :model="model" :rootModel="internalRootModel" :no-layout="noLayout"
+                 v-show="isVisible(_field)"/>
       </template>
-    </g-col>
-  </g-row>
+      <g-col xs12>
+        <template v-for="(addField, index) in getAddFields()" :key="addField.key + index">
+          <g-chip v-show="isVisible(addField)"
+                  backgroundColor="#e5efff" textColor="primary" @click="addNullValue(addField)">
+            <g-avatar class="g-avatar__left">
+              <g-icon color="primary">add_circle</g-icon>
+            </g-avatar>
+            {{ addField.label || addField.key }}
+          </g-chip>
+        </template>
+      </g-col>
+    </g-row>
 
-  <!--todo: object navigate-->
-  <component v-else :is="type" v-bind="$attrs"
-             :rootModel="internalRootModel" :path="path"
-             :model="model" :field="field" :in-array="inArray" :no-layout="noLayout" :fields="fields">
-    <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
-  </component>
+    <!--todo: object navigate-->
+    <component v-else :is="type"
+               :rootModel="internalRootModel" :path="path"
+               :model="model" :field="field" :in-array="inArray" :no-layout="noLayout" :fields="fields">
+      <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
+    </component>
+  </div>
 </template>
 
 <script>

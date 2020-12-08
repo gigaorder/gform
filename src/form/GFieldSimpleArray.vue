@@ -19,6 +19,7 @@
   export default {
     name: 'GFieldSimpleArray',
     props: ['model', 'field', 'path', 'rootModel', 'noLayout'],
+    inheritAttrs: false,
     data: function () {
       return {}
     },
@@ -26,9 +27,9 @@
       const internalModel = _modelFactory(props);
       const flex = flexFactory(props)
       const label = labelFactory(props);
-      const _fields = _fieldsFactory(props);
+      const fields = _fieldsFactory(props);
 
-      return {internalModel, flex, label, _fields}
+      return {internalModel, flex, label, fields}
     },
     computed: {},
     methods: {
