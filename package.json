@@ -21,8 +21,7 @@
     "sass-loader": "^7.0.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
-    "vue": "3.0.2",
-    "vue-fragment": "^1.2.2",
+    "vue": "^3.0.2",
     "dayjs": "^1.8.12"
   },
   "devDependencies": {
