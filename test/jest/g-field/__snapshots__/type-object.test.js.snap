@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GField with type object should render correctly 1`] = `
+"<div class=\\"g-col col-xs-12\\" xs12=\\"\\">
+  <fieldset class=\\"\\" style=\\"position: relative;\\">
+    <!---->
+    <div style=\\"display: none;\\">
+      <div class=\\"action-container g-card bg-white\\">
+        <div class=\\"g-btn g-btn__flat g-btn__icon g-btn__round g-btn__uppercase g-size__x-small waves-effect\\"><span class=\\"g-btn__content\\"><i class=\\"g-icon material-icons\\" style=\\"font-size: 16px;\\">delete</i></span></div>
+      </div>
+    </div>
+    <legend class=\\"\\"><span>Address </span></legend>
+    <transition-stub name=\\"expand-transition\\" mode=\\"in-out\\">
+      <div class=\\"g-row\\">
+        <div class=\\"g-row no-gutters\\">
+          <div class=\\"g-col md-6 px-2\\">
+            <div class=\\"g-tf-wrapper g-tf r\\">
+              <!---->
+              <!----> <input autocomplete=\\"off\\" label=\\"Street\\" type=\\"text\\" class=\\"g-tf-input\\">
+              <!----> <label class=\\"g-tf-label\\">
+                Street
+                <!----></label>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+            </div>
+          </div>
+          <div class=\\"g-col md-6 px-2\\">
+            <div class=\\"g-tf-wrapper g-tf r\\">
+              <!---->
+              <!----> <input autocomplete=\\"off\\" label=\\"City\\" type=\\"text\\" class=\\"g-tf-input\\">
+              <!----> <label class=\\"g-tf-label\\">
+                City
+                <!----></label>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+            </div>
+          </div>
+          <div class=\\"g-col col-xs-12\\" xs12=\\"\\"></div>
+        </div>
+      </div>
+    </transition-stub>
+  </fieldset>
+</div>"
+`;

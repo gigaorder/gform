@@ -7,7 +7,8 @@
     "build": "vue-cli-service build --target lib --name GForm src/main.js",
     "build:storybook": "vue-cli-service build:storybook -c config/storybook",
     "serve:storybook": "vue-cli-service serve:storybook -p 8080 -c config/storybook",
-    "storybook": "start-storybook -p 8000"
+    "storybook": "start-storybook -p 8000",
+    "jest": "jest"
   },
   "module": "src/main.js",
   "main": "src/main.js",

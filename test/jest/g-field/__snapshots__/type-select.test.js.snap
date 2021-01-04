@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GField with type select should render correctly 1`] = `
+"<div class=\\"g-col md-6 px-2\\">
+  <div class=\\"g-autocomplete\\">
+    <div>
+      <div class=\\"g-tf-wrapper g-tf r\\" style=\\"flex-wrap: wrap;\\">
+        <!---->
+        <!---->
+        <div class=\\"input\\">
+          <div class=\\"input-slot\\" style=\\"display: contents;\\"></div> <input autocomplete=\\"off\\" label=\\"Sex\\" type=\\"text\\" class=\\"g-tf-input\\">
+          <!---->
+        </div> <label class=\\"g-tf-label\\">
+          Sex
+          <!----></label>
+        <!---->
+        <div class=\\"g-tf-append__inner\\">
+          <!----> <i class=\\"g-icon material-icons g-icon__arrow\\" style=\\"font-size: 24px;\\">arrow_drop_down</i></div>
+        <!---->
+        <!---->
+      </div>
+    </div>
+  </div>
+</div>"
+`;
