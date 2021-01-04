@@ -7,7 +7,8 @@
     "build": "vue-cli-service build --target lib --name GForm src/main.js",
     "build:storybook": "vue-cli-service build:storybook -c config/storybook",
     "serve:storybook": "vue-cli-service serve:storybook -p 8080 -c config/storybook",
-    "storybook": "start-storybook -p 8000"
+    "storybook": "start-storybook -p 8000",
+    "jest": "jest"
   },
   "module": "src/main.js",
   "main": "src/main.js",
@@ -47,7 +48,7 @@
     "@vue/babel-preset-jsx": "^1.1.0",
     "@vue/cli-plugin-babel": "3.11.0",
     "@vue/composition-api": "0.3.2",
-    "@vue/test-utils": "^1.0.0-beta.29",
+    "@vue/test-utils": "^1.1.2",
     "autoprefixer": "^9.6.2",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "10.0.3",
