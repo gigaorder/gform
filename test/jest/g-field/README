@@ -1,0 +1,5 @@
+following tests don't render correct:
+- type-choice
+- type-choice-array
+- type-object
+- type-select

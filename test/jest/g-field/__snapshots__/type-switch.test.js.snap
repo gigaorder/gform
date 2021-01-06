@@ -1,7 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`GField with type switch should render correctly 1`] = `
-"<div class=\\"g-col md-6 px-2\\">
-  <div class=\\"g-switch-wrapper\\"><label class=\\"g-switch-container\\"><input type=\\"checkbox\\"> <span class=\\"g-switch\\"><span class=\\"g-switch-track\\"></span> <span class=\\"g-switch-thumb\\"></span></span> <span class=\\"g-switch-label\\">Switch</span></label></div>
-</div>"
+<div class="col-flex md-6 px-2">
+  <div class="g-switch-wrapper">
+    <label class="g-switch-container">
+      <input type="checkbox">
+      <span class="g-switch">
+        <span class="g-switch-track">
+        </span>
+        <span class="g-switch-thumb">
+        </span>
+      </span>
+    </label>
+  </div>
+</div>
 `;

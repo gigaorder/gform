@@ -1,15 +1,17 @@
 <template>
-  <g-col xs12 v-for="(val, index) in model[field.key]" :key="index">
+  <div v-for="(val, index) in model[field.key]"
+       class="col-flex col-xs-12"
+       :key="index">
     <g-field @remove-field="internalModel.splice(index, 1)" :in-array="true" :no-layout="false"
              :path="genPath(field.key)" :root-model="rootModel"
              :field="createArrayField(field.fields, index)" :model="model[field.key]"></g-field>
-  </g-col>
-  <g-col xs12>
+  </div>
+  <div class="col-flex col-xs-12">
     <g-btn textColor="blue lighten-2" outlined small @click="addItem()">
-      Add {{label}}
+      Add {{ label }}
     </g-btn>
     <slot name="btn-append"></slot>
-  </g-col>
+  </div>
 </template>
 
 <script>

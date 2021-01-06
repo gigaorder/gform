@@ -1,19 +1,25 @@
 <template>
-  <g-col :class="[flex,paddingClass]" v-if="inputType === 'switch'">
+  <div v-if="inputType === 'switch'"
+       class="col-flex"
+       :class="[flex, paddingClass]">
     <g-switch :label="field.tableCell ? '': label" v-model="internalValue">
       <template #label v-if="inArray">
         {{field.tableCell ? '': label}} (<g-icon slot="append-inner"  @click.stop="removeField">clear</g-icon>)
       </template>
     </g-switch>
-  </g-col>
-  <g-col :class="[flex,paddingClass]" class="row-flex align-items-center" v-else-if="inputType === 'checkbox'">
+  </div>
+  <div v-else-if="inputType === 'checkbox'"
+       :class="[flex, paddingClass]"
+       class="row-flex align-items-center" >
     <g-checkbox color="primary" :label="field.tableCell ? '': label" v-model="internalValue">
       <template #label v-if="inArray">
         {{field.tableCell ? '': label}} (<g-icon slot="append-inner"  @click.stop="removeField">clear</g-icon>)
       </template>
     </g-checkbox>
-  </g-col>
-  <g-col :class="[flex,paddingClass]" v-else-if="inputType === 'select' || inputType === 'select:number'">
+  </div>
+  <div v-else-if="inputType === 'select' || inputType === 'select:number'"
+       :class="[flex, paddingClass]"
+       class="col-flex">
     <component :is="field.notOnlyValueInOptions ? 'g-combobox': 'g-autocomplete'" v-model="internalValue"
                :normalize="field.normalize"
                :items="options"
@@ -27,9 +33,10 @@
         <g-icon @click.stop="removeField">delete_outline</g-icon>
       </template>
     </component>
-  </g-col>
-  <g-col :class="[flex,paddingClass]"
-         v-else-if="inputType === 'multiSelect' || inputType === 'multiSelect:number'">
+  </div>
+  <div v-else-if="inputType === 'multiSelect' || inputType === 'multiSelect:number'"
+       :class="[flex, paddingClass]"
+       class="col-flex">
     <g-combobox
       v-model="internalValue"
       :normalize="field.normalize"
@@ -47,9 +54,11 @@
         <g-icon @click.stop="removeField">delete_outline</g-icon>
       </template>
     </g-combobox>
-  </g-col>
+  </div>
   <input v-else-if="field.tableCell" :type="inputType" v-model="internalValue" class="form-control">
-  <g-col :class="[flex,paddingClass]" v-else>
+  <div v-else
+       class="col-flex"
+       :class="[flex, paddingClass]">
     <g-text-field v-model="internalValue" :label="label" :type="inputType">
       <template #append-inner v-if="field.addable">
         <g-icon style="opacity: 0.4" @click.stop="clearValue()">clear</g-icon>
@@ -58,7 +67,7 @@
         <g-icon @click.stop="removeField">delete_outline</g-icon>
       </template>
     </g-text-field>
-  </g-col>
+  </div>
 </template>
 <script>
   //not required but this baseField has a lot of useful stuff already in it, check it out

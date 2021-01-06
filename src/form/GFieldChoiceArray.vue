@@ -1,11 +1,14 @@
 <template>
-  <g-col :class="[flex]" v-for="(val, index) in model[field.key]" :key="index">
+  <div v-for="(val, index) in model[field.key]"
+       :class="[flex]"
+       class="col-flex"
+       :key="index">
     <g-field-choice @remove-field="model[field.key].splice(index, 1)" :in-array="true"
                     :rootModel="rootModel" :path="genPath(field.key)"
                     :field="createChoiceArrayField(index)" :model.sync="model[field.key]"
                     :no-layout="noLayout"/>
-  </g-col>
-  <g-col md12>
+  </div>
+  <div class="col-flex col-md-12">
     <g-menu offset-y v-if="!inArray" z-index="1000" v-model="showMenu" :closeOnContentClick="true">
       <template #activator="{toggleContent}">
         <g-btn @click="toggleContent" backgroundColor="blue" textColor="white" small>
@@ -23,7 +26,7 @@
         </template>
       </g-list>
     </g-menu>
-  </g-col>
+  </div>
 </template>
 
 <script>

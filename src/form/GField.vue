@@ -26,7 +26,7 @@
                :field="_field" :model="model" :rootModel="internalRootModel" :no-layout="noLayout"
                v-show="isVisible(_field)"/>
     </template>
-    <g-col xs12>
+    <div class="col-flex col-xs-12">
       <template v-for="(addField, index) in getAddFields()" :key="addField.key + index">
         <g-chip v-show="isVisible(addField)"
                 backgroundColor="#e5efff" textColor="primary" @click="addNullValue(addField)">
@@ -36,7 +36,7 @@
           {{ addField.label || addField.key }}
         </g-chip>
       </template>
-    </g-col>
+    </div>
   </g-row>
 
   <!--todo: object navigate-->

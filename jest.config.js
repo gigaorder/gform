@@ -15,5 +15,6 @@ module.exports = {
   },
   moduleNameMapper: {
     '\\.(css|scss)$': '<rootDir>/test/jest/jest-style-mock.js',
-  }
+  },
+  snapshotSerializers: ['jest-serializer-html'],
 }

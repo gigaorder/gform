@@ -1,5 +1,5 @@
 <template>
-  <g-col xs12>
+  <div class="col-flex col-xs-12">
     <table class="g-datatable g-table theme--light gfield-table"
            v-if="model[field.key] && model[field.key].length > 0">
       <thead>
@@ -49,7 +49,7 @@
       {{getLabel(field)}}
     </g-btn>
     <slot name="btn-append"></slot>
-  </g-col>
+  </div>
 </template>
 
 <script>

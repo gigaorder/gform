@@ -1,13 +1,9 @@
-import Vue from 'vue';
 import _ from 'lodash';
-import '../../../src/plugins/giga-components.js';
-import CompositionApi from '@vue/composition-api'
-import GForm from "../../../src/main";
+import GigaComponents from 'pos-vue-framework';
+import GForm from '../../../src/main';
 import { mount } from "@vue/test-utils";
-import GField from "../../../src/form/GField";
+import GField from '../../../src/form/GField';
 
-Vue.use(CompositionApi)
-Vue.use(GForm);
 window._ = _;
 
 const modelData = {
@@ -22,7 +18,10 @@ const modelData = {
 
 export function generateComponent(field) {
   return mount(GField, {
-    propsData: {
+    global: {
+      plugins: [GForm, GigaComponents],
+    },
+    props: {
       model: _.cloneDeep(modelData),
       field,
     }

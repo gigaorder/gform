@@ -1,17 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`GField with type input should render correctly 1`] = `
-"<div class=\\"g-col md-6 px-2\\">
-  <div class=\\"g-tf-wrapper g-tf r\\">
-    <!---->
-    <!----> <input autocomplete=\\"off\\" label=\\"Name\\" type=\\"text\\" class=\\"g-tf-input\\">
-    <!----> <label class=\\"g-tf-label g-tf-label__active\\">
-      Name
-      <!----></label>
-    <!---->
-    <!---->
-    <!---->
-    <!---->
+<div class="col-flex md-6 px-2">
+  <div class="g-tf-wrapper g-tf  r">
+    <pass-through class="input">
+      <input autocomplete="off"
+             class="g-tf-input"
+             type="text"
+             label="Name"
+      >
+    </pass-through>
   </div>
-</div>"
+</div>
 `;
