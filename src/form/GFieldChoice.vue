@@ -1,7 +1,7 @@
 <template>
-  <div class="col-flex col-xs-12">
+  <g-col xs12>
     <div v-if="choiceExist">
-      <div class="col-flex col-xs-12">
+      <g-col xs12>
         <g-field :field="choiceField" :model="choiceModel" @remove-field="removeChoice" :in-array="true"
                  :root-model="rootModel" :path="choicePath" :no-layout="noLayout">
           <template #action>
@@ -29,7 +29,7 @@
             </g-btn>
           </template>
         </g-field>
-      </div>
+      </g-col>
     </div>
     <g-menu offset-y v-if="!choiceExist" z-index="1000" v-model="showMenu" :closeOnContentClick="true">
       <template #activator="{toggleContent}">
@@ -48,7 +48,7 @@
         </template>
       </g-list>
     </g-menu>
-  </div>
+  </g-col>
 </template>
 
 <script>

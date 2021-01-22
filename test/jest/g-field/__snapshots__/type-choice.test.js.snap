@@ -1,12 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`GField with type choice should render correctly 1`] = `
-"<div class=\\"g-col col-xs-12\\" xs12=\\"\\">
-  <!---->
-  <div z-index=\\"1000\\">
-    <div class=\\"g-btn g-btn__flat g-btn__depressed g-btn__outlined g-btn__uppercase text-blue-lighten-2 g-size__small waves-effect\\"><span class=\\"g-btn__content\\">
-        ADD LAYOUT
-        <i class=\\"g-icon material-icons\\" style=\\"font-size: 24px;\\">arrow_drop_down</i></span></div>
-  </div>
-</div>"
+<g-col-stub xs12>
+  <g-menu-stub offset-y
+               z-index="1000"
+               modelvalue="false"
+               closeoncontentclick="true"
+  >
+    <g-list-stub items="[object Object],[object Object]">
+    </g-list-stub>
+  </g-menu-stub>
+</g-col-stub>
 `;

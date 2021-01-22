@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!noPanel" class="col-flex col-xs-12">
+  <g-col xs12 v-if="!noPanel">
     <fieldset :class="collapse ? 'fieldset__collapsed' : ''" v-show="fields && fields.length > 0"
               style="position: relative" @mouseenter="showAction = true" @mouseleave="showAction = false">
       <div v-if="collapse" @click="toggleCollapse" class="fieldset-activator"/>
@@ -24,12 +24,12 @@
         </g-row>
       </g-expand-transition>
     </fieldset>
-  </div>
+  </g-col>
 
-  <div v-else-if="noPanel" class="col-flex col-xs-12" style="position: relative">
+  <g-col xs12 v-else-if="noPanel" style="position: relative">
     <slot name="action"/>
     <g-field :fields="fields" :model="internalModel" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
-  </div>
+  </g-col>
 </template>
 
 <script>

@@ -10,9 +10,13 @@ module.exports = {
     "vue",
   ],
   transform: {
-    ".*\\.(vue)$": "vue-jest",
-    ".*\\.(js)$": "babel-jest",
+    '^.*\\.vue$': "vue-jest",
+    '^.+\\.js$': "<rootDir>/node_modules/babel-jest",
+    ".+\\.(css|styl|less|sass|scss|png|jpg|svg|ttf|woff|woff2)$": "<rootDir>/node_modules/jest-transform-stub"
   },
+  transformIgnorePatterns: [
+    "<rootDir>/node_modules/(?!pos-vue-framework)",
+  ],
   moduleNameMapper: {
     '\\.(css|scss)$': '<rootDir>/test/jest/jest-style-mock.js',
   },

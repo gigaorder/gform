@@ -1,13 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`GField with type array should render correctly 1`] = `
-<div class="col-flex col-xs-12"
-     in-array="false"
+<g-col-stub xs12
+            in-array="false"
 >
-  <div class="g-btn g-btn__flat g-btn__depressed g-btn__outlined g-btn__uppercase text-blue-lighten-2 g-size__small ma-2">
-    <span class="g-btn__content">
-      ADD ADDRESS1
-    </span>
-  </div>
-</div>
+  <g-btn-stub class="ma-2"
+              textcolor="blue lighten-2"
+              outlined
+              small
+  >
+    ADD ADDRESS1
+  </g-btn-stub>
+</g-col-stub>
 `;

@@ -1,37 +1,35 @@
 <template>
-  <div class="col-flex col-xs-12">
-<!--    <g-row no-gutters>-->
-      <template v-for="val in model[field.key]">
-        <div class="col-flex"
-             :class="[flex, flex !== 'col-xs-12' ? 'fix-inline': '']"
-             style="position: relative">
-          <g-field-object :field="createObjectArrayField(field.fields, val)" :model="model[field.key]"
-                          :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
-            <template #action="{collapse}">
-              <g-card background-color="white" class="action-container" :elevation="0">
-                <g-btn xSmall icon @click="pushItemUp(val)">
-                  <g-icon small>
-                    keyboard_arrow_up
-                  </g-icon>
-                </g-btn>
-                <g-btn xSmall icon @click="pushItemDown(val)">
-                  <g-icon small>
-                    keyboard_arrow_down
-                  </g-icon>
-                </g-btn>
-                <g-btn xSmall icon @click="deleteItem(val)">
-                  <g-icon small>delete</g-icon>
-                </g-btn>
-              </g-card>
-            </template>
-          </g-field-object>
-        </div>
-      </template>
-<!--    </g-row>-->
+  <g-col xs12>
+    <!--    <g-row no-gutters>-->
+    <template v-for="val in model[field.key]">
+      <g-col :class="[flex, flex !== 'col-xs-12' ? 'fix-inline': '']" style="position: relative">
+        <g-field-object :field="createObjectArrayField(field.fields, val)" :model="model[field.key]"
+                        :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
+          <template #action="{collapse}">
+            <g-card background-color="white" class="action-container" :elevation="0">
+              <g-btn xSmall icon @click="pushItemUp(val)">
+                <g-icon small>
+                  keyboard_arrow_up
+                </g-icon>
+              </g-btn>
+              <g-btn xSmall icon @click="pushItemDown(val)">
+                <g-icon small>
+                  keyboard_arrow_down
+                </g-icon>
+              </g-btn>
+              <g-btn xSmall icon @click="deleteItem(val)">
+                <g-icon small>delete</g-icon>
+              </g-btn>
+            </g-card>
+          </template>
+        </g-field-object>
+      </g-col>
+    </template>
+    <!--    </g-row>-->
     <g-btn class="ma-2" textColor="blue lighten-2" outlined small @click="addObjectItem" v-if="!field.addable">
       ADD {{getLabel(field).toUpperCase()}}
     </g-btn>
-  </div>
+  </g-col>
 </template>
 
 <script>
