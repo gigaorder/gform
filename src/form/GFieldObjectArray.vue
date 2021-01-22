@@ -1,8 +1,10 @@
 <template>
-  <g-col xs12>
+  <div class="col-flex col-xs-12">
 <!--    <g-row no-gutters>-->
       <template v-for="val in model[field.key]">
-        <g-col :class="[flex, flex !== 'col-xs-12' ? 'fix-inline': '']" style="position: relative">
+        <div class="col-flex"
+             :class="[flex, flex !== 'col-xs-12' ? 'fix-inline': '']"
+             style="position: relative">
           <g-field-object :field="createObjectArrayField(field.fields, val)" :model="model[field.key]"
                           :in-array="true" :rootModel="rootModel" :path="genPath(field.key)" :no-layout="noLayout">
             <template #action="{collapse}">
@@ -23,13 +25,13 @@
               </g-card>
             </template>
           </g-field-object>
-        </g-col>
+        </div>
       </template>
 <!--    </g-row>-->
     <g-btn class="ma-2" textColor="blue lighten-2" outlined small @click="addObjectItem" v-if="!field.addable">
       ADD {{getLabel(field).toUpperCase()}}
     </g-btn>
-  </g-col>
+  </div>
 </template>
 
 <script>

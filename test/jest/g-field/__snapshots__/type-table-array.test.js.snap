@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GField with type table array should render correctly 1`] = `
+<div class="col-flex col-xs-12"
+     in-array="false"
+     no-layout="false"
+>
+  <table class="g-datatable g-table theme--light gfield-table">
+    <thead>
+      <tr class="table-header">
+        <th>
+          Street
+        </th>
+        <th>
+          City
+        </th>
+        <th>
+          X
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="text-md-center">
+        <td class="input-group-sm">
+          <input type="text"
+                 class="form-control"
+          >
+        </td>
+        <td class="input-group-sm">
+          <input type="text"
+                 class="form-control"
+          >
+        </td>
+        <td>
+          <i class="g-icon material-icons"
+             style="font-size: 24px;"
+          >
+            delete
+          </i>
+        </td>
+      </tr>
+      <transition-stub>
+      </transition-stub>
+      <tr class="text-md-center">
+        <td class="input-group-sm">
+          <input type="text"
+                 class="form-control"
+          >
+        </td>
+        <td class="input-group-sm">
+          <input type="text"
+                 class="form-control"
+          >
+        </td>
+        <td>
+          <i class="g-icon material-icons"
+             style="font-size: 24px;"
+          >
+            delete
+          </i>
+        </td>
+      </tr>
+      <transition-stub>
+      </transition-stub>
+    </tbody>
+  </table>
+  <div class="g-btn g-btn__flat g-btn__depressed g-btn__outlined g-btn__uppercase text-blue-lighten-2 g-size__small ma-2">
+    <span class="g-btn__content">
+      Add Address3
+    </span>
+  </div>
+</div>
+`;

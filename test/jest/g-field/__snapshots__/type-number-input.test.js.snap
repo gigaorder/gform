@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GField with type number input should render correctly 1`] = `
+<div class="col-flex md-6 px-2">
+  <div class="g-tf-wrapper g-tf  r">
+    <div class="input">
+      <input autocomplete="off"
+             class="g-tf-input"
+             type="number"
+             label="Nr"
+      >
+    </div>
+    <div class="g-tf-append__inner">
+    </div>
+  </div>
+</div>
+`;

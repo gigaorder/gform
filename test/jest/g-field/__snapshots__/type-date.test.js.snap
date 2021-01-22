@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GField with type date should render correctly 1`] = `
+<div class="col-flex md-6 px-2">
+  <div class="g-tf-wrapper g-tf  r">
+    <pass-through class="input">
+      <input autocomplete="off"
+             class="g-tf-input"
+             type="datetime-local"
+             label="Date"
+      >
+    </pass-through>
+  </div>
+</div>
+`;

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GField with type choice array should render correctly 1`] = `
+"<div >
+  <div class=\\"g-col col-md-12\\"  md12=\\"\\">
+    <div z-index=\\"1000\\">
+      <div class=\\"g-btn g-btn__contained g-btn__uppercase bg-blue text-white g-size__small waves-effect\\"><span class=\\"g-btn__content\\">
+          ADD LAYOUT
+          <i class=\\"g-icon material-icons\\" style=\\"font-size: 24px;\\">arrow_drop_down</i></span></div>
+    </div>
+  </div>
+</div>"
+`;

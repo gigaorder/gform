@@ -1,5 +1,5 @@
 <template>
-  <g-col xs12 v-if="!noPanel">
+  <div v-if="!noPanel" class="col-flex col-xs-12">
     <fieldset :class="collapse ? 'fieldset__collapsed' : ''" v-show="fields && fields.length > 0"
               style="position: relative" @mouseenter="showAction = true" @mouseleave="showAction = false">
       <div v-if="collapse" @click="toggleCollapse" class="fieldset-activator"/>
@@ -24,12 +24,12 @@
         </g-row>
       </g-expand-transition>
     </fieldset>
-  </g-col>
+  </div>
 
-  <g-col xs12 v-else-if="noPanel" style="position: relative">
+  <div v-else-if="noPanel" class="col-flex col-xs-12" style="position: relative">
     <slot name="action"/>
     <g-field :fields="fields" :model="internalModel" :rootModel="rootModel" :path="objectPath" :no-layout="noLayout"/>
-  </g-col>
+  </div>
 </template>
 
 <script>
@@ -50,7 +50,7 @@
       return `${this.rootModel._id}/${this.field.key ? this.field.key : 'no-key'}/${this.path}/GFieldObject/collapseState`;
     },
     injectLocalStorage: {
-      collapseHistory: {default: false},
+      collapseHistory: { default: false },
     },
     data: () => ({
       collapse: false,
@@ -63,7 +63,7 @@
       const label = labelFactory(props);
       const fields = _fieldsFactory(props, gForm);
 
-      return {internalModel, flex, label, fields}
+      return { internalModel, flex, label, fields }
     },
     created() {
       this.collapse = this.collapseHistory
