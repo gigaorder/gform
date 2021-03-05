@@ -1,20 +1,55 @@
 <script>
+
+import { computed, ref } from 'vue'
+import { genPath, getLabel } from './FormFactory';
+
 export default {
-  setup() {
+  setup(props, { emit }) {
+    const rowDetail = ref(null)
+    const expansionInitialized = ref([])
+    const mainFields = computed(() => {
+      if (!props.field.expansion) return props.field.fields;
+      return props.field.fields.filter(f => !props.field.expansion.includes(f.key));
+    })
+    const expansionFields = computed(() => {
+      if (!props.field.expansion) return [];
+      return props.field.fields.filter(f => props.field.expansion.includes(f.key));
+    })
+
+    function addObjectItem() {
+      if (!props.model[props.field.key]) props.model[props.field.key] = []
+      props.model[props.field.key].push({});
+    }
+
+    //todo: use stateTree
+    function toggleRowDetail(index) {
+      if (rowDetail.value === index) {
+        rowDetail.value = null;
+      } else {
+        rowDetail.value = index;
+        expansionInitialized.value[index] = true
+      }
+    }
+
+    function makeTableCell(field) {
+      return _.assign(field, { tableCell: true });
+    }
+
     return () => <>
       <div class="col-flex col-xs-12">
         {
-          (model[field.key] && model[field.key].length > 0) &&
+          (props.model[props.field.key] && props.model[props.field.key].length > 0) &&
           <table class="g-datatable g-table theme--light gfield-table">
             <thead>
             <tr class="table-header">
               {
-                (field.expansion) &&
-                <th style="width: 15px"></th>
+                (props.field.expansion) &&
+                <th style="width: 15px"/>
               }
-              {mainFields.map(_field =>
+              {mainFields.value.map(_field =>
                   <th>
-                    {getLabel(_field)} </th>
+                    {getLabel(_field)}
+                  </th>
               )}
               <th>
                 X
@@ -22,36 +57,44 @@ export default {
             </tr>
             </thead>
             <tbody>
-            {model[field.key].map((val, index) =>
+            {props.props.model[props.field.key].map((val, index) =>
                 <>
                   <tr class="text-md-center">
                     {
-                      (field.expansion) &&
+                      (props.field.expansion) &&
                       <td style="width: 15px" onClick={() => toggleRowDetail(index)}>
                         <g-icon>
                           keyboard_arrow_{rowDetail === index ? 'down' : 'right'} </g-icon>
                       </td>
                     }
-                    {mainFields.map(_field =>
+                    {mainFields.value.map(_field =>
                         <td class="input-group-sm">
-                          <g-field field={makeTableCell(_field)} model={model[field.key][index]} rootModel={rootModel} path={genPath(field.key, index)}></g-field>
+                          <g-field field={makeTableCell(_field)}
+                                   model={props.model[props.field.key][index]}
+                                   rootModel={props.rootModel}
+                                   path={genPath(props.field.key, index)}
+                          />
                         </td>
                     )}
                     <td>
-                      <g-icon onClick={() => model[field.key].splice(index, 1)}>
+                      <g-icon onClick={() => props.model[props.field.key].splice(index, 1)}>
                         delete
                       </g-icon>
                     </td>
                   </tr>
                   <g-expand-transition>
                     {
-                      (field.expansion && (!field.lazy || rowDetail === index || expansionInitialized[index])) &&
-                      <tr v-show="rowDetail === index" class="g-expansion" style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
-                        <td colspan={field.fields.length + 2} style="height: 0 !important;">
+                      (props.field.expansion && (!props.field.lazy || rowDetail.value === index || expansionInitialized.value[index])) &&
+                      <tr v-show={rowDetail.value === index} class="g-expansion" style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
+                        <td colspan={props.field.fields.length + 2} style="height: 0 !important;">
                           <g-expand-transition>
-                            <g-card v-show="rowDetail === index" flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
+                            <g-card v-show={rowDetail.value === index} flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
                               <g-card-text>
-                                <g-field fields={expansionFields} model={model[field.key][index]} rootModel={rootModel} path={genPath(field.key, index)}></g-field>
+                                <g-field fields={expansionFields.value}
+                                         model={props.model[props.field.key][index]}
+                                         rootModel={props.rootModel}
+                                         path={genPath(props.field.key, index)}
+                                />
                               </g-card-text>
                             </g-card>
                           </g-expand-transition>
@@ -60,7 +103,8 @@ export default {
                     }
                   </g-expand-transition>
                 </>
-            )} </tbody>
+            )}
+            </tbody>
           </table>
         }
         {

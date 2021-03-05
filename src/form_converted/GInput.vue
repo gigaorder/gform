@@ -1,105 +1,196 @@
 <script>
+
+import { computed, withModifiers } from 'vue'
+import dayjs from 'dayjs'
+
 export default {
-  setup() {
+  props: ['model', 'field', 'inArray', 'noFlex', 'rootModel', 'path', 'noLayout'],
+  setup(props, { emit }) {
+    const paddingClass = computed(() => {
+      return props.field.tableCell ? 'px-0' : 'px-2';
+    })
+    const inputType = computed(() => {
+      if (props.field.type.includes('@')) {
+        return props.field.type.split('@')[1];
+      }
+      return _.get(props.field, 'inputType', 'text');
+    })
+    const internalValue = computed({
+      get() {
+        try {
+          if (inputType.value === 'date') {
+            return props.model[props.field.key] && dayjs(props.model[props.field.key]).format('YYYY-MM-DD');
+          } else if (inputType.value === 'datetime-local') {
+            return props.model[props.field.key] && dayjs(props.model[props.field.key]).format('YYYY-MM-DD[T]HH:mm');
+          }
+        } catch (e) {
+        }
+        return props.model[props.field.key];
+      },
+      set(v) {
+        if (inputType.value.includes('number')) {
+          props.model[props.field.key] = parseFloat(v)
+        } else if (inputType.value === 'date') {
+          props.model[props.field.key] = new Date(v + 'T00:00:00')
+        } else if (inputType.value === 'datetime-local') {
+          props.model[props.field.key] = new Date(v)
+        } else {
+          props.model[props.field.key] = v
+        }
+      }
+    })
+    const label = computed(() => {
+      if (props.field.label) {
+        return props.field.label;
+      }
+      return _.upperFirst(props.field.key);
+    })
+    const options = computed(() => {
+      if (typeof props.field.options === 'function') {
+        //fixme: *this
+        return props.field.options(this);
+      }
+      if (inputType.value.includes('number')) {
+        return props.field.options.map(opt => {
+          if (typeof opt === 'object') return Object.assign(opt, { value: parseFloat(opt.value) });
+          return parseFloat(opt);
+        });
+      }
+      return props.field.options;
+    })
+    const flex = computed(() => {
+      return props.noLayout ? 'col-xs-12' : props.field.flex;
+    })
+
+    function clearValue() {
+      props.model[props.field.key] = undefined;
+    }
+
+    function onChange(e) {
+      if (props.field.onChange) {
+        props.field.onChange(e, props.rootModel, props.model);
+      }
+    }
+
+    function removeField() {
+      //props.model.splice(props.field.key, 1);
+      emit('remove-field');
+    }
+
+    function init() {
+      if (props.field.default && typeof props.field.default !== 'function' && !props.model[props.field.key]) {
+        if (inputType.value.includes('number')) {
+          props.model, props.field.key, parseFloat(props.field.default);
+        } else {
+          (props.model, props.field.key, props.field.default);
+        }
+      } else if (props.field.default && typeof props.field.default === 'function' && !props.model[props.field.key]) {
+        (props.model, props.field.key, props.field.default());
+      } else if (!props.model.hasOwnProperty(props.field.key)) {
+        (props.model, props.field.key, undefined);
+      }
+    }
+
+    init()
     return () => <>
       {
         (inputType === 'switch') ?
-            <g-col class={[flex, paddingClass]}>
-              <g-switch label={field.tableCell ? '' : label} v-model={internalValue} v-slots={{
-                'label': () => <> {
-                  (inArray) &&
-                  <>
-                    {field.tableCell ? '' : label} (
-                    <g-icon slot="append-inner" onClick={withModifiers(removeField, ['stop'])}>
-                      clear
-                    </g-icon>
-                    )
-                  </>
-                }
-                </>
+            <g-col class={[flex.value, paddingClass.value]}>
+              <g-switch label={props.field.tableCell ? '' : label.value} v-model={internalValue.value} v-slots={{
+                'label': () =>
+                    (props.inArray) &&
+                    <>
+                      {props.field.tableCell ? '' : label.value}
+                      <g-icon onClick={withModifiers(removeField, ['stop'])}>
+                        clear
+                      </g-icon>
+                    </>
               }}>
               </g-switch>
             </g-col>
             :
             (
-                (inputType === 'checkbox') ?
+                (inputType.value === 'checkbox') ?
                     <g-col class="row-flex align-items-center">
-                      <g-checkbox color="primary" label={field.tableCell ? '' : label} v-model={internalValue} v-slots={{
-                        'label': () => <> {
-                          (inArray) &&
-                          <>
-                            {field.tableCell ? '' : label} (
-                            <g-icon slot="append-inner" onClick={withModifiers(removeField, ['stop'])}>
-                              clear
-                            </g-icon>
-                            )
-                          </>
-                        }
-                        </>
+                      <g-checkbox color="primary" label={props.field.tableCell ? '' : label.value} v-model={internalValue.value} v-slots={{
+                        'label': () =>
+                            (props.inArray) && <>
+                              {props.field.tableCell ? '' : label.value} (
+                              <g-icon onClick={withModifiers(removeField, ['stop'])}>
+                                clear
+                              </g-icon>)
+                            </>
                       }}>
                       </g-checkbox>
                     </g-col>
                     :
                     (
-                        (inputType === 'select' || inputType === 'select:number') ?
-                            <g-col class={[flex, paddingClass]}>
-                              <component is={field.notOnlyValueInOptions ? 'g-combobox' : 'g-autocomplete'} v-model={internalValue} normalize={field.normalize} items={options} itemText={field.itemText} itemValue={field.itemValue} chips={field.chips} smallChips={field.chips} label={field.tableCell ? '' : label} clearable onChange={onChange} returnObject={!!field.returnObject} menuProps={{ 'z-index': 1000, 'closeOnContentClick': true }} v-slots={{
-                                'append-inner': () => <> {
-                                  (inArray) &&
-                                  <>
+                        (inputType.value === 'select' || inputType.value === 'select:number') ?
+                            <g-col class={[flex.value, paddingClass.value]}>
+                              <component is={props.field.notOnlyValueInOptions ? 'g-combobox' : 'g-autocomplete'}
+                                         v-model={internalValue.value}
+                                         normalize={props.field.normalize}
+                                         items={options.value}
+                                         itemText={props.field.itemText}
+                                         itemValue={props.field.itemValue}
+                                         chips={props.field.chips}
+                                         smallChips={props.field.chips}
+                                         label={props.field.tableCell ? '' : label.value}
+                                         clearable onChange={onChange}
+                                         returnObject={!!props.field.returnObject}
+                                         menuProps={{ 'z-index': 1000, 'closeOnContentClick': true }} v-slots={{
+                                'append-inner': () =>
+                                    (props.inArray) &&
                                     <g-icon onClick={withModifiers(removeField, ['stop'])}>
                                       delete_outline
                                     </g-icon>
-                                  </>
-                                }
-                                </>
                               }}>
                               </component>
                             </g-col>
                             :
                             (
-                                (inputType === 'multiSelect' || inputType === 'multiSelect:number') ?
-                                    <g-col class={[flex, paddingClass]}>
-                                      <g-combobox v-model={internalValue} normalize={field.normalize} itemText={field.itemText} itemValue={field.itemValue} allowduplicates={field.allowDuplicates} items={options} hide-selected label={field.tableCell ? '' : label} multiple small-chips deletable-chips returnObject={!!field.returnObject} menuProps={{ 'z-index': 1000, 'closeOnContentClick': true }} v-slots={{
-                                        'append-inner': () => <> {
-                                          (inArray) &&
-                                          <>
+                                (inputType.value === 'multiSelect' || inputType.value === 'multiSelect:number') ?
+                                    <g-col class={[flex.value, paddingClass.value]}>
+                                      <g-combobox v-model={internalValue.value}
+                                                  normalize={props.field.normalize}
+                                                  itemText={props.field.itemText}
+                                                  itemValue={props.field.itemValue}
+                                                  allowduplicates={props.field.allowDuplicates}
+                                                  items={options.value} hide-selected
+                                                  label={props.field.tableCell ? '' : label.value}
+                                                  multiple small-chips
+                                                  deletable-chips
+                                                  returnObject={!!props.field.returnObject}
+                                                  menuProps={{ 'z-index': 1000, 'closeOnContentClick': true }} v-slots={{
+                                        'append-inner': () =>
+                                            (props.inArray) &&
                                             <g-icon onClick={withModifiers(removeField, ['stop'])}>
                                               delete_outline
                                             </g-icon>
-                                          </>
-                                        }
-                                        </>
-                                      }}>
-                                      </g-combobox>
+                                      }}/>
                                     </g-col>
                                     :
                                     (
-                                        (field.tableCell) ?
-                                            <input type={inputType} v-model={internalValue} class="form-control"> </input>
+                                        (props.field.tableCell) ?
+                                            <input type={inputType.value} v-model={internalValue.value} class="form-control"/>
                                             :
-                                            <g-col class={[flex, paddingClass]}>
-                                              <g-text-field v-model={internalValue} label={label} type={inputType} v-slots={{
-                                                'append-inner': () => <> {
-                                                  (field.addable) &&
-                                                  <>
-                                                    <g-icon style="opacity: 0.4" onClick={withModifiers(() => clearValue(), ['stop'])}>
+                                            <g-col class={[flex.value, paddingClass.value]}>
+                                              <g-text-field v-model={internalValue.value} label={label.value} type={inputType.value} v-slots={{
+                                                'append-inner': () => <>
+                                                  {
+                                                    (props.field.addable) &&
+                                                    <g-icon style="opacity: 0.4" onClick={withModifiers(clearValue, ['stop'])}>
                                                       clear
                                                     </g-icon>
-                                                  </>
-                                                }
+                                                  }
                                                   {
-                                                    (inArray) &&
-                                                    <>
-                                                      <g-icon onClick={withModifiers(removeField, ['stop'])}>
-                                                        delete_outline
-                                                      </g-icon>
-                                                    </>
+                                                    (props.inArray) &&
+                                                    <g-icon onClick={withModifiers(removeField, ['stop'])}>
+                                                      delete_outline
+                                                    </g-icon>
                                                   }
                                                 </>
-                                                ,
-                                              }}>
-                                              </g-text-field>
+                                              }}/>
                                             </g-col>
                                     )
                             )

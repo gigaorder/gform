@@ -1,50 +1,91 @@
 <script>
+import { _fieldsFactory, _modelFactory, flexFactory, genPath, labelFactory } from '../form/FormFactory';
+import { computed, inject, ref } from 'vue'
+
 export default {
-  setup() {
+  props: ['model', 'field', 'rootModel', 'path', 'noLayout'],
+  emits: ['saveLocalStorage'],
+  initLocalStoragePath() {
+    return `${this.rootModel._id}/${this.field.key ? this.field.key : 'no-key'}/${this.path}/GFieldObject/collapseState`;
+  },
+  injectLocalStorage: {
+    collapseHistory: { default: false },
+  },
+  setup(props, { slots, emit }) {
+    const gForm = inject('$gform')
+    const internalModel = _modelFactory(props);
+    const flex = flexFactory(props);
+    const label = labelFactory(props);
+    const fields = _fieldsFactory(props, gForm);
+    const collapse = ref(false)
+    const showAction = ref(false)
+    const noPanel = computed(() => {
+      return props.field.noPanel;
+    })
+    const objectPath = computed(() => {
+      return genPath(props.field.key);
+    })
+
+    function toggleCollapse() {
+      collapse.value = !collapse.value
+      //fixme:
+      // collapseHistory = collapse.value
+      emit('saveLocalStorage')
+    }
+
     return () => <>
       {
-        (!noPanel) ?
-            <g-col xs12 >
-              <fieldset class={ collapse ? 'fieldset__collapsed' : '' } v-show="fields && fields.length > 0" style="position: relative" onMouseenter={() => showAction = true} onMouseleave={() => showAction = false} >
+        (!noPanel.value) ?
+            <g-col xs12>
+              <fieldset class={collapse.value ? 'fieldset__collapsed' : ''}
+                        v-show="fields && fields.length > 0"
+                        style="position: relative"
+                        onMouseEnter={() => showAction.value = true}
+                        onMouseLeave={() => showAction.value = false}>
                 {
-                  (collapse) &&
-                  <div onClick={toggleCollapse} class="fieldset-activator" >
+                  (collapse.value) &&
+                  <div onClick={toggleCollapse} class="fieldset-activator">
                   </div>
                 }
-                <div v-show="showAction" >
-                  <slot name="action" collapse={ collapse } >
-                    <g-card background-color="white" class="action-container" elevation={ 0 } >
-                      <g-btn xsmall icon onClick={() => model[field.key] = undefined} >
-                        <g-icon small >
-                          delete
-                        </g-icon>
-                      </g-btn>
-                    </g-card>
-                  </slot>
+                <div v-show={showAction.value}>
+                  {slots.action ? slots.action() :
+                      <g-card background-color="white" class="action-container" elevation={0}>
+                        <g-btn xSmall icon onClick={props.model[props.field.key] = undefined}>
+                          <g-icon small>
+                            delete
+                          </g-icon>
+                        </g-btn>
+                      </g-card>}
                 </div>
                 {
-                  (label) &&
-                  <legend class={ collapse ? 'legend__collapsed' : '' } >
-                    <span onClick={toggleCollapse} >
-                      { label } { collapse ? '+' : '' } </span>
+                  (label.value) &&
+                  <legend class={collapse.value ? 'legend__collapsed' : ''}>
+                    <span onClick={toggleCollapse}>
+                      {label.value} {collapse.value ? '+' : ''}
+                    </span>
                   </legend>
                 }
                 <g-expand-transition>
-                  <g-row v-show="!collapse" >
-                    <g-field fields={ fields } model={ internalModel } rootmodel={ rootModel } path={ objectPath } noLayout={ noLayout } >
-                    </g-field>
+                  <g-row v-show={!collapse.value}>
+                    <g-field fields={fields.value}
+                             model={internalModel.value}
+                             rootmodel={props.rootModel}
+                             path={objectPath.value}
+                             noLayout={props.noLayout}/>
                   </g-row>
                 </g-expand-transition>
               </fieldset>
             </g-col>
             :
             (
-                (noPanel) &&
-                <g-col xs12 style="position: relative" >
-                  <slot name="action" >
-                  </slot>
-                  <g-field fields={ fields } model={ internalModel } rootmodel={ rootModel } path={ objectPath } noLayout={ noLayout } >
-                  </g-field>
+                (noPanel.value) &&
+                <g-col xs12 style="position: relative">
+                  {slots.action && slots.action()}
+                  <g-field fields={fields.value}
+                           model={internalModel.value}
+                           rootModel={props.rootModel}
+                           path={objectPath.value}
+                           noLayout={props.noLayout}/>
                 </g-col>
             )
       }
