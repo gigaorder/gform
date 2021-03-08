@@ -1,10 +1,12 @@
 <script>
 
-import { computed, withModifiers } from 'vue'
+import {computed, resolveComponent, withModifiers} from 'vue'
 import dayjs from 'dayjs'
 
 export default {
+  name: 'GInput',
   props: ['model', 'field', 'inArray', 'noFlex', 'rootModel', 'path', 'noLayout'],
+  emits: ['remove-field'],
   setup(props, { emit }) {
     const paddingClass = computed(() => {
       return props.field.tableCell ? 'px-0' : 'px-2';
@@ -127,25 +129,28 @@ export default {
                     (
                         (inputType.value === 'select' || inputType.value === 'select:number') ?
                             <g-col class={[flex.value, paddingClass.value]}>
-                              <component is={props.field.notOnlyValueInOptions ? 'g-combobox' : 'g-autocomplete'}
-                                         v-model={internalValue.value}
-                                         normalize={props.field.normalize}
-                                         items={options.value}
-                                         itemText={props.field.itemText}
-                                         itemValue={props.field.itemValue}
-                                         chips={props.field.chips}
-                                         smallChips={props.field.chips}
-                                         label={props.field.tableCell ? '' : label.value}
-                                         clearable onChange={onChange}
-                                         returnObject={!!props.field.returnObject}
-                                         menuProps={{ 'z-index': 1000, 'closeOnContentClick': true }} v-slots={{
-                                'append-inner': () =>
-                                    (props.inArray) &&
-                                    <g-icon onClick={withModifiers(removeField, ['stop'])}>
-                                      delete_outline
-                                    </g-icon>
-                              }}>
-                              </component>
+                              {(() => {
+                                const dynamicField = resolveComponent(props.field.notOnlyValueInOptions ? 'g-combobox' : 'g-autocomplete');
+                                return <dynamicField
+                                           v-model={internalValue.value}
+                                           normalize={props.field.normalize}
+                                           items={options.value}
+                                           itemText={props.field.itemText}
+                                           itemValue={props.field.itemValue}
+                                           chips={props.field.chips}
+                                           smallChips={props.field.chips}
+                                           label={props.field.tableCell ? '' : label.value}
+                                           clearable onChange={onChange}
+                                           returnObject={!!props.field.returnObject}
+                                           menuProps={{'z-index': 1000, 'closeOnContentClick': true}} v-slots={{
+                                  'append-inner': () =>
+                                      (props.inArray) &&
+                                      <g-icon onClick={withModifiers(removeField, ['stop'])}>
+                                        delete_outline
+                                      </g-icon>
+                                }}>
+                                </dynamicField>
+                              })()}
                             </g-col>
                             :
                             (

@@ -1,9 +1,11 @@
 <script>
-import { _fieldsFactory, _modelFactory, flexFactory, labelFactory } from '../form/FormFactory';
+import { _fieldsFactory, _modelFactory, flexFactory, labelFactory } from './FormFactory';
 import { inject } from 'vue'
 import { genPath, getLabel } from './FormFactory';
 
 export default {
+  name: 'GFieldObjectArray',
+  props: ['model', 'field', 'rootModel', 'path', 'noLayout'],
   setup(props, { emit }) {
     const gForm = inject('$gform')
     const internalModel = _modelFactory(props);
@@ -58,9 +60,9 @@ export default {
               <g-field-object field={createObjectArrayField(props.field.fields, val)}
                               model={props.model[props.field.key]}
                               inArray={true} rootmodel={props.rootModel}
-                              path={genPath(props.field.key)}
+                              path={genPath(props, props.field.key)}
                               noLayout={props.noLayout} v-slots={{
-                'action': ({}) =>
+                'action': () =>
                     <g-card background-color="white" class="action-container" elevation={0}>
                       <g-btn xsmall icon onClick={() => pushItemUp(val)}>
                         <g-icon small>

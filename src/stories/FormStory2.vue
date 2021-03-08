@@ -20,6 +20,7 @@
         dialog: false,
         model: {
           name: 'test',
+          address: {street: 'a1', city: 'b1'},
           addressArray3: [
             {street: 'a1', city: 'b1'},
             {street: 'a2', city: 'b2'}

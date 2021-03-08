@@ -20,6 +20,8 @@ global.root.use(router);
 global.root.use(GForm);
 global.root.use(GigaComponents)
 
+require('pos-vue-framework/src/style/main.scss')
+
 import {
   storiesOf, specs, describe, it,
   after, before, beforeEach, afterEach

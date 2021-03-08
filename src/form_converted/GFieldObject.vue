@@ -1,8 +1,10 @@
 <script>
-import { _fieldsFactory, _modelFactory, flexFactory, genPath, labelFactory } from '../form/FormFactory';
+import { _fieldsFactory, _modelFactory, flexFactory, genPath, labelFactory } from './FormFactory';
 import { computed, inject, ref } from 'vue'
+import {genScopeId} from "../utils/vue-utils";
 
 export default {
+  name: 'GFieldObject',
   props: ['model', 'field', 'rootModel', 'path', 'noLayout'],
   emits: ['saveLocalStorage'],
   initLocalStoragePath() {
@@ -12,6 +14,7 @@ export default {
     collapseHistory: { default: false },
   },
   setup(props, { slots, emit }) {
+    //if (props.path === 'deep.layout2.0') debugger
     const gForm = inject('$gform')
     const internalModel = _modelFactory(props);
     const flex = flexFactory(props);
@@ -23,7 +26,7 @@ export default {
       return props.field.noPanel;
     })
     const objectPath = computed(() => {
-      return genPath(props.field.key);
+      return genPath(props, props.field.key);
     })
 
     function toggleCollapse() {
@@ -33,15 +36,15 @@ export default {
       emit('saveLocalStorage')
     }
 
-    return () => <>
+    return genScopeId(() => <>
       {
         (!noPanel.value) ?
             <g-col xs12>
               <fieldset class={collapse.value ? 'fieldset__collapsed' : ''}
-                        v-show="fields && fields.length > 0"
+                        v-show={fields.value && fields.value.length > 0}
                         style="position: relative"
-                        onMouseEnter={() => showAction.value = true}
-                        onMouseLeave={() => showAction.value = false}>
+                        onMouseenter={() => showAction.value = true}
+                        onMouseleave={() => showAction.value = false}>
                 {
                   (collapse.value) &&
                   <div onClick={toggleCollapse} class="fieldset-activator">
@@ -50,7 +53,7 @@ export default {
                 <div v-show={showAction.value}>
                   {slots.action ? slots.action() :
                       <g-card background-color="white" class="action-container" elevation={0}>
-                        <g-btn xSmall icon onClick={props.model[props.field.key] = undefined}>
+                        <g-btn xSmall icon onClick={() => props.model[props.field.key] = undefined}>
                           <g-icon small>
                             delete
                           </g-icon>
@@ -89,7 +92,7 @@ export default {
                 </g-col>
             )
       }
-    </>
+    </>)
   }
 }
 </script>

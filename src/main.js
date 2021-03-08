@@ -1,11 +1,11 @@
-import GField from './form/GField';
-import GInput from './form/GInput';
-import GFieldSimpleArray from './form/GFieldSimpleArray';
-import GFieldTableArray from './form/GFieldTableArray';
-import GFieldChoice from './form/GFieldChoice';
-import GFieldChoiceArray from './form/GFieldChoiceArray';
-import GFieldObjectArray from './form/GFieldObjectArray';
-import GFieldObject from './form/GFieldObject';
+import GField from './form_converted/GField';
+import GInput from './form_converted/GInput';
+import GFieldSimpleArray from './form_converted/GFieldSimpleArray';
+import GFieldTableArray from './form_converted/GFieldTableArray';
+import GFieldChoice from './form_converted/GFieldChoice';
+import GFieldChoiceArray from './form_converted/GFieldChoiceArray';
+import GFieldObjectArray from './form_converted/GFieldObjectArray';
+import GFieldObject from './form_converted/GFieldObject';
 
 let GForm = {
   install(app, options) {

@@ -1,10 +1,10 @@
 <script>
 import { genPath } from './FormFactory';
-import { _fieldsFactory, _modelFactory, flexFactory, labelFactory } from '../form/FormFactory';
+import { _fieldsFactory, _modelFactory, flexFactory, labelFactory } from './FormFactory';
 
 export default {
+  name: 'GFieldSimpleArray',
   props: ['model', 'field', 'path', 'rootModel', 'noLayout'],
-
   setup(props, { emit, slots }) {
     const internalModel = _modelFactory(props);
     const flex = flexFactory(props)
@@ -23,10 +23,10 @@ export default {
     return () => <>
       {props.model[props.field.key].map((val, index) =>
           <g-col xs12 key={index}>
-            <g-field onRemoveField={() => internalModel.splice(index, 1)}
+            <g-field onRemoveField={() => internalModel.value.splice(index, 1)}
                      inArray={true}
                      noLayout={false}
-                     path={genPath(props.field.key)}
+                     path={genPath(props, props.field.key)}
                      rootModel={props.rootModel}
                      field={createArrayField(props.field.fields, index)}
                      model={props.model[props.field.key]}/>

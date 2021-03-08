@@ -2,9 +2,10 @@
 import { computed, inject, ref } from 'vue'
 import { genScopeId } from '../utils/vue-utils';
 import { genPath, getLabel } from './FormFactory';
-import { _fieldsFactory, _modelFactory, flexFactory, getChoiceName, labelFactory } from '../form/FormFactory';
+import { _fieldsFactory, _modelFactory, flexFactory, getChoiceName, labelFactory } from './FormFactory';
 
 export default {
+  name: 'GFieldChoice',
   props: ['model', 'field', 'inArray', 'rootModel', 'path', 'noLayout'],
   emits: ['remove-field', 'update:model'],
   setup(props, { emit }) {
@@ -26,14 +27,14 @@ export default {
     })
     const choicePath = computed(() => {
       if (props.field.choiceKeyOutside) return props.path;
-      return genPath(props.field.key)
+      return genPath(props, props.field.key)
     })
     const choiceBtnPrepend = computed(() => {
       if (props.field.choiceKeyOutside) return 'Choose';
       return 'Add'
     })
     const choiceField = computed(() => {
-      let field = _.cloneDeep(props.fields.find(choice => getChoiceName(choice) === choiceModel[choiceKey.value]));
+      let field = _.cloneDeep(fields.value.find(choice => getChoiceName(choice) === choiceModel.value[choiceKey.value]));
       /*if (!['array', 'object', 'tableArray', 'input', 'input@number', 'input@multiSelect'].includes(field.type)) {
         field = {
           label: this.choiceModel[choiceKey.value],
@@ -134,7 +135,7 @@ export default {
         }
         {(!choiceExist.value) &&
         <g-menu offset-y z-index="1000" v-model={showMenu.value} closeOnContentClick={true} v-slots={{
-          'default': () => <g-list items={fields.value} v-slots={{
+          default: () => <g-list items={fields.value} v-slots={{
             'list-item': ({ item }) =>
                 <g-list-item item={item} onSingleItemClick={() => selectChoice(item)}>
                   <g-list-item-content>
@@ -143,16 +144,14 @@ export default {
                     </g-list-item-text>
                   </g-list-item-content>
                 </g-list-item>
-          }}/>
-          ,
-          'activator': ({ toggleContent }) => <>
+          }}/>,
+          activator: ({ toggleContent }) =>
             <g-btn onClick={toggleContent} textcolor="blue lighten-2" outlined small>
-              {choiceBtnPrepend.toUpperCase()} {getLabel(props.field).toUpperCase()}
+              {choiceBtnPrepend.value.toUpperCase()} {getLabel(props.field).toUpperCase()}
               <g-icon>
                 arrow_drop_down
               </g-icon>
             </g-btn>
-          </>
         }}/>
         }
       </g-col>

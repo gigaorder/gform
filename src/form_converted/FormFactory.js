@@ -47,17 +47,14 @@ export const _fieldsFactory = (props, gForm) => computed(() => {
   return props.field.fields;
 });
 
-export function addObjectItem() {
-  if (!this.model[this.field.key]) this.model[this.field.key] = []
-  this.model[this.field.key].push({});
-}
-
 export function getChoiceName(choice) {
   return choice.choiceName || choice.key;
 }
 
-export function genPath() {
-  const rootPathArr = this.path ? [this.path] : [];
-  const result = rootPathArr.concat(...arguments).filter(path => path !== undefined).join('.');
+export function genPath(props) {
+  const rootPathArr = props.path ? [props.path] : [];
+  const args = [...arguments];
+  args.shift();
+  const result = rootPathArr.concat(...args).filter(path => path !== undefined).join('.');
   return result
 }

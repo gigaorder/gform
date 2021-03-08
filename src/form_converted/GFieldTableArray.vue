@@ -1,10 +1,13 @@
 <script>
 
-import { computed, ref } from 'vue'
-import { genPath, getLabel } from './FormFactory';
+import {computed, ref, withModifiers} from 'vue'
+import {genPath, getLabel} from './FormFactory';
+import {genScopeId} from "../utils/vue-utils";
 
 export default {
-  setup(props, { emit }) {
+  name: 'GFieldTableArray',
+  props: ['model', 'field', 'rootModel', 'path'],
+  setup(props, {emit}) {
     const rowDetail = ref(null)
     const expansionInitialized = ref([])
     const mainFields = computed(() => {
@@ -32,97 +35,99 @@ export default {
     }
 
     function makeTableCell(field) {
-      return _.assign(field, { tableCell: true });
+      return _.assign(field, {tableCell: true});
     }
 
-    return () => <>
-      <div class="col-flex col-xs-12">
-        {
-          (props.model[props.field.key] && props.model[props.field.key].length > 0) &&
-          <table class="g-datatable g-table theme--light gfield-table">
-            <thead>
-            <tr class="table-header">
-              {
-                (props.field.expansion) &&
-                <th style="width: 15px"/>
-              }
-              {mainFields.value.map(_field =>
-                  <th>
-                    {getLabel(_field)}
-                  </th>
-              )}
-              <th>
-                X
-              </th>
-            </tr>
-            </thead>
-            <tbody>
-            {props.props.model[props.field.key].map((val, index) =>
-                <>
-                  <tr class="text-md-center">
-                    {
-                      (props.field.expansion) &&
-                      <td style="width: 15px" onClick={() => toggleRowDetail(index)}>
-                        <g-icon>
-                          keyboard_arrow_{rowDetail === index ? 'down' : 'right'} </g-icon>
+    return genScopeId(() =>
+        <div class="col-flex col-xs-12">
+          {
+            (props.model[props.field.key] && props.model[props.field.key].length > 0) &&
+            <table class="g-datatable g-table theme--light gfield-table">
+              <thead>
+              <tr class="table-header">
+                {
+                  (props.field.expansion) &&
+                  <th style="width: 15px"/>
+                }
+                {mainFields.value.map(_field =>
+                    <th>
+                      {getLabel(_field)}
+                    </th>
+                )}
+                <th>
+                  X
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              {props.model[props.field.key].map((val, index) =>
+                  <>
+                    <tr class="text-md-center">
+                      {
+                        (props.field.expansion) &&
+                        <td style="width: 15px" onClick={() => toggleRowDetail(index)}>
+                          <g-icon>
+                            keyboard_arrow_{rowDetail === index ? 'down' : 'right'} </g-icon>
+                        </td>
+                      }
+                      {mainFields.value.map(_field =>
+                          <td class="input-group-sm">
+                            <g-field field={makeTableCell(_field)}
+                                     model={props.model[props.field.key][index]}
+                                     rootModel={props.rootModel}
+                                     path={genPath(props, props.field.key, index)}
+                            />
+                          </td>
+                      )}
+                      <td>
+                        <g-icon onClick={() => props.model[props.field.key].splice(index, 1)}>
+                          delete
+                        </g-icon>
                       </td>
-                    }
-                    {mainFields.value.map(_field =>
-                        <td class="input-group-sm">
-                          <g-field field={makeTableCell(_field)}
-                                   model={props.model[props.field.key][index]}
-                                   rootModel={props.rootModel}
-                                   path={genPath(props.field.key, index)}
-                          />
-                        </td>
-                    )}
-                    <td>
-                      <g-icon onClick={() => props.model[props.field.key].splice(index, 1)}>
-                        delete
-                      </g-icon>
-                    </td>
-                  </tr>
-                  <g-expand-transition>
-                    {
-                      (props.field.expansion && (!props.field.lazy || rowDetail.value === index || expansionInitialized.value[index])) &&
-                      <tr v-show={rowDetail.value === index} class="g-expansion" style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
-                        <td colspan={props.field.fields.length + 2} style="height: 0 !important;">
-                          <g-expand-transition>
-                            <g-card v-show={rowDetail.value === index} flat style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
-                              <g-card-text>
-                                <g-field fields={expansionFields.value}
-                                         model={props.model[props.field.key][index]}
-                                         rootModel={props.rootModel}
-                                         path={genPath(props.field.key, index)}
-                                />
-                              </g-card-text>
-                            </g-card>
-                          </g-expand-transition>
-                        </td>
-                      </tr>
-                    }
-                  </g-expand-transition>
-                </>
-            )}
-            </tbody>
-          </table>
-        }
-        {
-          (!field.addable) &&
-          <g-btn class="ma-2" textcolor="blue lighten-2" outlined small onClick={withModifiers(addObjectItem, ['stop'])}>
-            Add
-            {getLabel(field)}
-          </g-btn>
-        }
-        <slot name="btn-append"></slot>
-      </div>
-    </>
+                    </tr>
+                    <g-expand-transition>
+                      {
+                        (props.field.expansion && (!props.field.lazy || rowDetail.value === index || expansionInitialized.value[index])) &&
+                        <tr v-show={rowDetail.value === index} class="g-expansion"
+                            style="border-bottom: 1px solid rgba(0,0,0,0.12);background-color: #f3f3f3;">
+                          <td colspan={props.field.fields.length + 2} style="height: 0 !important;">
+                            <g-expand-transition>
+                              <g-card v-show={rowDetail.value === index} flat
+                                      style="width: 100%;margin-top: 5px;margin-bottom: 5px;border: solid 1px #d3d3d375;">
+                                <g-card-text>
+                                  <g-field fields={expansionFields.value}
+                                           model={props.model[props.field.key][index]}
+                                           rootModel={props.rootModel}
+                                           path={genPath(props, props.field.key, index)}
+                                  />
+                                </g-card-text>
+                              </g-card>
+                            </g-expand-transition>
+                          </td>
+                        </tr>
+                      }
+                    </g-expand-transition>
+                  </>
+              )}
+              </tbody>
+            </table>
+          }
+          {
+            (!props.field.addable) &&
+            <g-btn class="ma-2" textcolor="blue lighten-2" outlined small
+                   onClick={withModifiers(addObjectItem, ['stop'])}>
+              Add
+              {getLabel(props.field)}
+            </g-btn>
+          }
+          <slot name="btn-append"></slot>
+        </div>)
   }
 }
 </script>
 
 <style lang="scss" scoped>
-table.g-table ::v-deep {
+table.g-table :deep {
   .g-tf-wrapper {
     margin: 8px 0;
   }

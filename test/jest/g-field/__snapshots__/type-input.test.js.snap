@@ -1,11 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`GField with type input should render correctly 1`] = `
-<g-col-stub class="md-6 px-2">
-  <g-text-field-stub modelvalue="test"
-                     label="Name"
-                     type="text"
-  >
-  </g-text-field-stub>
-</g-col-stub>
+<input rootmodel="[object Object]"
+       model="[object Object]"
+       field="[object Object]"
+       in-array="false"
+       no-layout="false"
+>
 `;

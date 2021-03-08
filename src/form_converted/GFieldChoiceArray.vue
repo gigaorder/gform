@@ -1,11 +1,12 @@
 <script>
-import { ref, computed, inject } from 'vue'
-import { _fieldsFactory, _modelFactory, flexFactory, labelFactory } from '../form/FormFactory';
-import { genPath, getLabel, getChoiceName } from './FormFactory';
+import {ref, computed, inject} from 'vue'
+import {_fieldsFactory, _modelFactory, flexFactory, labelFactory} from './FormFactory';
+import {genPath, getLabel, getChoiceName} from './FormFactory';
 
 export default {
+  name: 'GFieldChoiceArray',
   props: ['model', 'field', 'inArray', 'rootModel', 'path', 'noLayout'],
-  setup(props, { emit }) {
+  setup(props, {emit}) {
     const gForm = inject('$gform')
     const flex = flexFactory(props)
     const label = labelFactory(props);
@@ -28,8 +29,7 @@ export default {
 
     function selectChoiceInArray(choice) {
       if (!props.model[props.field.key]) props.model[props.field.key] = []
-      props.model[props.field.key].push({ [choiceKey.value]: this.getChoiceName(choice) });
-      console.log('props.model[props.field.key]', props.model[props.field.key])
+      props.model[props.field.key].push({[choiceKey.value]: getChoiceName(choice)});
     }
 
     return () => <>
@@ -38,9 +38,9 @@ export default {
             <g-field-choice onRemoveField={() => props.model[props.field.key].splice(index, 1)}
                             inArray={true}
                             rootmodel={props.rootModel}
-                            path={genPath(props.field.key)}
+                            path={genPath(props, props.field.key)}
                             field={createChoiceArrayField(index)}
-                            model.sync={props.model[props.field.key]}
+                            model={props.model[props.field.key]}
                             noLayout={props.noLayout}
             />
           </g-col>
@@ -49,9 +49,9 @@ export default {
         {
           (!props.inArray) &&
           <g-menu offset-y z-index="1000" v-model={showMenu.value} closeOnContentClick={true} v-slots={{
-            'default': () =>
+            default: () =>
                 <g-list items={fields.value} v-slots={{
-                  'list-item': ({ item }) =>
+                  'list-item': ({item}) =>
                       <g-list-item item={item} onSingleItemClick={() => selectChoiceInArray(item)}>
                         <g-list-item-content>
                           <g-list-item-text>
@@ -60,9 +60,8 @@ export default {
                         </g-list-item-content>
                       </g-list-item>
                   ,
-                }}/>
-            ,
-            'activator': ({ toggleContent }) =>
+                }}/>,
+            activator: ({toggleContent}) =>
                 <g-btn onClick={toggleContent} backGroundColor="blue" textColor="white" small>
                   ADD {getLabel(props.field).toUpperCase()}
                   <g-icon>
