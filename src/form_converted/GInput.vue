@@ -1,6 +1,6 @@
 <script>
 
-import {computed, resolveComponent, withModifiers} from 'vue'
+import {computed, getCurrentInstance, resolveComponent, withModifiers} from 'vue'
 import dayjs from 'dayjs'
 
 export default {
@@ -49,8 +49,7 @@ export default {
     })
     const options = computed(() => {
       if (typeof props.field.options === 'function') {
-        //fixme: *this
-        return props.field.options(this);
+        return props.field.options(getCurrentInstance().ctx);
       }
       if (inputType.value.includes('number')) {
         return props.field.options.map(opt => {
@@ -96,7 +95,7 @@ export default {
     init()
     return () => <>
       {
-        (inputType === 'switch') ?
+        (inputType.value === 'switch') ?
             <g-col class={[flex.value, paddingClass.value]}>
               <g-switch label={props.field.tableCell ? '' : label.value} v-model={internalValue.value} v-slots={{
                 'label': () =>

@@ -1,5 +1,5 @@
 <script>
-import {computed, inject, ref, resolveComponent} from 'vue'
+import {computed, getCurrentInstance, inject, ref, resolveComponent} from 'vue'
 import {genScopeId} from '../utils/vue-utils';
 import {_rootModelFactory, flexFactory, labelFactory} from './FormFactory';
 
@@ -68,8 +68,8 @@ export default {
 
     function isVisible(field) {
       if (!field.isVisible) return true;
-      //fixme: *this
-      return field.isVisible(this);
+      const instance = getCurrentInstance()
+      return field.isVisible(instance.ctx);
     }
 
     function setProperty(field) {
@@ -104,76 +104,71 @@ export default {
     init()
 
     const renderDynamicField = function () {
+      if (!type.value) return;
       const dynamicField = resolveComponent(type.value);
-      return <dynamicField rootmodel={internalRootModel.value} path={props.path}
+      return <dynamicField root-model={internalRootModel.value} path={props.path}
                            model={props.model} field={props.field} inArray={props.inArray}
                            noLayout={props.noLayout} fields={props.fields} v-slots={slots}
                            onRemoveField={() => emit('remove-field')}>
       </dynamicField>
     }
 
-    const _render = genScopeId(() => {
-
-      return <>
-        {
-          (props.metadata) ?
-              <g-field path={props.path} fields={resolveMetadata()} model={props.model} noLayout={props.noLayout}/>
-              :
-              (
-                  (props.tabs) ?
-                      <g-tabs slider-color="primary" style="width: 100%" items={Object.keys(getTabs())}
-                              class={{'tab-wrapper': props.fillHeight}} v-model={activeTab.value} v-slots={{
-                        'default': () => <>
-                          {getTabs().map((tab, index) =>
-                              <g-tab-item class="pt-3" item={`${index}`} key={tab.name}>
-                                <g-field fields={tab.fields} model={props.model} path={props.path}
-                                         noLayout={props.noLayout} fillHeight={props.fillHeight}
-                                         rootModel={internalRootModel.value}/>
-                              </g-tab-item>
-                          )}
-                          {slots['tab-append'] && slots['tab-append']()}
-                        </>,
-                        'tabs': () => getTabs().map((tab, index) =>
-                            <g-tab item={`${index}`} key={tab.name}> {tab.name} </g-tab>
-                        )
-                      }}>
-                      </g-tabs>
-                      :
-                      (
-                          props.fields ?
-                              <g-row no-gutters class={props.fillHeight ? 'fill-height' : ''}>
-                                {getFormFields().map((_field, index) => {
-                                      return < g-field path={props.path} field={_field} model={props.model}
-                                                       rootmodel={internalRootModel.value} noLayout={props.noLayout}
-                                                       v-show={isVisible(_field)} key={'field_' + _field.key + '_' + index}>
-                                      </g-field>;
-                                    }
-                                )}
-                                <g-col xs12>
-                                  {getAddFields().map((addField, index) =>
-                                      <g-chip v-show='isVisible(addField)' backgroundcolor='#e5efff' textcolor='primary'
-                                              onClick={() => addNullValue(addField)} key={addField.key + index}>
-                                        <g-avatar class='g-avatar__left'>
-                                          <g-icon color='primary'>
-                                            add_circle
-                                          </g-icon>
-                                        </g-avatar>
-                                        {addField.label || addField.key}
-                                      </g-chip>
-                                  )}
-                                </g-col>
-                              </g-row>
-                              :
-                              renderDynamicField()
-
+    const _render = genScopeId(() =>
+        props.metadata ?
+            <g-field path={props.path} fields={resolveMetadata()} model={props.model} noLayout={props.noLayout}/>
+            :
+            (
+                (props.tabs) ?
+                    <g-tabs slider-color="primary" style="width: 100%" items={Object.keys(getTabs())}
+                            class={{'tab-wrapper': props.fillHeight}} v-model={activeTab.value} v-slots={{
+                      'default': () => <>
+                        {getTabs().map((tab, index) =>
+                            <g-tab-item class="pt-3" item={`${index}`} key={tab.name}>
+                              <g-field fields={tab.fields} model={props.model} path={props.path}
+                                       noLayout={props.noLayout} fillHeight={props.fillHeight}
+                                       rootModel={internalRootModel.value}/>
+                            </g-tab-item>
+                        )}
+                        {slots['tab-append'] && slots['tab-append']()}
+                      </>,
+                      'tabs': () => getTabs().map((tab, index) =>
+                          <g-tab item={`${index}`} key={tab.name}> {tab.name} </g-tab>
                       )
-              )
-        }
-      </>;
-    })
+                    }}>
+                    </g-tabs>
+                    :
+                    (
+                        props.fields ?
+                            <g-row no-gutters class={props.fillHeight ? 'fill-height' : ''}>
+                              {getFormFields().map((_field, index) => {
+                                    return < g-field path={props.path} field={_field} model={props.model}
+                                                     rootmodel={internalRootModel.value} noLayout={props.noLayout}
+                                                     v-show={isVisible(_field)} key={'field_' + _field.key + '_' + index}>
+                                    </g-field>;
+                                  }
+                              )}
+                              <g-col xs12>
+                                {getAddFields().map((addField, index) =>
+                                    <g-chip v-show={isVisible(addField)} backgroundcolor='#e5efff' textcolor='primary'
+                                            onClick={() => addNullValue(addField)} key={addField.key + index}>
+                                      <g-avatar class='g-avatar__left'>
+                                        <g-icon color='primary'>
+                                          add_circle
+                                        </g-icon>
+                                      </g-avatar>
+                                      {addField.label || addField.key}
+                                    </g-chip>
+                                )}
+                              </g-col>
+                            </g-row>
+                            :
+                            renderDynamicField()
+                    )
+            ))
     return {
       _render,
-      type
+      type,
+      internalRootModel
     }
   },
   render() {

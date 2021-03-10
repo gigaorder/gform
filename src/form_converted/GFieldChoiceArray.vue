@@ -62,7 +62,7 @@ export default {
                   ,
                 }}/>,
             activator: ({toggleContent}) =>
-                <g-btn onClick={toggleContent} backGroundColor="blue" textColor="white" small>
+                <g-btn onClick={toggleContent} backgroundColor="blue" textColor="white" small>
                   ADD {getLabel(props.field).toUpperCase()}
                   <g-icon>
                     arrow_drop_down
