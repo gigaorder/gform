@@ -53,8 +53,7 @@ export default {
       model.splice(index, 1)
     }
 
-    return () => <>
-      <g-col xs12>
+    return () => <g-col xs12>
         {props.model[props.field.key].map(val =>
             <g-col class={[flex, flex !== 'col-xs-12' ? 'fix-inline' : '']} style="position: relative">
               <g-field-object field={createObjectArrayField(props.field.fields, val)}
@@ -89,7 +88,6 @@ export default {
         </g-btn>
         }
       </g-col>
-    </>
   }
 }
 </script>

@@ -62,19 +62,16 @@ export default {
                       </g-card>}
                 </div>
                 {
-                  label.value && <>
-                    {!collapse.value ? <legend class={collapse.value ? 'legend__collapsed' : ''}>
-                          <span onClick={toggleCollapse}>
-                            {label.value} {collapse.value ? '+' : ''}
-                          </span>
-                        </legend> :
-                        <div class="legend__collapsed .legend">
-                          <span onClick={toggleCollapse}>
-                            {label.value} {collapse.value ? '+' : ''}
-                          </span>
-                        </div>
-                    }
-                  </>
+                  label.value && !collapse.value ? <legend class={collapse.value ? 'legend__collapsed' : ''}>
+                        <span onClick={toggleCollapse}>
+                          {label.value} {collapse.value ? '+' : ''}
+                        </span>
+                      </legend> :
+                      <div class="legend__collapsed .legend">
+                        <span onClick={toggleCollapse}>
+                          {label.value} {collapse.value ? '+' : ''}
+                        </span>
+                      </div>
                 }
                 <g-expand-transition>
                   <g-row v-show={!collapse.value}>
