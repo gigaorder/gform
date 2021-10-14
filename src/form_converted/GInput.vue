@@ -49,7 +49,8 @@ export default {
     })
     const options = computed(() => {
       if (typeof props.field.options === 'function') {
-        return props.field.options(getCurrentInstance().ctx);
+        const ctx = getCurrentInstance().ctx;
+        return props.field.options(ctx);
       }
       if (inputType.value.includes('number')) {
         return props.field.options.map(opt => {

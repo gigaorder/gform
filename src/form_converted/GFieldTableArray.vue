@@ -38,7 +38,7 @@ export default {
       return _.assign(field, {tableCell: true});
     }
 
-    return genScopeId(() =>
+    const _render = genScopeId(() =>
         <div class="col-flex col-xs-12">
           {
             (props.model[props.field.key] && props.model[props.field.key].length > 0) &&
@@ -67,7 +67,7 @@ export default {
                         (props.field.expansion) &&
                         <td style="width: 15px" onClick={() => toggleRowDetail(index)}>
                           <g-icon>
-                            keyboard_arrow_{rowDetail === index ? 'down' : 'right'} </g-icon>
+                            {rowDetail.value === index ? 'keyboard_arrow_down' : 'keyboard_arrow_right'} </g-icon>
                         </td>
                       }
                       {mainFields.value.map(_field =>
@@ -122,6 +122,11 @@ export default {
           }
           <slot name="btn-append"></slot>
         </div>)
+
+    return {_render, rowDetail}
+  },
+  render() {
+    return this._render();
   }
 }
 </script>

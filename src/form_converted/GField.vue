@@ -68,6 +68,7 @@ export default {
 
     function isVisible(field) {
       if (!field.isVisible) return true;
+      if (typeof field.isVisible === 'object') return false;
       const instance = getCurrentInstance()
       return field.isVisible(instance.ctx);
     }
