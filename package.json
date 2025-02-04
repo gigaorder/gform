@@ -21,7 +21,7 @@
     "sass-loader": "^7.0.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
-    "vue": "3.0.4",
+    "vue": "3.5.13",
     "dayjs": "^1.8.12"
   },
   "devDependencies": {
@@ -85,9 +85,9 @@
     "stylus-loader": "^3.0.1",
     "traverse": "^0.6.6",
     "typescript": "^4.1.3",
-    "vue": "3.0.7",
+    "vue": "3.5.13",
     "vue-jest": "^5.0.0-alpha.7",
-    "vue-loader": "^16.1.0",
+    "vue-loader": "^17.4.2",
     "vue-router": "^4.0.0-rc.5",
     "schemahandler": "github:gigasource/schemaHandler#1.0.91"
   },
